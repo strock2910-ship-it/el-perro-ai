@@ -42,34 +42,46 @@
     }
 
     .mascota {
-      height: 180px;
+      height: 245px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .marco-perro {
+      width: 210px;
+      height: 210px;
+      border-radius: 25px;
+      overflow: hidden;
+      border: 3px solid #ff8a00;
+      box-shadow: 0 0 30px #ff8a0066;
+      background: #222;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
     #perro {
-      width: 145px;
-      height: 145px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 75px;
-      background: linear-gradient(145deg, #ff9d00, #a83d00);
-      box-shadow: 0 0 30px #ff8a0055;
-      transition: transform .2s, box-shadow .2s;
+      width: 200%;
+      height: 200%;
+      object-fit: cover;
+      transform: translate(-25%, -18%);
+      transition: transform .2s, filter .2s;
     }
 
     #perro.hablando {
-      transform: scale(1.08);
-      box-shadow: 0 0 45px #ff8a00;
-      animation: pulso .8s infinite alternate;
+      animation: pulso .65s infinite alternate;
+      filter: brightness(1.15);
     }
 
     @keyframes pulso {
-      from { transform: scale(1.02); }
-      to { transform: scale(1.10); }
+      from {
+        transform: translate(-25%, -18%) scale(1);
+      }
+      to {
+        transform: translate(-25%, -18%) scale(1.07);
+      }
     }
 
     #chat {
@@ -184,7 +196,14 @@
   </header>
 
   <section class="mascota">
-    <div id="perro">🐶</div>
+    <div class="marco-perro">
+      <img
+        id="perro"
+        src="https://raw.githubusercontent.com/strock2910-ship-it/el-perro-ai/main/perro-ai.png"
+        alt="EL PERRO AI, nuestro perro salchicha"
+        onerror="this.style.display='none'; document.getElementById('respaldo').style.display='block';">
+      <span id="respaldo" style="display:none;font-size:80px;">🐶</span>
+    </div>
   </section>
 
   <section id="chat" aria-live="polite">
@@ -241,7 +260,6 @@
   // Cargar voces del navegador
   function cargarVoces() {
     if (!window.speechSynthesis) return;
-
     vocesDisponibles = speechSynthesis.getVoices();
   }
 
@@ -251,7 +269,7 @@
     speechSynthesis.onvoiceschanged = cargarVoces;
   }
 
-  // Buscar una voz masculina en español, si el navegador la identifica
+  // Buscar voz en español
   function seleccionarVoz() {
     cargarVoces();
 
@@ -279,7 +297,7 @@
     chat.scrollTop = chat.scrollHeight;
   }
 
-  // Comunicación JSONP con Google Apps Script
+  // Comunicación con Google Apps Script mediante JSONP
   function llamarGoogle(parametros) {
     return new Promise(function(resolve, reject) {
 
@@ -296,7 +314,6 @@
       function limpiar() {
         if (terminado) return;
         terminado = true;
-
         delete window[nombreCallback];
 
         if (script.parentNode) {
@@ -332,7 +349,6 @@
       };
 
       script.src = URL_APPS_SCRIPT + '?' + consulta.toString();
-
       document.head.appendChild(script);
     });
   }
@@ -444,7 +460,6 @@
 
       estado.textContent = 'EL PERRO AI está en línea';
 
-      // Hablar automáticamente después de responder
       if (vozAutomatica) {
         hablar(respuesta);
       }
@@ -486,7 +501,6 @@
 
     const reconocimiento = new Reconocimiento();
     reconocimientoActivo = reconocimiento;
-
     reconocimiento.lang = 'es-MX';
     reconocimiento.continuous = false;
     reconocimiento.interimResults = false;
@@ -501,7 +515,6 @@
       const texto = evento.results[0][0].transcript;
 
       entrada.value = texto;
-
       reconocimientoActivo = null;
       botonMicrofono.textContent = '🎤 Hablar';
 
@@ -549,7 +562,7 @@
     }
   });
 
-  // Escuchar última respuesta manualmente
+  // Escuchar última respuesta
   document.getElementById('escuchar')
     .addEventListener('click', function() {
       if (!ultimaRespuesta) {
