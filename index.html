@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>EL PERRO AI</title>
 
-  <!-- Visor de modelos 3D -->
   <script type="module"
     src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js">
   </script>
@@ -50,7 +49,6 @@
       border: 1px solid #444;
       border-radius: 20px;
       overflow: hidden;
-      position: relative;
     }
 
     model-viewer {
@@ -91,6 +89,7 @@
       max-width: 90%;
       line-height: 1.5;
       overflow-wrap: anywhere;
+      white-space: pre-wrap;
     }
 
     .user {
@@ -191,6 +190,7 @@
     </div>
 
     <section class="chat">
+
       <div id="messages">
         <div class="message bot">
           ¡Hola! Soy EL PERRO AI. ¿En qué puedo ayudarte?
@@ -211,7 +211,7 @@
       </div>
 
       <div class="voice-controls">
-        <button class="secondary" id="micButton" onclick="iniciarMicrofono()">
+        <button class="secondary" onclick="iniciarMicrofono()">
           🎤 Hablar
         </button>
 
@@ -223,6 +223,7 @@
           ⏹ Detener voz
         </button>
       </div>
+
     </section>
 
     <div class="footer">
@@ -254,10 +255,12 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
+    // Comunicación JSONP con Google Apps Script
     function llamarGoogle(parametros) {
       return new Promise((resolve, reject) => {
+
         const callback =
-          "perroAI_" + Date.now() + "_" +
+          "perroAI" + Date.now() +
           Math.random().toString(36).slice(2);
 
         const script = document.createElement("script");
@@ -267,8 +270,8 @@
 
         const timeout = setTimeout(() => {
           limpiar();
-          reject(new Error("Tiempo de espera agotado al conectar con Google."));
-        }, 30000);
+          reject(new Error("Google tardó demasiado en responder."));
+        }, 45000);
 
         function limpiar() {
           clearTimeout(timeout);
@@ -283,53 +286,72 @@
 
         script.onerror = () => {
           limpiar();
-          reject(new Error("No se pudo conectar con Google."));
+          reject(new Error("No se pudo cargar la respuesta de Google."));
         };
 
         script.src = GOOGLE_URL + "?" + datos.toString();
+
         document.body.appendChild(script);
       });
     }
 
+    // Comprobar conexión
     async function conectarGoogle() {
       try {
         const respuesta = await llamarGoogle({
           action: "ping"
         });
 
-        if (respuesta.correcto) {
+        if (respuesta && respuesta.correcto) {
           status.textContent = "🟢 Conectado con Google";
         } else {
-          status.textContent = "⚠️ Revisa la conexión con Google";
+          status.textContent = "⚠️ Google respondió, pero no confirmó conexión";
         }
+
       } catch (error) {
-        status.textContent = "🔴 Sin conexión con Google";
-        console.error(error);
+        console.error("Error de conexión:", error);
+        status.textContent = "🔴 " + error.message;
       }
     }
 
+    // Enviar mensaje a Gemini
     async function enviarMensaje() {
+
       const texto = input.value.trim();
 
       if (!texto || sendButton.disabled) return;
 
       agregarMensaje(texto, "user");
+
       input.value = "";
       sendButton.disabled = true;
       status.textContent = "EL PERRO AI está pensando...";
 
       try {
+
         const respuesta = await llamarGoogle({
           action: "responder",
           texto: texto,
           historial: JSON.stringify(historial.slice(-6))
         });
 
-        if (!respuesta || !respuesta.texto) {
-          throw new Error("Google no devolvió una respuesta válida.");
-        }
+        console.log("Respuesta recibida de Google:", respuesta);
 
-        const respuestaTexto = respuesta.texto;
+        // Aceptar distintos nombres de propiedad
+        const respuestaTexto =
+          typeof respuesta === "string"
+            ? respuesta
+            : respuesta?.respuesta ??
+              respuesta?.texto ??
+              respuesta?.mensaje ??
+              respuesta?.response ??
+              respuesta?.text;
+
+        if (typeof respuestaTexto !== "string" || !respuestaTexto.trim()) {
+          throw new Error(
+            "Google respondió, pero no encontramos el texto. Revisa la consola."
+          );
+        }
 
         agregarMensaje(respuestaTexto, "bot");
 
@@ -340,17 +362,23 @@
 
         historial = historial.slice(-12);
 
-        if (vozActivada) hablar(respuestaTexto);
+        if (vozActivada) {
+          hablar(respuestaTexto);
+        }
 
         status.textContent = "🟢 EL PERRO AI está listo";
 
       } catch (error) {
-        console.error(error);
+
+        console.error("Error al responder:", error);
+
         agregarMensaje(
-          "No pude conectarme en este momento. Intenta nuevamente.",
+          "No pude procesar tu mensaje: " + error.message,
           "bot"
         );
+
         status.textContent = "⚠️ Error de conexión";
+
       } finally {
         sendButton.disabled = false;
         input.focus();
@@ -358,10 +386,14 @@
     }
 
     input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") enviarMensaje();
+      if (event.key === "Enter") {
+        enviarMensaje();
+      }
     });
 
+    // Configuración de voz
     function cargarVoces() {
+      if (!("speechSynthesis" in window)) return;
       voces = speechSynthesis.getVoices();
     }
 
@@ -371,11 +403,13 @@
     }
 
     function hablar(texto) {
+
       if (!("speechSynthesis" in window)) return;
 
       speechSynthesis.cancel();
 
       const mensaje = new SpeechSynthesisUtterance(texto);
+
       mensaje.lang = "es-MX";
       mensaje.rate = 0.92;
       mensaje.pitch = 0.85;
@@ -383,7 +417,8 @@
 
       const voz =
         voces.find(v =>
-          /es-MX/i.test(v.lang) && /male|masculino/i.test(v.name)
+          /es-MX/i.test(v.lang) &&
+          /male|masculino/i.test(v.name)
         ) ||
         voces.find(v => /es-MX/i.test(v.lang)) ||
         voces.find(v => /^es/i.test(v.lang));
@@ -394,13 +429,16 @@
     }
 
     function alternarVoz() {
+
       vozActivada = !vozActivada;
 
       voiceButton.textContent = vozActivada
         ? "🔊 Voz activada"
         : "🔇 Voz desactivada";
 
-      if (!vozActivada) speechSynthesis.cancel();
+      if (!vozActivada && "speechSynthesis" in window) {
+        speechSynthesis.cancel();
+      }
     }
 
     function detenerVoz() {
@@ -409,7 +447,9 @@
       }
     }
 
+    // Reconocimiento de voz
     function iniciarMicrofono() {
+
       const SpeechRecognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
@@ -424,6 +464,7 @@
       }
 
       reconocimiento = new SpeechRecognition();
+
       reconocimiento.lang = "es-MX";
       reconocimiento.continuous = false;
       reconocimiento.interimResults = false;
@@ -438,8 +479,8 @@
       };
 
       reconocimiento.onerror = (event) => {
-        status.textContent = "No se pudo utilizar el micrófono";
-        console.error(event.error);
+        console.error("Error del micrófono:", event.error);
+        status.textContent = "⚠️ Error del micrófono";
       };
 
       reconocimiento.onend = () => {
@@ -451,18 +492,21 @@
       reconocimiento.start();
     }
 
+    // Estado del modelo 3D
     const avatar = document.getElementById("avatar");
 
     avatar.addEventListener("load", () => {
-      status.textContent = "🐕 Modelo 3D cargado · Conectando con Google...";
+      console.log("Modelo 3D cargado correctamente.");
     });
 
     avatar.addEventListener("error", (event) => {
-      console.error("Error al cargar el modelo 3D", event);
+      console.error("Error al cargar el modelo 3D:", event);
       status.textContent = "⚠️ No se pudo cargar el modelo 3D";
     });
 
+    // Inicio
     conectarGoogle();
+
   </script>
 </body>
 </html>
