@@ -177,7 +177,7 @@
       </div>
     </section>
 
-    <div id="estado">Conectando con EL PERRO AI...</div>
+    <div id="estado">Conectando con Google...</div>
 
     <div class="entrada">
       <input
@@ -186,51 +186,28 @@
         placeholder="Escribe tu mensaje..."
         autocomplete="off">
 
-      <button id="enviar" type="button">
-        Enviar
-      </button>
+      <button id="enviar" type="button">Enviar</button>
     </div>
 
     <div class="acciones">
-      <button id="microfono" type="button">
-        🎤 Hablar
-      </button>
-
-      <button id="escuchar" type="button">
-        🔊 Escuchar
-      </button>
-
-      <button id="detener" type="button">
-        ⏹ Detener
-      </button>
+      <button id="microfono" type="button">🎤 Hablar</button>
+      <button id="escuchar" type="button">🔊 Escuchar</button>
+      <button id="detener" type="button">⏹ Detener</button>
     </div>
 
   </main>
 
-  <!-- CONEXIÓN OCULTA CON GOOGLE APPS SCRIPT -->
   <iframe
     id="puente"
-    title="Conexión segura con EL PERRO AI"
-    style="
-      position:absolute;
-      width:1px;
-      height:1px;
-      opacity:0;
-      pointer-events:none;
-      border:0;
-    ">
+    title="Conexión con Google Apps Script"
+    style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;">
   </iframe>
 
   <script>
-    // =========================================
-    // CONFIGURACIÓN
-    // =========================================
-
     const URL_APPS_SCRIPT =
       'https://script.google.com/macros/s/AKfycbxwBmyFNByGO9u-83mkdJlw8OVLjcOJOcUbbsweRejXPhTcLgBAfzPg2Pl86o9cUDx0Bg/exec';
 
-    const ORIGEN_GITHUB =
-      'https://strock2910-ship-it.github.io';
+    const ORIGEN_GITHUB = 'https://strock2910-ship-it.github.io';
 
     const chat = document.getElementById('chat');
     const entrada = document.getElementById('mensaje');
@@ -246,16 +223,17 @@
     let solicitudPendiente = null;
     let contador = 0;
 
-    // =========================================
-    // INICIAR CONEXIÓN
-    // =========================================
+    function agregarMensaje(texto, clase) {
+      const div = document.createElement('div');
+      div.className = 'mensaje ' + clase;
+      div.textContent = texto;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
+    // Recibir mensajes de Google Apps Script
     window.addEventListener('message', function(evento) {
 
-      // Solo aceptar mensajes de nuestro iframe
-      if (evento.source !== puente.contentWindow) return;
-
-      // Apps Script puede responder desde estos dominios
       const origenPermitido =
         evento.origin === 'https://script.google.com' ||
         evento.origin === 'https://script.googleusercontent.com';
@@ -268,7 +246,7 @@
 
       if (datos.tipo === 'EL_PERRO_AI_LISTO') {
         puenteListo = true;
-        estado.textContent = 'EL PERRO AI conectado con Gemini';
+        estado.textContent = 'EL PERRO AI conectado con Google';
         return;
       }
 
@@ -276,9 +254,7 @@
         datos.id &&
         solicitudPendiente &&
         datos.id !== solicitudPendiente.id
-      ) {
-        return;
-      }
+      ) return;
 
       if (datos.tipo === 'EL_PERRO_AI_PROCESANDO') {
         estado.textContent = 'EL PERRO AI está pensando...';
@@ -286,61 +262,39 @@
       }
 
       if (datos.tipo === 'EL_PERRO_AI_RESPUESTA') {
-        const textoOriginal = solicitudPendiente.texto;
+        if (!solicitudPendiente) return;
+
         const respuesta = String(datos.respuesta || '');
 
         agregarMensaje(respuesta, 'asistente');
 
         historial.push(
-          { role: 'user', content: textoOriginal },
+          { role: 'user', content: solicitudPendiente.texto },
           { role: 'model', content: respuesta }
         );
 
         historial = historial.slice(-10);
         ultimaRespuesta = respuesta;
-
         solicitudPendiente = null;
         botonEnviar.disabled = false;
         estado.textContent = 'En línea';
-
         return;
       }
 
       if (datos.tipo === 'EL_PERRO_AI_ERROR') {
-        agregarMensaje(
-          'Error: ' + datos.error,
-          'asistente'
-        );
-
+        agregarMensaje('Error: ' + datos.error, 'asistente');
         solicitudPendiente = null;
         botonEnviar.disabled = false;
         estado.textContent = 'Error de comunicación';
       }
-
     });
 
-    // Registrar el listener antes de cargar el iframe
-    puente.src = URL_APPS_SCRIPT;
-
-    // =========================================
-    // AGREGAR MENSAJES
-    // =========================================
-
-    function agregarMensaje(texto, clase) {
-      const div = document.createElement('div');
-      div.className = 'mensaje ' + clase;
-      div.textContent = texto;
-
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    // =========================================
-    // ENVIAR MENSAJE A APPS SCRIPT
-    // =========================================
+    // Avisar a Google que esta página está lista
+    window.addEventListener('load', function() {
+      puente.src = URL_APPS_SCRIPT;
+    });
 
     function enviarMensaje() {
-
       const texto = entrada.value.trim();
 
       if (!texto || botonEnviar.disabled) return;
@@ -352,164 +306,107 @@
       }
 
       agregarMensaje(texto, 'usuario');
-
       entrada.value = '';
       botonEnviar.disabled = true;
       estado.textContent = 'Enviando mensaje...';
 
       const id = 'mensaje_' + (++contador);
 
-      solicitudPendiente = {
-        id: id,
-        texto: texto
-      };
+      solicitudPendiente = { id: id, texto: texto };
 
       puente.contentWindow.postMessage({
-
         tipo: 'EL_PERRO_AI_MENSAJE',
         id: id,
         texto: texto,
         historial: historial
-
       }, '*');
-
     }
 
     botonEnviar.addEventListener('click', enviarMensaje);
 
     entrada.addEventListener('keydown', function(evento) {
-      if (evento.key === 'Enter') {
-        enviarMensaje();
-      }
+      if (evento.key === 'Enter') enviarMensaje();
     });
 
-    // =========================================
-    // RECONOCIMIENTO DE VOZ
-    // =========================================
-
+    // Reconocimiento de voz
     function escuchar() {
-
       const Reconocimiento =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
 
       if (!Reconocimiento) {
-        estado.textContent =
-          'Chrome no admite reconocimiento de voz.';
+        estado.textContent = 'Chrome no admite reconocimiento de voz.';
         return;
       }
 
       if (reconocimientoActivo) return;
 
-      try {
+      const reconocimiento = new Reconocimiento();
+      reconocimientoActivo = reconocimiento;
+      reconocimiento.lang = 'es-MX';
+      reconocimiento.continuous = false;
+      reconocimiento.interimResults = true;
+      reconocimiento.maxAlternatives = 1;
 
-        const reconocimiento = new Reconocimiento();
+      reconocimiento.onstart = function() {
+        estado.textContent = 'Te estoy escuchando...';
+        botonMicrofono.textContent = '🎙 Escuchando...';
+      };
 
-        reconocimientoActivo = reconocimiento;
+      reconocimiento.onresult = function(evento) {
+        let textoFinal = '';
 
-        reconocimiento.lang = 'es-MX';
-        reconocimiento.continuous = false;
-        reconocimiento.interimResults = true;
-        reconocimiento.maxAlternatives = 1;
-
-        reconocimiento.onstart = function() {
-          estado.textContent = 'Te estoy escuchando...';
-          botonMicrofono.textContent = '🎙 Escuchando...';
-        };
-
-        reconocimiento.onresult = function(evento) {
-
-          let textoFinal = '';
-          let textoTemporal = '';
-
-          for (
-            let i = evento.resultIndex;
-            i < evento.results.length;
-            i++
-          ) {
-
-            const resultado = evento.results[i];
-
-            if (resultado.isFinal) {
-              textoFinal += resultado[0].transcript;
-            } else {
-              textoTemporal += resultado[0].transcript;
-            }
-
+        for (let i = evento.resultIndex; i < evento.results.length; i++) {
+          if (evento.results[i].isFinal) {
+            textoFinal += evento.results[i][0].transcript;
           }
+        }
 
-          if (textoTemporal) {
-            estado.textContent = 'Te escuché: ' + textoTemporal;
-          }
-
-          if (textoFinal.trim()) {
-
-            entrada.value = textoFinal.trim();
-
-            reconocimientoActivo = null;
-            botonMicrofono.textContent = '🎤 Hablar';
-
-            enviarMensaje();
-
-          }
-
-        };
-
-        reconocimiento.onerror = function(evento) {
-          estado.textContent =
-            'Error de voz: ' + evento.error;
-
+        if (textoFinal.trim()) {
+          entrada.value = textoFinal.trim();
           reconocimientoActivo = null;
           botonMicrofono.textContent = '🎤 Hablar';
-        };
+          enviarMensaje();
+        }
+      };
 
-        reconocimiento.onend = function() {
-
-          reconocimientoActivo = null;
-          botonMicrofono.textContent = '🎤 Hablar';
-
-        };
-
-        reconocimiento.start();
-
-      } catch (error) {
-
-        estado.textContent =
-          'No se pudo iniciar el micrófono: ' + error.message;
-
+      reconocimiento.onerror = function(evento) {
+        estado.textContent = 'Error de voz: ' + evento.error;
         reconocimientoActivo = null;
         botonMicrofono.textContent = '🎤 Hablar';
+      };
 
+      reconocimiento.onend = function() {
+        reconocimientoActivo = null;
+        botonMicrofono.textContent = '🎤 Hablar';
+      };
+
+      try {
+        reconocimiento.start();
+      } catch (error) {
+        estado.textContent = 'No se pudo iniciar el micrófono: ' + error.message;
+        reconocimientoActivo = null;
+        botonMicrofono.textContent = '🎤 Hablar';
       }
-
     }
 
     botonMicrofono.addEventListener('click', escuchar);
 
-    // =========================================
-    // REPRODUCIR RESPUESTA
-    // =========================================
-
+    // Reproducir respuesta
     function leerRespuesta() {
-
       if (!ultimaRespuesta) {
-        estado.textContent =
-          'Todavía no hay una respuesta para escuchar.';
+        estado.textContent = 'Todavía no hay una respuesta para escuchar.';
         return;
       }
 
       if (!window.speechSynthesis) {
-        estado.textContent =
-          'La reproducción de voz no está disponible.';
+        estado.textContent = 'La reproducción de voz no está disponible.';
         return;
       }
 
       speechSynthesis.cancel();
 
-      const voz = new SpeechSynthesisUtterance(
-        ultimaRespuesta
-      );
-
+      const voz = new SpeechSynthesisUtterance(ultimaRespuesta);
       voz.lang = 'es-MX';
       voz.rate = 0.95;
       voz.pitch = 0.85;
@@ -537,21 +434,14 @@
       };
 
       speechSynthesis.speak(voz);
-
     }
 
     document.getElementById('escuchar')
       .addEventListener('click', leerRespuesta);
 
-    // =========================================
-    // DETENER
-    // =========================================
-
+    // Detener voz y micrófono
     function detenerTodo() {
-
-      if (window.speechSynthesis) {
-        speechSynthesis.cancel();
-      }
+      if (window.speechSynthesis) speechSynthesis.cancel();
 
       if (reconocimientoActivo) {
         reconocimientoActivo.abort();
@@ -559,15 +449,17 @@
       }
 
       botonMicrofono.textContent = '🎤 Hablar';
-      estado.textContent = 'En línea';
-
+      estado.textContent = puenteListo ? 'En línea' : 'Conectando con Google...';
     }
 
     document.getElementById('detener')
       .addEventListener('click', detenerTodo);
 
+    // Detectar si el iframe no carga
+    puente.addEventListener('error', function() {
+      estado.textContent = 'No se pudo cargar la conexión con Google.';
+    });
   </script>
 
 </body>
 </html>
-
