@@ -2,70 +2,103 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EL PERRO AI</title>
-  <style>
-    body {
-      background: #151515;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 35px 15px;
-    }
-    .panel {
-      max-width: 500px;
-      margin: auto;
-      padding: 25px;
-      background: #252525;
-      border-radius: 18px;
-    }
-    button {
-      padding: 14px 22px;
-      margin: 10px;
-      border: 0;
-      border-radius: 10px;
-      background: #e5a000;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #resultado {
-      margin-top: 20px;
-      color: #72e69a;
-      overflow-wrap: anywhere;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EL PERRO AI</title>
+<style>
+body {
+  background: #151515;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 30px 15px;
+}
+.panel {
+  max-width: 500px;
+  margin: auto;
+  padding: 25px;
+  background: #252525;
+  border-radius: 18px;
+}
+button {
+  padding: 14px 20px;
+  margin: 10px;
+  border: 0;
+  border-radius: 10px;
+  background: #e5a000;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+#resultado {
+  margin-top: 20px;
+  color: #72e69a;
+  overflow-wrap: anywhere;
+}
+</style>
 </head>
 <body>
-  <div class="panel">
-    <h1>🐕 EL PERRO AI</h1>
-    <p>Prueba de micrófono</p>
-    <button onclick="probarMicrofono()">🎤 Probar micrófono</button>
-    <p id="resultado">Esperando prueba...</p>
-  </div>
+<div class="panel">
+  <h1>🐕 EL PERRO AI</h1>
+  <p>Prueba de reconocimiento de voz</p>
 
-  <script>
-    async function probarMicrofono() {
-      const resultado = document.getElementById("resultado");
-      resultado.textContent = "Solicitando acceso al micrófono...";
+  <button onclick="escuchar()">🎤 Hablar</button>
+  <button onclick="detener()">⏹ Detener</button>
 
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true
-        });
+  <p id="resultado">Estoy listo para escucharte.</p>
+</div>
 
-        const pista = stream.getAudioTracks()[0];
-        resultado.textContent =
-          "¡Micrófono funcionando! " + pista.label;
+<script>
+let reconocimiento;
 
-        stream.getTracks().forEach(track => track.stop());
+function escuchar() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
 
-      } catch (error) {
-        resultado.textContent =
-          "Error: " + error.name + " - " + error.message;
-      }
+  if (!SpeechRecognition) {
+    document.getElementById("resultado").textContent =
+      "Este navegador no admite reconocimiento de voz.";
+    return;
+  }
+
+  reconocimiento = new SpeechRecognition();
+  reconocimiento.lang = "es-MX";
+  reconocimiento.continuous = false;
+  reconocimiento.interimResults = true;
+
+  reconocimiento.onstart = () => {
+    document.getElementById("resultado").textContent =
+      "Te estoy escuchando...";
+  };
+
+  reconocimiento.onresult = (event) => {
+    let texto = "";
+
+    for (let i = 0; i < event.results.length; i++) {
+      texto += event.results[i][0].transcript;
     }
-  </script>
+
+    document.getElementById("resultado").textContent =
+      "Te escuché: " + texto;
+  };
+
+  reconocimiento.onerror = (event) => {
+    document.getElementById("resultado").textContent =
+      "Error de voz: " + event.error;
+  };
+
+  reconocimiento.onend = () => {
+    console.log("Reconocimiento terminado");
+  };
+
+  reconocimiento.start();
+}
+
+function detener() {
+  if (reconocimiento) reconocimiento.stop();
+}
+</script>
 </body>
 </html>
+
