@@ -190,7 +190,6 @@
     </div>
 
     <section class="chat">
-
       <div id="messages">
         <div class="message bot">
           ¡Hola! Soy EL PERRO AI. ¿En qué puedo ayudarte?
@@ -223,7 +222,6 @@
           ⏹ Detener voz
         </button>
       </div>
-
     </section>
 
     <div class="footer">
@@ -255,7 +253,7 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    // Comunicación JSONP con Google Apps Script
+    // Comunicación con Google Apps Script
     function llamarGoogle(parametros) {
       return new Promise((resolve, reject) => {
 
@@ -290,7 +288,6 @@
         };
 
         script.src = GOOGLE_URL + "?" + datos.toString();
-
         document.body.appendChild(script);
       });
     }
@@ -305,7 +302,7 @@
         if (respuesta && respuesta.correcto) {
           status.textContent = "🟢 Conectado con Google";
         } else {
-          status.textContent = "⚠️ Google respondió, pero no confirmó conexión";
+          status.textContent = "⚠️ Google no confirmó la conexión";
         }
 
       } catch (error) {
@@ -316,26 +313,23 @@
 
     // Enviar mensaje a Gemini
     async function enviarMensaje() {
-
       const texto = input.value.trim();
 
       if (!texto || sendButton.disabled) return;
 
       agregarMensaje(texto, "user");
-
       input.value = "";
       sendButton.disabled = true;
       status.textContent = "EL PERRO AI está pensando...";
 
       try {
-
         const respuesta = await llamarGoogle({
           action: "responder",
           texto: texto,
           historial: JSON.stringify(historial.slice(-6))
         });
 
-        console.log("Respuesta recibida de Google:", respuesta);
+        console.log("Respuesta de Google:", respuesta);
 
         const respuestaTexto =
           typeof respuesta === "string"
@@ -346,10 +340,9 @@
               respuesta?.response ??
               respuesta?.text;
 
-        if (typeof respuestaTexto !== "string" || !respuestaTexto.trim()) {
-          throw new Error(
-            "Google respondió, pero no encontramos el texto."
-          );
+        if (typeof respuestaTexto !== "string" ||
+            !respuestaTexto.trim()) {
+          throw new Error("No encontramos el texto de respuesta.");
         }
 
         agregarMensaje(respuestaTexto, "bot");
@@ -368,7 +361,6 @@
         status.textContent = "🟢 EL PERRO AI está listo";
 
       } catch (error) {
-
         console.error("Error al responder:", error);
 
         agregarMensaje(
@@ -393,13 +385,8 @@
     // Cargar voces disponibles
     function cargarVoces() {
       if (!("speechSynthesis" in window)) return;
-
       voces = speechSynthesis.getVoices();
-
-      console.log(
-        "Voces disponibles:",
-        voces.map(v => v.name + " - " + v.lang)
-      );
+      console.log("Voces disponibles:", voces.map(v => v.name + " - " + v.lang));
     }
 
     if ("speechSynthesis" in window) {
@@ -407,45 +394,136 @@
       speechSynthesis.onvoiceschanged = cargarVoces;
     }
 
-    // Limpiar texto sin eliminar números
-    function limpiarTextoParaVoz(texto) {
+    // Convertir números menores de mil a palabras
+    function numeroMenorMil(n) {
+      const unidades = [
+        "cero", "uno", "dos", "tres", "cuatro",
+        "cinco", "seis", "siete", "ocho", "nueve",
+        "diez", "once", "doce", "trece", "catorce",
+        "quince", "dieciséis", "diecisiete",
+        "dieciocho", "diecinueve", "veinte",
+        "veintiuno", "veintidós", "veintitrés",
+        "veinticuatro", "veinticinco", "veintiséis",
+        "veintisiete", "veintiocho", "veintinueve"
+      ];
 
-      return String(texto)
+      const decenas = [
+        "", "", "", "treinta", "cuarenta",
+        "cincuenta", "sesenta", "setenta",
+        "ochenta", "noventa"
+      ];
 
-        // Eliminar enlaces
-        .replace(/https?:\/\/\S+/gi, " ")
+      const centenas = [
+        "", "ciento", "doscientos", "trescientos",
+        "cuatrocientos", "quinientos", "seiscientos",
+        "setecientos", "ochocientos", "novecientos"
+      ];
 
-        // Eliminar bloques de código
-        .replace(/```[\s\S]*?```/g, " ")
+      if (n < 30) return unidades[n];
 
-        // Quitar formato Markdown conservando el texto
-        .replace(/`([^`]+)`/g, "$1")
-        .replace(/\*\*([^*]+)\*\*/g, "$1")
-        .replace(/\*([^*]+)\*/g, "$1")
-        .replace(/__([^_]+)__/g, "$1")
-        .replace(/_([^_]+)_/g, "$1")
+      if (n === 100) return "cien";
 
-        // Convertir precios en palabras
-        .replace(/\$\s*(\d+(?:[.,]\d+)?)/g, "$1 pesos")
+      if (n < 100) {
+        const d = Math.floor(n / 10);
+        const u = n % 10;
+        return decenas[d] + (u ? " y " + unidades[u] : "");
+      }
 
-        // Eliminar emojis
-        .replace(/[\p{Extended_Pictographic}\p{Emoji_Component}]/gu, " ")
+      const c = Math.floor(n / 100);
+      const resto = n % 100;
 
-        // Eliminar símbolos decorativos, conservando números
-        .replace(/[^\p{L}\p{N}\s.,;:!?¡¿-]/gu, " ")
-
-        // Evitar signos repetidos
-        .replace(/[!?¡¿]{2,}/g, " ")
-
-        // Normalizar espacios
-        .replace(/\s+/g, " ")
-
-        .trim();
+      return centenas[c] +
+        (resto ? " " + numeroMenorMil(resto) : "");
     }
 
-    // Seleccionar voz disponible
-    function seleccionarVoz() {
+    // Convertir números hasta 999,999,999
+    function numeroATexto(valor) {
+      let n = Math.floor(Math.abs(valor));
 
+      if (n === 0) return "cero";
+      if (n > 999999999) return String(n);
+
+      const partes = [];
+
+      const millones = Math.floor(n / 1000000);
+      n %= 1000000;
+
+      const miles = Math.floor(n / 1000);
+      n %= 1000;
+
+      if (millones) {
+        partes.push(
+          millones === 1
+            ? "un millón"
+            : numeroATexto(millones) + " millones"
+        );
+      }
+
+      if (miles) {
+        partes.push(
+          miles === 1
+            ? "mil"
+            : numeroMenorMil(miles) + " mil"
+        );
+      }
+
+      if (n) {
+        partes.push(numeroMenorMil(n));
+      }
+
+      return partes.join(" ");
+    }
+
+    // Preparar texto para que la voz pronuncie los números
+    function limpiarTextoParaVoz(texto) {
+      let limpio = String(texto);
+
+      limpio = limpio.replace(/https?:\/\/\S+/gi, " ");
+      limpio = limpio.replace(/```[\s\S]*?```/g, " ");
+
+      limpio = limpio.replace(/`([^`]+)`/g, "$1");
+      limpio = limpio.replace(/\*\*([^*]+)\*\*/g, "$1");
+      limpio = limpio.replace(/\*([^*]+)\*/g, "$1");
+      limpio = limpio.replace(/__([^_]+)__/g, "$1");
+      limpio = limpio.replace(/_([^_]+)_/g, "$1");
+
+      // Convertir cantidades de dinero
+      limpio = limpio.replace(
+        /\$\s*(\d[\d,]*(?:\.\d{1,2})?)/g,
+        (coincidencia, cantidad) => {
+          const partes = cantidad.replace(/,/g, "").split(".");
+          const entero = parseInt(partes[0], 10) || 0;
+
+          let resultado = numeroATexto(entero) + " pesos";
+
+          if (partes[1]) {
+            const centavos = parseInt(partes[1].padEnd(2, "0"), 10);
+            if (centavos > 0) {
+              resultado += " con " +
+                numeroATexto(centavos) + " centavos";
+            }
+          }
+
+          return resultado;
+        }
+      );
+
+      // Quitar emojis sin borrar números
+      limpio = limpio.replace(/\p{Extended_Pictographic}/gu, " ");
+
+      // Convertir números restantes a palabras
+      limpio = limpio.replace(/\b\d+\b/g, (numero) => {
+        return numeroATexto(parseInt(numero, 10));
+      });
+
+      // Quitar símbolos decorativos
+      limpio = limpio.replace(/[^\p{L}\p{N}\s.,;:!?¡¿-]/gu, " ");
+
+      return limpio.replace(/\s+/g, " ").trim();
+    }
+
+    // Seleccionar voz
+    function seleccionarVoz() {
       if (!voces.length) cargarVoces();
 
       return (
@@ -459,12 +537,13 @@
       );
     }
 
-    // Hablar con pronunciación más natural
+    // Reproducir voz
     function hablar(texto) {
-
       if (!("speechSynthesis" in window)) return;
 
       const textoLimpio = limpiarTextoParaVoz(texto);
+
+      console.log("Texto que se va a pronunciar:", textoLimpio);
 
       if (!textoLimpio) return;
 
@@ -489,7 +568,6 @@
 
     // Activar o desactivar voz
     function alternarVoz() {
-
       vozActivada = !vozActivada;
 
       voiceButton.textContent = vozActivada
@@ -509,7 +587,6 @@
 
     // Reconocimiento de voz
     function iniciarMicrofono() {
-
       const SpeechRecognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
@@ -524,7 +601,6 @@
       }
 
       reconocimiento = new SpeechRecognition();
-
       reconocimiento.lang = "es-MX";
       reconocimiento.continuous = false;
       reconocimiento.interimResults = false;
@@ -566,7 +642,6 @@
 
     // Inicio
     conectarGoogle();
-
   </script>
 </body>
 </html>
