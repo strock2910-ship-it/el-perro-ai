@@ -190,6 +190,7 @@
     </div>
 
     <section class="chat">
+
       <div id="messages">
         <div class="message bot">
           ¡Hola! Soy EL PERRO AI. ¿En qué puedo ayudarte?
@@ -222,6 +223,7 @@
           ⏹ Detener voz
         </button>
       </div>
+
     </section>
 
     <div class="footer">
@@ -253,10 +255,9 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    // Comunicación con Google Apps Script
+    // Conexión con Google Apps Script
     function llamarGoogle(parametros) {
       return new Promise((resolve, reject) => {
-
         const callback =
           "perroAI" + Date.now() +
           Math.random().toString(36).slice(2);
@@ -304,14 +305,13 @@
         } else {
           status.textContent = "⚠️ Google no confirmó la conexión";
         }
-
       } catch (error) {
-        console.error("Error de conexión:", error);
+        console.error(error);
         status.textContent = "🔴 " + error.message;
       }
     }
 
-    // Enviar mensaje a Gemini
+    // Enviar mensaje
     async function enviarMensaje() {
       const texto = input.value.trim();
 
@@ -354,20 +354,16 @@
 
         historial = historial.slice(-12);
 
-        if (vozActivada) {
-          hablar(respuestaTexto);
-        }
+        if (vozActivada) hablar(respuestaTexto);
 
         status.textContent = "🟢 EL PERRO AI está listo";
 
       } catch (error) {
-        console.error("Error al responder:", error);
-
+        console.error(error);
         agregarMensaje(
           "No pude procesar tu mensaje: " + error.message,
           "bot"
         );
-
         status.textContent = "⚠️ Error de conexión";
 
       } finally {
@@ -377,12 +373,10 @@
     }
 
     input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        enviarMensaje();
-      }
+      if (event.key === "Enter") enviarMensaje();
     });
 
-    // Cargar voces disponibles
+    // Cargar voces
     function cargarVoces() {
       if (!("speechSynthesis" in window)) return;
       voces = speechSynthesis.getVoices();
@@ -394,8 +388,10 @@
       speechSynthesis.onvoiceschanged = cargarVoces;
     }
 
-    // Convertir números menores de mil a palabras
-    function numeroMenorMil(n) {
+    // Conversión de números a palabras
+    function numeroATexto(valor) {
+      const n = Math.floor(Math.abs(valor));
+
       const unidades = [
         "cero", "uno", "dos", "tres", "cuatro",
         "cinco", "seis", "siete", "ocho", "nueve",
@@ -419,62 +415,43 @@
         "setecientos", "ochocientos", "novecientos"
       ];
 
-      if (n < 30) return unidades[n];
+      function menorMil(x) {
+        if (x < 30) return unidades[x];
+        if (x === 100) return "cien";
 
-      if (n === 100) return "cien";
+        if (x < 100) {
+          return decenas[Math.floor(x / 10)] +
+            (x % 10 ? " y " + unidades[x % 10] : "");
+        }
 
-      if (n < 100) {
-        const d = Math.floor(n / 10);
-        const u = n % 10;
-        return decenas[d] + (u ? " y " + unidades[u] : "");
+        return centenas[Math.floor(x / 100)] +
+          (x % 100 ? " " + menorMil(x % 100) : "");
       }
 
-      const c = Math.floor(n / 100);
-      const resto = n % 100;
+      if (n < 1000) return menorMil(n);
 
-      return centenas[c] +
-        (resto ? " " + numeroMenorMil(resto) : "");
+      if (n < 1000000) {
+        const miles = Math.floor(n / 1000);
+        const resto = n % 1000;
+
+        return (miles === 1 ? "mil" : menorMil(miles) + " mil") +
+          (resto ? " " + menorMil(resto) : "");
+      }
+
+      if (n < 1000000000) {
+        const millones = Math.floor(n / 1000000);
+        const resto = n % 1000000;
+
+        return (millones === 1
+          ? "un millón"
+          : numeroATexto(millones) + " millones") +
+          (resto ? " " + numeroATexto(resto) : "");
+      }
+
+      return String(n);
     }
 
-    // Convertir números hasta 999,999,999
-    function numeroATexto(valor) {
-      let n = Math.floor(Math.abs(valor));
-
-      if (n === 0) return "cero";
-      if (n > 999999999) return String(n);
-
-      const partes = [];
-
-      const millones = Math.floor(n / 1000000);
-      n %= 1000000;
-
-      const miles = Math.floor(n / 1000);
-      n %= 1000;
-
-      if (millones) {
-        partes.push(
-          millones === 1
-            ? "un millón"
-            : numeroATexto(millones) + " millones"
-        );
-      }
-
-      if (miles) {
-        partes.push(
-          miles === 1
-            ? "mil"
-            : numeroMenorMil(miles) + " mil"
-        );
-      }
-
-      if (n) {
-        partes.push(numeroMenorMil(n));
-      }
-
-      return partes.join(" ");
-    }
-
-    // Preparar texto para que la voz pronuncie los números
+    // Preparar texto para voz
     function limpiarTextoParaVoz(texto) {
       let limpio = String(texto);
 
@@ -487,7 +464,7 @@
       limpio = limpio.replace(/__([^_]+)__/g, "$1");
       limpio = limpio.replace(/_([^_]+)_/g, "$1");
 
-      // Convertir cantidades de dinero
+      // Convertir precios con signo de pesos
       limpio = limpio.replace(
         /\$\s*(\d[\d,]*(?:\.\d{1,2})?)/g,
         (coincidencia, cantidad) => {
@@ -498,6 +475,7 @@
 
           if (partes[1]) {
             const centavos = parseInt(partes[1].padEnd(2, "0"), 10);
+
             if (centavos > 0) {
               resultado += " con " +
                 numeroATexto(centavos) + " centavos";
@@ -508,15 +486,16 @@
         }
       );
 
-      // Quitar emojis sin borrar números
+      // Quitar emojis
       limpio = limpio.replace(/\p{Extended_Pictographic}/gu, " ");
 
-      // Convertir números restantes a palabras
-      limpio = limpio.replace(/\b\d+\b/g, (numero) => {
-        return numeroATexto(parseInt(numero, 10));
+      // Convertir números restantes
+      limpio = limpio.replace(/\d[\d,]*(?:\.\d+)?/g, (numero) => {
+        const valor = parseInt(numero.replace(/,/g, ""), 10);
+        return Number.isFinite(valor) ? numeroATexto(valor) : numero;
       });
 
-      // Quitar símbolos decorativos
+      // Limpiar símbolos
       limpio = limpio.replace(/[^\p{L}\p{N}\s.,;:!?¡¿-]/gu, " ");
 
       return limpio.replace(/\s+/g, " ").trim();
@@ -537,20 +516,19 @@
       );
     }
 
-    // Reproducir voz
+    // Hablar
     function hablar(texto) {
       if (!("speechSynthesis" in window)) return;
 
       const textoLimpio = limpiarTextoParaVoz(texto);
 
-      console.log("Texto que se va a pronunciar:", textoLimpio);
+      console.log("Texto enviado a voz:", textoLimpio);
 
       if (!textoLimpio) return;
 
       speechSynthesis.cancel();
 
       const mensaje = new SpeechSynthesisUtterance(textoLimpio);
-
       mensaje.lang = "es-MX";
       mensaje.rate = 0.88;
       mensaje.pitch = 0.90;
@@ -574,18 +552,14 @@
         ? "🔊 Voz activada"
         : "🔇 Voz desactivada";
 
-      if (!vozActivada && "speechSynthesis" in window) {
-        speechSynthesis.cancel();
-      }
+      if (!vozActivada) speechSynthesis.cancel();
     }
 
     function detenerVoz() {
-      if ("speechSynthesis" in window) {
-        speechSynthesis.cancel();
-      }
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
     }
 
-    // Reconocimiento de voz
+    // Micrófono
     function iniciarMicrofono() {
       const SpeechRecognition =
         window.SpeechRecognition ||
@@ -596,9 +570,7 @@
         return;
       }
 
-      if (reconocimiento) {
-        reconocimiento.stop();
-      }
+      if (reconocimiento) reconocimiento.stop();
 
       reconocimiento = new SpeechRecognition();
       reconocimiento.lang = "es-MX";
@@ -628,7 +600,7 @@
       reconocimiento.start();
     }
 
-    // Estado del modelo 3D
+    // Modelo 3D
     const avatar = document.getElementById("avatar");
 
     avatar.addEventListener("load", () => {
@@ -636,11 +608,10 @@
     });
 
     avatar.addEventListener("error", (event) => {
-      console.error("Error al cargar el modelo 3D:", event);
+      console.error("Error del modelo 3D:", event);
       status.textContent = "⚠️ No se pudo cargar el modelo 3D";
     });
 
-    // Inicio
     conectarGoogle();
   </script>
 </body>
