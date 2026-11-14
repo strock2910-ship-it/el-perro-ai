@@ -2,103 +2,572 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EL PERRO AI</title>
-<style>
-body {
-  background: #151515;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 30px 15px;
-}
-.panel {
-  max-width: 500px;
-  margin: auto;
-  padding: 25px;
-  background: #252525;
-  border-radius: 18px;
-}
-button {
-  padding: 14px 20px;
-  margin: 10px;
-  border: 0;
-  border-radius: 10px;
-  background: #e5a000;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-}
-#resultado {
-  margin-top: 20px;
-  color: #72e69a;
-  overflow-wrap: anywhere;
-}
-</style>
-</head>
-<body>
-<div class="panel">
-  <h1>🐕 EL PERRO AI</h1>
-  <p>Prueba de reconocimiento de voz</p>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EL PERRO AI</title>
 
-  <button onclick="escuchar()">🎤 Hablar</button>
-  <button onclick="detener()">⏹ Detener</button>
+  <style>
+    * { box-sizing: border-box; }
 
-  <p id="resultado">Estoy listo para escucharte.</p>
-</div>
-
-<script>
-let reconocimiento;
-
-function escuchar() {
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    document.getElementById("resultado").textContent =
-      "Este navegador no admite reconocimiento de voz.";
-    return;
-  }
-
-  reconocimiento = new SpeechRecognition();
-  reconocimiento.lang = "es-MX";
-  reconocimiento.continuous = false;
-  reconocimiento.interimResults = true;
-
-  reconocimiento.onstart = () => {
-    document.getElementById("resultado").textContent =
-      "Te estoy escuchando...";
-  };
-
-  reconocimiento.onresult = (event) => {
-    let texto = "";
-
-    for (let i = 0; i < event.results.length; i++) {
-      texto += event.results[i][0].transcript;
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
     }
 
-    document.getElementById("resultado").textContent =
-      "Te escuché: " + texto;
-  };
+    .app {
+      max-width: 760px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
 
-  reconocimiento.onerror = (event) => {
-    document.getElementById("resultado").textContent =
-      "Error de voz: " + event.error;
-  };
+    header {
+      text-align: center;
+      padding: 15px;
+    }
 
-  reconocimiento.onend = () => {
-    console.log("Reconocimiento terminado");
-  };
+    h1 {
+      color: #ff8a00;
+      letter-spacing: 2px;
+      margin: 5px;
+    }
 
-  reconocimiento.start();
-}
+    header p {
+      color: #aaa;
+      font-size: 14px;
+    }
 
-function detener() {
-  if (reconocimiento) reconocimiento.stop();
-}
-</script>
+    .mascota {
+      height: 180px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #perro {
+      width: 145px;
+      height: 145px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 75px;
+      background: linear-gradient(145deg, #ff9d00, #a83d00);
+      box-shadow: 0 0 30px #ff8a0055;
+    }
+
+    #chat {
+      flex: 1;
+      min-height: 280px;
+      max-height: 48vh;
+      overflow-y: auto;
+      background: #1d1d1d;
+      border: 1px solid #383838;
+      border-radius: 15px;
+      padding: 12px;
+    }
+
+    .mensaje {
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.5;
+    }
+
+    .usuario {
+      background: #653900;
+      margin-left: 12%;
+    }
+
+    .asistente {
+      background: #303030;
+      margin-right: 12%;
+    }
+
+    #estado {
+      text-align: center;
+      color: #ffb347;
+      font-size: 13px;
+      padding: 12px;
+      min-height: 40px;
+    }
+
+    .entrada {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid #444;
+      border-radius: 10px;
+      background: #222;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      background: #ff8a00;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .acciones button {
+      flex: 1;
+      min-width: 100px;
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+    }
+
+    .acciones button:hover {
+      background: #653900;
+    }
+
+    @media(max-width: 480px) {
+      .app { padding: 10px; }
+      .entrada button { padding: 10px; }
+      .acciones button { font-size: 12px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <header>
+      <h1>EL PERRO AI</h1>
+      <p>Tu asistente virtual de El Perro Caliente</p>
+    </header>
+
+    <section class="mascota">
+      <div id="perro">🐶</div>
+    </section>
+
+    <section id="chat" aria-live="polite">
+      <div class="mensaje asistente">
+        ¡Qué onda! Soy EL PERRO AI.
+        Estoy listo para ayudarte con El Perro Caliente.
+        ¿Qué vamos a trabajar hoy?
+      </div>
+    </section>
+
+    <div id="estado">Conectando con EL PERRO AI...</div>
+
+    <div class="entrada">
+      <input
+        id="mensaje"
+        type="text"
+        placeholder="Escribe tu mensaje..."
+        autocomplete="off">
+
+      <button id="enviar" type="button">
+        Enviar
+      </button>
+    </div>
+
+    <div class="acciones">
+      <button id="microfono" type="button">
+        🎤 Hablar
+      </button>
+
+      <button id="escuchar" type="button">
+        🔊 Escuchar
+      </button>
+
+      <button id="detener" type="button">
+        ⏹ Detener
+      </button>
+    </div>
+
+  </main>
+
+  <!-- CONEXIÓN OCULTA CON GOOGLE APPS SCRIPT -->
+  <iframe
+    id="puente"
+    title="Conexión segura con EL PERRO AI"
+    style="
+      position:absolute;
+      width:1px;
+      height:1px;
+      opacity:0;
+      pointer-events:none;
+      border:0;
+    ">
+  </iframe>
+
+  <script>
+    // =========================================
+    // CONFIGURACIÓN
+    // =========================================
+
+    const URL_APPS_SCRIPT =
+      'https://script.google.com/macros/s/AKfycbxwBmyFNByGO9u-83mkdJlw8OVLjcOJOcUbbsweRejXPhTcLgBAfzPg2Pl86o9cUDx0Bg/exec';
+
+    const ORIGEN_GITHUB =
+      'https://strock2910-ship-it.github.io';
+
+    const chat = document.getElementById('chat');
+    const entrada = document.getElementById('mensaje');
+    const estado = document.getElementById('estado');
+    const botonEnviar = document.getElementById('enviar');
+    const botonMicrofono = document.getElementById('microfono');
+    const puente = document.getElementById('puente');
+
+    let historial = [];
+    let ultimaRespuesta = '';
+    let reconocimientoActivo = null;
+    let puenteListo = false;
+    let solicitudPendiente = null;
+    let contador = 0;
+
+    // =========================================
+    // INICIAR CONEXIÓN
+    // =========================================
+
+    window.addEventListener('message', function(evento) {
+
+      // Solo aceptar mensajes de nuestro iframe
+      if (evento.source !== puente.contentWindow) return;
+
+      // Apps Script puede responder desde estos dominios
+      const origenPermitido =
+        evento.origin === 'https://script.google.com' ||
+        evento.origin === 'https://script.googleusercontent.com';
+
+      if (!origenPermitido) return;
+
+      const datos = evento.data;
+
+      if (!datos || !datos.tipo) return;
+
+      if (datos.tipo === 'EL_PERRO_AI_LISTO') {
+        puenteListo = true;
+        estado.textContent = 'EL PERRO AI conectado con Gemini';
+        return;
+      }
+
+      if (
+        datos.id &&
+        solicitudPendiente &&
+        datos.id !== solicitudPendiente.id
+      ) {
+        return;
+      }
+
+      if (datos.tipo === 'EL_PERRO_AI_PROCESANDO') {
+        estado.textContent = 'EL PERRO AI está pensando...';
+        return;
+      }
+
+      if (datos.tipo === 'EL_PERRO_AI_RESPUESTA') {
+        const textoOriginal = solicitudPendiente.texto;
+        const respuesta = String(datos.respuesta || '');
+
+        agregarMensaje(respuesta, 'asistente');
+
+        historial.push(
+          { role: 'user', content: textoOriginal },
+          { role: 'model', content: respuesta }
+        );
+
+        historial = historial.slice(-10);
+        ultimaRespuesta = respuesta;
+
+        solicitudPendiente = null;
+        botonEnviar.disabled = false;
+        estado.textContent = 'En línea';
+
+        return;
+      }
+
+      if (datos.tipo === 'EL_PERRO_AI_ERROR') {
+        agregarMensaje(
+          'Error: ' + datos.error,
+          'asistente'
+        );
+
+        solicitudPendiente = null;
+        botonEnviar.disabled = false;
+        estado.textContent = 'Error de comunicación';
+      }
+
+    });
+
+    // Registrar el listener antes de cargar el iframe
+    puente.src = URL_APPS_SCRIPT;
+
+    // =========================================
+    // AGREGAR MENSAJES
+    // =========================================
+
+    function agregarMensaje(texto, clase) {
+      const div = document.createElement('div');
+      div.className = 'mensaje ' + clase;
+      div.textContent = texto;
+
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // =========================================
+    // ENVIAR MENSAJE A APPS SCRIPT
+    // =========================================
+
+    function enviarMensaje() {
+
+      const texto = entrada.value.trim();
+
+      if (!texto || botonEnviar.disabled) return;
+
+      if (!puenteListo) {
+        estado.textContent =
+          'Todavía estoy conectando con Google. Espera unos segundos.';
+        return;
+      }
+
+      agregarMensaje(texto, 'usuario');
+
+      entrada.value = '';
+      botonEnviar.disabled = true;
+      estado.textContent = 'Enviando mensaje...';
+
+      const id = 'mensaje_' + (++contador);
+
+      solicitudPendiente = {
+        id: id,
+        texto: texto
+      };
+
+      puente.contentWindow.postMessage({
+
+        tipo: 'EL_PERRO_AI_MENSAJE',
+        id: id,
+        texto: texto,
+        historial: historial
+
+      }, '*');
+
+    }
+
+    botonEnviar.addEventListener('click', enviarMensaje);
+
+    entrada.addEventListener('keydown', function(evento) {
+      if (evento.key === 'Enter') {
+        enviarMensaje();
+      }
+    });
+
+    // =========================================
+    // RECONOCIMIENTO DE VOZ
+    // =========================================
+
+    function escuchar() {
+
+      const Reconocimiento =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+      if (!Reconocimiento) {
+        estado.textContent =
+          'Chrome no admite reconocimiento de voz.';
+        return;
+      }
+
+      if (reconocimientoActivo) return;
+
+      try {
+
+        const reconocimiento = new Reconocimiento();
+
+        reconocimientoActivo = reconocimiento;
+
+        reconocimiento.lang = 'es-MX';
+        reconocimiento.continuous = false;
+        reconocimiento.interimResults = true;
+        reconocimiento.maxAlternatives = 1;
+
+        reconocimiento.onstart = function() {
+          estado.textContent = 'Te estoy escuchando...';
+          botonMicrofono.textContent = '🎙 Escuchando...';
+        };
+
+        reconocimiento.onresult = function(evento) {
+
+          let textoFinal = '';
+          let textoTemporal = '';
+
+          for (
+            let i = evento.resultIndex;
+            i < evento.results.length;
+            i++
+          ) {
+
+            const resultado = evento.results[i];
+
+            if (resultado.isFinal) {
+              textoFinal += resultado[0].transcript;
+            } else {
+              textoTemporal += resultado[0].transcript;
+            }
+
+          }
+
+          if (textoTemporal) {
+            estado.textContent = 'Te escuché: ' + textoTemporal;
+          }
+
+          if (textoFinal.trim()) {
+
+            entrada.value = textoFinal.trim();
+
+            reconocimientoActivo = null;
+            botonMicrofono.textContent = '🎤 Hablar';
+
+            enviarMensaje();
+
+          }
+
+        };
+
+        reconocimiento.onerror = function(evento) {
+          estado.textContent =
+            'Error de voz: ' + evento.error;
+
+          reconocimientoActivo = null;
+          botonMicrofono.textContent = '🎤 Hablar';
+        };
+
+        reconocimiento.onend = function() {
+
+          reconocimientoActivo = null;
+          botonMicrofono.textContent = '🎤 Hablar';
+
+        };
+
+        reconocimiento.start();
+
+      } catch (error) {
+
+        estado.textContent =
+          'No se pudo iniciar el micrófono: ' + error.message;
+
+        reconocimientoActivo = null;
+        botonMicrofono.textContent = '🎤 Hablar';
+
+      }
+
+    }
+
+    botonMicrofono.addEventListener('click', escuchar);
+
+    // =========================================
+    // REPRODUCIR RESPUESTA
+    // =========================================
+
+    function leerRespuesta() {
+
+      if (!ultimaRespuesta) {
+        estado.textContent =
+          'Todavía no hay una respuesta para escuchar.';
+        return;
+      }
+
+      if (!window.speechSynthesis) {
+        estado.textContent =
+          'La reproducción de voz no está disponible.';
+        return;
+      }
+
+      speechSynthesis.cancel();
+
+      const voz = new SpeechSynthesisUtterance(
+        ultimaRespuesta
+      );
+
+      voz.lang = 'es-MX';
+      voz.rate = 0.95;
+      voz.pitch = 0.85;
+
+      const voces = speechSynthesis.getVoices();
+
+      const seleccion = voces.find(v =>
+        v.lang.toLowerCase() === 'es-mx'
+      ) || voces.find(v =>
+        v.lang.toLowerCase().startsWith('es')
+      );
+
+      if (seleccion) voz.voice = seleccion;
+
+      voz.onstart = function() {
+        estado.textContent = 'EL PERRO AI está hablando...';
+      };
+
+      voz.onend = function() {
+        estado.textContent = 'En línea';
+      };
+
+      voz.onerror = function() {
+        estado.textContent = 'No se pudo reproducir la voz.';
+      };
+
+      speechSynthesis.speak(voz);
+
+    }
+
+    document.getElementById('escuchar')
+      .addEventListener('click', leerRespuesta);
+
+    // =========================================
+    // DETENER
+    // =========================================
+
+    function detenerTodo() {
+
+      if (window.speechSynthesis) {
+        speechSynthesis.cancel();
+      }
+
+      if (reconocimientoActivo) {
+        reconocimientoActivo.abort();
+        reconocimientoActivo = null;
+      }
+
+      botonMicrofono.textContent = '🎤 Hablar';
+      estado.textContent = 'En línea';
+
+    }
+
+    document.getElementById('detener')
+      .addEventListener('click', detenerTodo);
+
+  </script>
+
 </body>
 </html>
 
