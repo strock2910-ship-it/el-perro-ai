@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EL PERRO AI</title>
+  <style>
+    body {
+      background: #151515;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 35px 15px;
+    }
+    .panel {
+      max-width: 500px;
+      margin: auto;
+      padding: 25px;
+      background: #252525;
+      border-radius: 18px;
+    }
+    button {
+      padding: 14px 22px;
+      margin: 10px;
+      border: 0;
+      border-radius: 10px;
+      background: #e5a000;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #resultado {
+      margin-top: 20px;
+      color: #72e69a;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>🐕 EL PERRO AI</h1>
+    <p>Prueba de micrófono</p>
+    <button onclick="probarMicrofono()">🎤 Probar micrófono</button>
+    <p id="resultado">Esperando prueba...</p>
+  </div>
+
+  <script>
+    async function probarMicrofono() {
+      const resultado = document.getElementById("resultado");
+      resultado.textContent = "Solicitando acceso al micrófono...";
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true
+        });
+
+        const pista = stream.getAudioTracks()[0];
+        resultado.textContent =
+          "¡Micrófono funcionando! " + pista.label;
+
+        stream.getTracks().forEach(track => track.stop());
+
+      } catch (error) {
+        resultado.textContent =
+          "Error: " + error.name + " - " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
