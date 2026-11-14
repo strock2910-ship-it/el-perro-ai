@@ -295,6 +295,7 @@
       });
     }
 
+    // Comprobar conexión
     async function conectarGoogle() {
       try {
         const respuesta = await llamarGoogle({
@@ -313,6 +314,7 @@
       }
     }
 
+    // Enviar mensaje a Gemini
     async function enviarMensaje() {
 
       const texto = input.value.trim();
@@ -346,7 +348,7 @@
 
         if (typeof respuestaTexto !== "string" || !respuestaTexto.trim()) {
           throw new Error(
-            "Google respondió, pero no encontramos el texto. Revisa la consola."
+            "Google respondió, pero no encontramos el texto."
           );
         }
 
@@ -405,7 +407,7 @@
       speechSynthesis.onvoiceschanged = cargarVoces;
     }
 
-    // Limpiar texto antes de hablar
+    // Limpiar texto sin eliminar números
     function limpiarTextoParaVoz(texto) {
 
       return String(texto)
@@ -413,33 +415,35 @@
         // Eliminar enlaces
         .replace(/https?:\/\/\S+/gi, " ")
 
-        // Eliminar emojis y símbolos pictográficos
-        .replace(/[\p{Extended_Pictographic}\p{Emoji_Component}]/gu, " ")
-
-        // Eliminar formato Markdown
+        // Eliminar bloques de código
         .replace(/```[\s\S]*?```/g, " ")
+
+        // Quitar formato Markdown conservando el texto
         .replace(/`([^`]+)`/g, "$1")
         .replace(/\*\*([^*]+)\*\*/g, "$1")
         .replace(/\*([^*]+)\*/g, "$1")
         .replace(/__([^_]+)__/g, "$1")
         .replace(/_([^_]+)_/g, "$1")
 
-        // Quitar viñetas y encabezados
-        .replace(/^\s*[-•#]+\s*/gm, "")
+        // Convertir precios en palabras
+        .replace(/\$\s*(\d+(?:[.,]\d+)?)/g, "$1 pesos")
 
-        // Quitar símbolos que no deben pronunciarse
-        .replace(/[<>{}[\]_*|~^=+\\/@#$%&]/g, " ")
+        // Eliminar emojis
+        .replace(/[\p{Extended_Pictographic}\p{Emoji_Component}]/gu, " ")
 
-        // Eliminar signos repetidos
+        // Eliminar símbolos decorativos, conservando números
+        .replace(/[^\p{L}\p{N}\s.,;:!?¡¿-]/gu, " ")
+
+        // Evitar signos repetidos
         .replace(/[!?¡¿]{2,}/g, " ")
 
-        // Normalizar espacios y saltos de línea
+        // Normalizar espacios
         .replace(/\s+/g, " ")
 
         .trim();
     }
 
-    // Seleccionar la mejor voz disponible
+    // Seleccionar voz disponible
     function seleccionarVoz() {
 
       if (!voces.length) cargarVoces();
@@ -455,7 +459,7 @@
       );
     }
 
-    // Hablar de forma más natural
+    // Hablar con pronunciación más natural
     function hablar(texto) {
 
       if (!("speechSynthesis" in window)) return;
@@ -469,8 +473,6 @@
       const mensaje = new SpeechSynthesisUtterance(textoLimpio);
 
       mensaje.lang = "es-MX";
-
-      // Ajustes de pronunciación
       mensaje.rate = 0.88;
       mensaje.pitch = 0.90;
       mensaje.volume = 1;
@@ -485,6 +487,7 @@
       speechSynthesis.speak(mensaje);
     }
 
+    // Activar o desactivar voz
     function alternarVoz() {
 
       vozActivada = !vozActivada;
@@ -549,6 +552,7 @@
       reconocimiento.start();
     }
 
+    // Estado del modelo 3D
     const avatar = document.getElementById("avatar");
 
     avatar.addEventListener("load", () => {
@@ -560,6 +564,7 @@
       status.textContent = "⚠️ No se pudo cargar el modelo 3D";
     });
 
+    // Inicio
     conectarGoogle();
 
   </script>
