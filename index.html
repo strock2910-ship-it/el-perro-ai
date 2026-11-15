@@ -113,20 +113,27 @@
       gap: 8px;
     }
 
-    input {
-      flex: 1;
+    input, select, textarea {
+      width: 100%;
       min-width: 0;
-      padding: 15px;
+      padding: 13px;
       border-radius: 10px;
       border: 1px solid #444;
       background: #252525;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
       outline: none;
+      font-family: Arial, sans-serif;
     }
 
-    input:focus {
+    input:focus, select:focus, textarea:focus {
       border-color: #ff8c00;
+    }
+
+    .entrada input {
+      flex: 1;
+      padding: 15px;
+      font-size: 16px;
     }
 
     button {
@@ -173,11 +180,124 @@
       background: #b83232;
     }
 
+    .reservar-boton {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      background: #b85c00;
+      border: 1px solid #ff8c00;
+    }
+
+    .reservar-boton:hover {
+      background: #d96d00;
+    }
+
+    .reserva-panel {
+      display: none;
+      background: #1c1c1c;
+      border: 1px solid #444;
+      border-radius: 15px;
+      padding: 18px;
+      gap: 13px;
+    }
+
+    .reserva-panel.visible {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .reserva-panel h2 {
+      color: #ff8c00;
+      text-align: center;
+      margin: 0 0 5px;
+      font-size: 23px;
+    }
+
+    .reserva-panel p {
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0;
+      text-align: center;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .campo label {
+      color: #ffad42;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 75px;
+    }
+
+    .aviso-reserva {
+      padding: 11px;
+      background: #292929;
+      border-radius: 9px;
+      color: #ccc;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .resultado-reserva {
+      display: none;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .resultado-reserva.exito {
+      display: block;
+      background: #173522;
+      border: 1px solid #32854b;
+      color: #a8f0bd;
+    }
+
+    .resultado-reserva.error {
+      display: block;
+      background: #401d1d;
+      border: 1px solid #a33;
+      color: #ffbaba;
+    }
+
+    .acciones-reserva {
+      display: flex;
+      gap: 9px;
+    }
+
+    .acciones-reserva button {
+      flex: 1;
+    }
+
+    .boton-cerrar {
+      background: #333;
+    }
+
     footer {
       text-align: center;
       color: #777;
       font-size: 12px;
       padding: 10px;
+    }
+
+    .puente-oculto {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      left: -10000px;
+      top: -10000px;
+      border: 0;
+      visibility: hidden;
     }
 
     @media (max-width: 600px) {
@@ -203,6 +323,10 @@
 
       .entrada button {
         flex: 1;
+      }
+
+      .reserva-panel {
+        padding: 13px;
       }
     }
   </style>
@@ -267,19 +391,174 @@
     </button>
   </div>
 
+  <!-- BOTÓN PARA ABRIR RESERVACIONES -->
+
+  <button
+    class="reservar-boton"
+    type="button"
+    onclick="mostrarReservaciones()">
+    📅 Reservar una mesa
+  </button>
+
+
+  <!-- FORMULARIO DE RESERVACIONES -->
+
+  <section
+    class="reserva-panel"
+    id="panelReservaciones">
+
+    <h2>🐕 Reserva tu mesa</h2>
+
+    <p>
+      Completa tus datos y solicita tu reservación
+      en El Perro Caliente.
+    </p>
+
+    <form id="formReservacion">
+
+      <div class="campo">
+        <label for="resNombre">Nombre completo</label>
+        <input
+          id="resNombre"
+          name="nombre"
+          type="text"
+          maxlength="100"
+          placeholder="Escribe tu nombre"
+          autocomplete="name"
+          required>
+      </div>
+
+      <div class="campo">
+        <label for="resTelefono">Teléfono</label>
+        <input
+          id="resTelefono"
+          name="telefono"
+          type="tel"
+          maxlength="20"
+          placeholder="Ej. 5544761827"
+          autocomplete="tel"
+          required>
+      </div>
+
+      <div class="campo">
+        <label for="resFecha">Fecha de reservación</label>
+        <input
+          id="resFecha"
+          name="fecha"
+          type="date"
+          required>
+      </div>
+
+      <div class="campo">
+        <label for="resHora">Hora de llegada</label>
+        <select id="resHora" name="hora" required>
+          <option value="">Selecciona una hora</option>
+          <option value="17:00">5:00 p. m.</option>
+          <option value="18:00">6:00 p. m.</option>
+          <option value="19:00">7:00 p. m.</option>
+          <option value="20:00">8:00 p. m.</option>
+          <option value="21:00">9:00 p. m.</option>
+          <option value="22:00">10:00 p. m.</option>
+          <option value="23:00">11:00 p. m.</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="resPersonas">Número de personas</label>
+        <select id="resPersonas" name="personas" required>
+          <option value="">Selecciona cuántas personas</option>
+          <option value="1">1 persona</option>
+          <option value="2">2 personas</option>
+          <option value="3">3 personas</option>
+          <option value="4">4 personas</option>
+          <option value="5">5 personas</option>
+          <option value="6">6 personas</option>
+          <option value="7">7 personas</option>
+          <option value="8">8 personas</option>
+          <option value="9">9 personas</option>
+          <option value="10">10 personas</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="resObservaciones">
+          Observaciones (opcional)
+        </label>
+
+        <textarea
+          id="resObservaciones"
+          name="observaciones"
+          maxlength="500"
+          placeholder="¿Alguna indicación especial?">
+        </textarea>
+      </div>
+
+      <div class="aviso-reserva">
+        <strong>Horarios de reservación:</strong><br>
+        Jueves y domingo: de 5:00 p. m. a 11:00 p. m.<br>
+        Viernes y sábado: de 5:00 p. m. a 11:00 p. m.<br><br>
+
+        Aceptamos reservaciones de jueves a domingo,
+        con al menos un día de anticipación y para
+        grupos de 1 a 10 personas.
+      </div>
+
+      <div
+        id="resultadoReservacion"
+        class="resultado-reserva">
+      </div>
+
+      <div class="acciones-reserva">
+
+        <button
+          id="btnConfirmarReserva"
+          type="submit">
+          Confirmar reservación
+        </button>
+
+        <button
+          type="button"
+          class="boton-cerrar"
+          onclick="ocultarReservaciones()">
+          Cerrar
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
   <footer>
     EL PERRO AI · El Perro Caliente Tultepec
   </footer>
 
 </div>
 
+
+<!-- PUENTE OCULTO DE GOOGLE APPS SCRIPT -->
+
+<iframe
+  id="reservacionesBridge"
+  class="puente-oculto"
+  title="Conexión segura de reservaciones">
+</iframe>
+
+
 <script>
+
 /* =========================================
-   CONFIGURACIÓN
+   1. CONFIGURACIÓN
 ========================================= */
 
 const URL_APPS_SCRIPT =
 "https://script.google.com/macros/s/AKfycbxwBmyFNByGO9u-83mkdJlw8OVLjcOJOcUbbsweRejXPhTcLgBAfzPg2Pl86o9cUDx0Bg/exec";
+
+const ORIGEN_PERMITIDO =
+"https://strock2910-ship-it.github.io";
+
+const URL_PUENTE =
+URL_APPS_SCRIPT + "?bridge=1";
 
 let historial = [];
 let reconocimiento = null;
@@ -287,12 +566,18 @@ let vozAutomatica = true;
 let ultimaRespuesta = "";
 let esperandoRespuesta = false;
 
+let puenteListo = false;
+let reservaEnviandose = false;
+let solicitudReservaActual = null;
+let temporizadorReserva = null;
+
 
 /* =========================================
-   CONEXIÓN CON GOOGLE APPS SCRIPT
+   2. CONEXIÓN JSONP CON GOOGLE
 ========================================= */
 
 function llamarGoogle(parametros) {
+
   return new Promise((resolve, reject) => {
 
     const callback =
@@ -310,15 +595,25 @@ function llamarGoogle(parametros) {
     url.searchParams.set("callback", callback);
 
     const script = document.createElement("script");
+
     let terminado = false;
 
     const temporizador = setTimeout(() => {
+
       finalizar();
-      reject(new Error("Tiempo de espera agotado al conectar con Google."));
+
+      reject(
+        new Error(
+          "Tiempo de espera agotado al conectar con Google."
+        )
+      );
+
     }, 45000);
 
     function finalizar() {
+
       if (terminado) return;
+
       terminado = true;
 
       clearTimeout(temporizador);
@@ -328,63 +623,94 @@ function llamarGoogle(parametros) {
       }
 
       delete window[callback];
+
     }
 
     window[callback] = function(resultado) {
+
       finalizar();
+
       resolve(resultado);
+
     };
 
     script.onerror = function() {
+
       finalizar();
-      reject(new Error("No se pudo conectar con Google."));
+
+      reject(
+        new Error("No se pudo conectar con Google.")
+      );
+
     };
 
     script.src = url.toString();
+
     document.body.appendChild(script);
+
   });
+
 }
 
 
 /* =========================================
-   COMPROBAR CONEXIÓN
+   3. CONEXIÓN DEL CHAT
 ========================================= */
 
 async function conectarGoogle() {
+
   const estado = document.getElementById("estado");
 
   try {
+
     const respuesta = await llamarGoogle({
       action: "ping"
     });
 
     if (respuesta && respuesta.correcto) {
-      estado.textContent = "🐕 EL PERRO AI está conectado";
+
+      estado.textContent =
+        "🐕 EL PERRO AI está conectado";
+
       estado.style.color = "#54d67a";
+
     } else {
-      estado.textContent = "No se pudo comprobar la conexión";
+
+      estado.textContent =
+        "No se pudo comprobar la conexión";
+
     }
 
   } catch (error) {
-    estado.textContent = "Error de conexión con Google";
+
+    estado.textContent =
+      "Error de conexión con Google";
+
     console.error(error);
+
   }
+
 }
 
 
 /* =========================================
-   CHAT
+   4. CHAT
 ========================================= */
 
 function agregarMensaje(texto, tipo) {
+
   const chat = document.getElementById("chat");
+
   const elemento = document.createElement("div");
 
   elemento.className = "mensaje " + tipo;
+
   elemento.textContent = texto;
 
   chat.appendChild(elemento);
+
   chat.scrollTop = chat.scrollHeight;
+
 }
 
 
@@ -393,6 +719,7 @@ async function enviarMensaje() {
   if (esperandoRespuesta) return;
 
   const input = document.getElementById("mensaje");
+
   const texto = input.value.trim();
 
   if (!texto) return;
@@ -404,25 +731,38 @@ async function enviarMensaje() {
   esperandoRespuesta = true;
 
   document.getElementById("btnEnviar").disabled = true;
+
   document.getElementById("estado").textContent =
     "🐕 Estoy pensando...";
 
   try {
 
     const respuesta = await llamarGoogle({
+
       action: "responder",
+
       texto: texto,
+
       historial: JSON.stringify(historial)
+
     });
 
     if (!respuesta) {
-      throw new Error("Google no devolvió una respuesta.");
+
+      throw new Error(
+        "Google no devolvió una respuesta."
+      );
+
     }
 
     if (respuesta.correcto === false) {
+
       throw new Error(
-        respuesta.mensaje || "No pude procesar tu mensaje."
+        respuesta.error ||
+        respuesta.mensaje ||
+        "No pude procesar tu mensaje."
       );
+
     }
 
     const contenido =
@@ -435,20 +775,32 @@ async function enviarMensaje() {
           respuesta.text;
 
     if (!contenido) {
-      throw new Error("La respuesta llegó vacía.");
+
+      throw new Error(
+        "La respuesta llegó vacía."
+      );
+
     }
 
     ultimaRespuesta = contenido;
 
+    // El backend espera role y text/content/mensaje.
+    // Se guarda el historial en ese formato.
+
     historial.push({
       role: "user",
-      parts: [{ text: texto }]
+      text: texto
     });
 
     historial.push({
       role: "model",
-      parts: [{ text: contenido }]
+      text: contenido
     });
+
+    // Evitar que el historial crezca indefinidamente.
+    if (historial.length > 20) {
+      historial = historial.slice(-20);
+    }
 
     agregarMensaje(contenido, "perro");
 
@@ -474,30 +826,37 @@ async function enviarMensaje() {
   } finally {
 
     esperandoRespuesta = false;
+
     document.getElementById("btnEnviar").disabled = false;
+
   }
+
 }
 
 
 document.getElementById("mensaje").addEventListener(
   "keydown",
   function(event) {
+
     if (event.key === "Enter") {
       enviarMensaje();
     }
+
   }
 );
 
 
 /* =========================================
-   NÚMEROS A PALABRAS
+   5. NÚMEROS A PALABRAS
 ========================================= */
 
 function numeroATexto(numero) {
 
   numero = Number(numero);
 
-  if (!Number.isFinite(numero)) return String(numero);
+  if (!Number.isFinite(numero)) {
+    return String(numero);
+  }
 
   if (numero > 999999999 || numero < 0) {
     return String(numero);
@@ -531,12 +890,14 @@ function numeroATexto(numero) {
     if (n < 30) return unidades[n];
 
     if (n < 100) {
+
       const d = Math.floor(n / 10);
       const u = n % 10;
 
       return u === 0
         ? decenas[d]
         : decenas[d] + " y " + unidades[u];
+
     }
 
     if (n === 100) return "cien";
@@ -546,11 +907,14 @@ function numeroATexto(numero) {
 
     return centenas[c] +
       (resto ? " " + menorMil(resto) : "");
+
   }
 
   function convertir(n) {
 
-    if (n < 1000) return menorMil(n);
+    if (n < 1000) {
+      return menorMil(n);
+    }
 
     if (n < 1000000) {
 
@@ -564,6 +928,7 @@ function numeroATexto(numero) {
 
       return textoMiles +
         (resto ? " " + menorMil(resto) : "");
+
     }
 
     const millones = Math.floor(n / 1000000);
@@ -576,6 +941,7 @@ function numeroATexto(numero) {
 
     return textoMillones +
       (resto ? " " + convertir(resto) : "");
+
   }
 
   if (Number.isInteger(numero)) {
@@ -583,18 +949,21 @@ function numeroATexto(numero) {
   }
 
   const partes = numero.toString().split(".");
+
   const entero = convertir(Number(partes[0]));
+
   const decimal = partes[1]
     .split("")
     .map(d => unidades[Number(d)])
     .join(" ");
 
   return entero + " punto " + decimal;
+
 }
 
 
 /* =========================================
-   LIMPIAR TEXTO PARA LA VOZ
+   6. LIMPIAR TEXTO PARA LA VOZ
 ========================================= */
 
 function limpiarTextoParaVoz(texto) {
@@ -619,16 +988,20 @@ function limpiarTextoParaVoz(texto) {
   limpio = limpio.replace(
     /\$(\d+(?:\.\d+)?)/g,
     function(match, numero) {
+
       return numeroATexto(numero) + " pesos";
+
     }
   );
 
   limpio = limpio.replace(
     /(\d[\d,]*(?:\.\d+)?)/g,
     function(numero) {
+
       return numeroATexto(
         Number(numero.replace(/,/g, ""))
       );
+
     }
   );
 
@@ -653,11 +1026,12 @@ function limpiarTextoParaVoz(texto) {
   );
 
   return limpio.trim();
+
 }
 
 
 /* =========================================
-   SELECCIÓN MEJORADA DE VOZ
+   7. SELECCIÓN DE VOZ
 ========================================= */
 
 function seleccionarVoz() {
@@ -680,34 +1054,31 @@ function seleccionarVoz() {
 
   if (!candidatas.length) return null;
 
-  // Primero buscar voces neuronales o naturales.
   const vozNeuronal = candidatas.find(voz =>
     /natural|neural|online|enhanced|premium/i.test(voz.name)
   );
 
   if (vozNeuronal) return vozNeuronal;
 
-  // Después buscar voces naturales de Microsoft.
   const vozMicrosoft = candidatas.find(voz =>
     /microsoft/i.test(voz.name)
   );
 
   if (vozMicrosoft) return vozMicrosoft;
 
-  // Después buscar voces de Google.
   const vozGoogle = candidatas.find(voz =>
     /google/i.test(voz.name)
   );
 
   if (vozGoogle) return vozGoogle;
 
-  // Si no hay otra opción, utilizar la primera voz española.
   return candidatas[0];
+
 }
 
 
 /* =========================================
-   HABLAR CON VOZ AJUSTADA
+   8. HABLAR
 ========================================= */
 
 function hablar(texto) {
@@ -716,15 +1087,15 @@ function hablar(texto) {
     return;
   }
 
-  const textoLimpio = limpiarTextoParaVoz(texto);
+  const textoLimpio =
+    limpiarTextoParaVoz(texto);
 
   if (!textoLimpio) return;
 
   speechSynthesis.cancel();
 
-  const mensaje = new SpeechSynthesisUtterance(
-    textoLimpio
-  );
+  const mensaje =
+    new SpeechSynthesisUtterance(textoLimpio);
 
   const voz = seleccionarVoz();
 
@@ -734,32 +1105,40 @@ function hablar(texto) {
     mensaje.voice = voz;
   }
 
-  // Velocidad y tono moderados.
   mensaje.rate = 0.98;
   mensaje.pitch = 0.98;
   mensaje.volume = 1;
 
   mensaje.onstart = function() {
+
     document.getElementById("estado").textContent =
       "🐕 EL PERRO AI está hablando...";
+
   };
 
   mensaje.onend = function() {
+
     document.getElementById("estado").textContent =
       "🐕 Aquí estoy para ayudarte";
+
   };
 
   mensaje.onerror = function(event) {
+
     console.error("Error de voz:", event);
+
     document.getElementById("estado").textContent =
       "No se pudo reproducir la voz";
+
   };
 
   speechSynthesis.speak(mensaje);
+
 }
 
 
 function activarVoz() {
+
   vozAutomatica = true;
 
   if (ultimaRespuesta) {
@@ -768,19 +1147,22 @@ function activarVoz() {
 
   document.getElementById("estado").textContent =
     "Voz activada";
+
 }
 
 
 function detenerVoz() {
+
   speechSynthesis.cancel();
 
   document.getElementById("estado").textContent =
     "Voz detenida";
+
 }
 
 
 /* =========================================
-   RECONOCIMIENTO DE VOZ
+   9. RECONOCIMIENTO DE VOZ
 ========================================= */
 
 function prepararMicrofono() {
@@ -790,9 +1172,12 @@ function prepararMicrofono() {
     window.webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
+
     document.getElementById("estado").textContent =
       "Tu navegador no admite reconocimiento de voz";
+
     return;
+
   }
 
   reconocimiento = new SpeechRecognition();
@@ -802,10 +1187,14 @@ function prepararMicrofono() {
   reconocimiento.interimResults = false;
 
   reconocimiento.onstart = function() {
-    document.getElementById("btnMicrofono").classList.add("activo");
+
+    document
+      .getElementById("btnMicrofono")
+      .classList.add("activo");
 
     document.getElementById("estado").textContent =
       "🎤 Te estoy escuchando...";
+
   };
 
   reconocimiento.onresult = function(event) {
@@ -813,24 +1202,37 @@ function prepararMicrofono() {
     const texto =
       event.results[0][0].transcript;
 
-    document.getElementById("mensaje").value = texto;
+    document.getElementById("mensaje").value =
+      texto;
 
     enviarMensaje();
+
   };
 
   reconocimiento.onerror = function(event) {
 
-    console.error("Error de micrófono:", event.error);
+    console.error(
+      "Error de micrófono:",
+      event.error
+    );
 
     document.getElementById("estado").textContent =
       "Error de voz: " + event.error;
 
-    document.getElementById("btnMicrofono").classList.remove("activo");
+    document
+      .getElementById("btnMicrofono")
+      .classList.remove("activo");
+
   };
 
   reconocimiento.onend = function() {
-    document.getElementById("btnMicrofono").classList.remove("activo");
+
+    document
+      .getElementById("btnMicrofono")
+      .classList.remove("activo");
+
   };
+
 }
 
 
@@ -843,28 +1245,534 @@ function escuchar() {
   if (!reconocimiento) return;
 
   try {
+
     reconocimiento.start();
+
   } catch (error) {
+
     console.error(error);
+
   }
+
 }
 
 
 /* =========================================
-   INICIAR EL ASISTENTE
+   10. FORMULARIO DE RESERVACIONES
+========================================= */
+
+function mostrarReservaciones() {
+
+  const panel =
+    document.getElementById("panelReservaciones");
+
+  panel.classList.add("visible");
+
+  panel.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+}
+
+
+function ocultarReservaciones() {
+
+  document
+    .getElementById("panelReservaciones")
+    .classList.remove("visible");
+
+}
+
+
+/* =========================================
+   11. FECHA MÍNIMA
+========================================= */
+
+function obtenerFechaLocal(diasAdicionales) {
+
+  const fecha = new Date();
+
+  fecha.setHours(0, 0, 0, 0);
+
+  fecha.setDate(
+    fecha.getDate() + diasAdicionales
+  );
+
+  const anio = fecha.getFullYear();
+
+  const mes = String(
+    fecha.getMonth() + 1
+  ).padStart(2, "0");
+
+  const dia = String(
+    fecha.getDate()
+  ).padStart(2, "0");
+
+  return anio + "-" + mes + "-" + dia;
+
+}
+
+
+function configurarFechaMinima() {
+
+  document.getElementById("resFecha").min =
+    obtenerFechaLocal(1);
+
+}
+
+
+/* =========================================
+   12. VALIDAR DÍA DE RESERVACIÓN
+========================================= */
+
+function validarFechaCliente(fechaTexto) {
+
+  if (!fechaTexto) {
+    return "Selecciona una fecha.";
+  }
+
+  const partes = fechaTexto.split("-").map(Number);
+
+  const fecha = new Date(
+    partes[0],
+    partes[1] - 1,
+    partes[2]
+  );
+
+  const diaSemana = fecha.getDay();
+
+  if (fechaTexto <= obtenerFechaLocal(0)) {
+
+    return "Las reservaciones deben realizarse con al menos un día de anticipación.";
+
+  }
+
+  if (![0, 4, 5, 6].includes(diaSemana)) {
+
+    return "Solo aceptamos reservaciones de jueves a domingo.";
+
+  }
+
+  return "";
+
+}
+
+
+/* =========================================
+   13. PREPARAR EL PUENTE
+========================================= */
+
+function prepararPuenteReservaciones() {
+
+  const iframe =
+    document.getElementById("reservacionesBridge");
+
+  iframe.addEventListener("load", function() {
+
+    puenteListo = true;
+
+    console.log(
+      "Puente de reservaciones cargado."
+    );
+
+  });
+
+  iframe.src = URL_PUENTE;
+
+}
+
+
+/* =========================================
+   14. ESCUCHAR RESPUESTAS DEL PUENTE
+========================================= */
+
+window.addEventListener("message", function(event) {
+
+  const iframe =
+    document.getElementById("reservacionesBridge");
+
+  // Aceptar solamente mensajes del iframe esperado.
+  if (!iframe || event.source !== iframe.contentWindow) {
+    return;
+  }
+
+  // Verificar el origen de la página principal.
+  if (event.origin !== ORIGEN_PERMITIDO) {
+    return;
+  }
+
+  const mensaje = event.data;
+
+  if (
+    !mensaje ||
+    mensaje.tipo !== "EL_PERRO_AI_RESULTADO" ||
+    !mensaje.requestId
+  ) {
+    return;
+  }
+
+  if (
+    !solicitudReservaActual ||
+    mensaje.requestId !== solicitudReservaActual
+  ) {
+    return;
+  }
+
+  clearTimeout(temporizadorReserva);
+
+  temporizadorReserva = null;
+
+  const resultado = mensaje.resultado || {};
+
+  reservaEnviandose = false;
+
+  document.getElementById(
+    "btnConfirmarReserva"
+  ).disabled = false;
+
+  if (
+    resultado.correcto &&
+    resultado.confirmada
+  ) {
+
+    mostrarResultadoReserva(
+      resultado.mensaje ||
+      "¡Tu reservación quedó confirmada!",
+      "exito"
+    );
+
+    document.getElementById(
+      "formReservacion"
+    ).reset();
+
+    configurarFechaMinima();
+
+  } else {
+
+    mostrarResultadoReserva(
+      resultado.error ||
+      "No fue posible confirmar tu reservación. Inténtalo nuevamente.",
+      "error"
+    );
+
+  }
+
+  solicitudReservaActual = null;
+
+});
+
+
+/* =========================================
+   15. MOSTRAR RESULTADO
+========================================= */
+
+function mostrarResultadoReserva(texto, tipo) {
+
+  const resultado = document.getElementById(
+    "resultadoReservacion"
+  );
+
+  resultado.textContent = texto;
+
+  resultado.className =
+    "resultado-reserva " + tipo;
+
+  resultado.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest"
+  });
+
+}
+
+
+/* =========================================
+   16. ENVIAR RESERVACIÓN AL PUENTE
+========================================= */
+
+function enviarAlPuente(datos) {
+
+  return new Promise((resolve, reject) => {
+
+    const iframe =
+      document.getElementById("reservacionesBridge");
+
+    if (!puenteListo || !iframe.contentWindow) {
+
+      reject(
+        new Error(
+          "La conexión de reservaciones todavía está iniciando. Espera unos segundos e inténtalo nuevamente."
+        )
+      );
+
+      return;
+
+    }
+
+    const requestId =
+      "reserva_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random() * 100000);
+
+    solicitudReservaActual = requestId;
+
+    temporizadorReserva = setTimeout(() => {
+
+      solicitudReservaActual = null;
+
+      reject(
+        new Error(
+          "No recibimos respuesta de Google. Verifica la conexión antes de volver a enviar la solicitud."
+        )
+      );
+
+    }, 45000);
+
+    try {
+
+      iframe.contentWindow.postMessage({
+
+        tipo: "EL_PERRO_AI_RESERVAR",
+
+        requestId: requestId,
+
+        datos: datos
+
+      }, "*");
+
+    } catch (error) {
+
+      clearTimeout(temporizadorReserva);
+
+      temporizadorReserva = null;
+
+      solicitudReservaActual = null;
+
+      reject(error);
+
+    }
+
+  });
+
+}
+
+
+/* =========================================
+   17. PROCESAR FORMULARIO
+========================================= */
+
+document.getElementById(
+  "formReservacion"
+).addEventListener("submit", async function(event) {
+
+  event.preventDefault();
+
+  if (reservaEnviandose) return;
+
+  const nombre =
+    document.getElementById("resNombre").value.trim();
+
+  const telefono =
+    document.getElementById("resTelefono").value.trim();
+
+  const fecha =
+    document.getElementById("resFecha").value;
+
+  const hora =
+    document.getElementById("resHora").value;
+
+  const personas =
+    Number(document.getElementById("resPersonas").value);
+
+  const observaciones =
+    document.getElementById("resObservaciones").value.trim();
+
+  // Validaciones antes de enviar.
+
+  if (!nombre || !telefono || !fecha || !hora) {
+
+    mostrarResultadoReserva(
+      "Completa todos los campos obligatorios.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (!/^[0-9+\-\s()]{7,20}$/.test(telefono)) {
+
+    mostrarResultadoReserva(
+      "Escribe un número telefónico válido.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (nombre.length > 100) {
+
+    mostrarResultadoReserva(
+      "El nombre es demasiado largo.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const errorFecha = validarFechaCliente(fecha);
+
+  if (errorFecha) {
+
+    mostrarResultadoReserva(
+      errorFecha,
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (!Number.isInteger(personas) || personas < 1 || personas > 10) {
+
+    mostrarResultadoReserva(
+      "La reservación debe ser de 1 a 10 personas.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (!/^\d{2}:\d{2}$/.test(hora)) {
+
+    mostrarResultadoReserva(
+      "Selecciona un horario válido.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (hora < "17:00" || hora > "23:00") {
+
+    mostrarResultadoReserva(
+      "El horario permitido es de 5:00 p. m. a 11:00 p. m.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (observaciones.length > 500) {
+
+    mostrarResultadoReserva(
+      "Las observaciones no pueden superar los 500 caracteres.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const datos = {
+
+    nombre: nombre,
+
+    telefono: telefono,
+
+    fecha: fecha,
+
+    hora: hora,
+
+    personas: personas,
+
+    observaciones: observaciones
+
+  };
+
+  reservaEnviandose = true;
+
+  document.getElementById(
+    "btnConfirmarReserva"
+  ).disabled = true;
+
+  mostrarResultadoReserva(
+    "🐕 Estamos procesando tu reservación. Espera un momento...",
+    "exito"
+  );
+
+  try {
+
+    const resultado = await enviarAlPuente(datos);
+
+    // La respuesta real se recibe por postMessage.
+    // Esta línea es una protección adicional.
+    if (
+      resultado &&
+      resultado.correcto &&
+      resultado.confirmada
+    ) {
+
+      mostrarResultadoReserva(
+        resultado.mensaje ||
+        "¡Tu reservación quedó confirmada!",
+        "exito"
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error de reservación:",
+      error
+    );
+
+    reservaEnviandose = false;
+
+    document.getElementById(
+      "btnConfirmarReserva"
+    ).disabled = false;
+
+    mostrarResultadoReserva(
+      error.message ||
+      "No fue posible enviar tu reservación.",
+      "error"
+    );
+
+  }
+
+});
+
+
+/* =========================================
+   18. INICIAR EL ASISTENTE
 ========================================= */
 
 window.addEventListener("load", function() {
 
   prepararMicrofono();
+
   conectarGoogle();
 
+  configurarFechaMinima();
+
+  prepararPuenteReservaciones();
+
   if ("speechSynthesis" in window) {
+
     speechSynthesis.getVoices();
 
     speechSynthesis.onvoiceschanged = function() {
       seleccionarVoz();
     };
+
   }
 
 });
