@@ -657,7 +657,7 @@ function limpiarTextoParaVoz(texto) {
 
 
 /* =========================================
-   SELECCIÓN DE VOZ NATURAL
+   SELECCIÓN MEJORADA DE VOZ
 ========================================= */
 
 function seleccionarVoz() {
@@ -666,7 +666,7 @@ function seleccionarVoz() {
 
   if (!voces.length) return null;
 
-  const vocesEspanolMexico = voces.filter(voz =>
+  const vocesMexico = voces.filter(voz =>
     voz.lang.toLowerCase() === "es-mx"
   );
 
@@ -674,32 +674,40 @@ function seleccionarVoz() {
     voz.lang.toLowerCase().startsWith("es")
   );
 
-  const candidatas =
-    vocesEspanolMexico.length
-      ? vocesEspanolMexico
-      : vocesEspanol;
+  const candidatas = vocesMexico.length
+    ? vocesMexico
+    : vocesEspanol;
 
   if (!candidatas.length) return null;
 
-  // Preferir una voz española de mejor integración con Chrome.
+  // Primero buscar voces neuronales o naturales.
+  const vozNeuronal = candidatas.find(voz =>
+    /natural|neural|online|enhanced|premium/i.test(voz.name)
+  );
+
+  if (vozNeuronal) return vozNeuronal;
+
+  // Después buscar voces naturales de Microsoft.
+  const vozMicrosoft = candidatas.find(voz =>
+    /microsoft/i.test(voz.name)
+  );
+
+  if (vozMicrosoft) return vozMicrosoft;
+
+  // Después buscar voces de Google.
   const vozGoogle = candidatas.find(voz =>
     /google/i.test(voz.name)
   );
 
   if (vozGoogle) return vozGoogle;
 
-  const vozNatural = candidatas.find(voz =>
-    /natural|neural|online/i.test(voz.name)
-  );
-
-  if (vozNatural) return vozNatural;
-
+  // Si no hay otra opción, utilizar la primera voz española.
   return candidatas[0];
 }
 
 
 /* =========================================
-   HABLAR CON VOZ MÁS NATURAL
+   HABLAR CON VOZ AJUSTADA
 ========================================= */
 
 function hablar(texto) {
@@ -726,9 +734,9 @@ function hablar(texto) {
     mensaje.voice = voz;
   }
 
-  // Ajustes suaves para evitar una voz artificial.
-  mensaje.rate = 0.96;
-  mensaje.pitch = 1.0;
+  // Velocidad y tono moderados.
+  mensaje.rate = 0.98;
+  mensaje.pitch = 0.98;
   mensaje.volume = 1;
 
   mensaje.onstart = function() {
@@ -851,7 +859,6 @@ window.addEventListener("load", function() {
   prepararMicrofono();
   conectarGoogle();
 
-  // Cargar voces disponibles del navegador.
   if ("speechSynthesis" in window) {
     speechSynthesis.getVoices();
 
@@ -861,6 +868,7 @@ window.addEventListener("load", function() {
   }
 
 });
+
 </script>
 
 </body>
