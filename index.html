@@ -136,6 +136,102 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
 .modulo-aviso{padding:14px;background:#242424;border:1px solid #494949;border-radius:10px;color:#ccc;font-size:12px;line-height:1.6;margin-top:12px}
 .admin-dashboard-pie{margin-top:20px;text-align:center;color:#777;font-size:11px}
 .admin-cerrar-panel{background:#572323;border-color:#8d3b3b}
+
+/* MÓDULO DE REPORTES */
+.reportes-contenido{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  margin-top:18px;
+}
+.reportes-intro{
+  padding:16px;
+  background:linear-gradient(145deg,#292015,#191919);
+  border:1px solid rgba(255,140,0,.35);
+  border-radius:13px;
+  color:#ddd;
+  font-size:13px;
+  line-height:1.6;
+}
+.reportes-seccion{
+  padding:17px;
+  background:linear-gradient(145deg,#202020,#141414);
+  border:1px solid #414141;
+  border-radius:14px;
+}
+.reportes-seccion h4{
+  margin:0 0 14px;
+  color:var(--claro);
+  font-size:15px;
+}
+.reportes-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:11px;
+}
+.reporte-indicador{
+  min-width:0;
+  padding:14px;
+  background:#111;
+  border:1px solid #393939;
+  border-radius:11px;
+}
+.reporte-indicador span{
+  display:block;
+  color:#aaa;
+  font-size:12px;
+  line-height:1.4;
+  margin-bottom:10px;
+}
+.reporte-indicador strong{
+  display:block;
+  color:var(--claro);
+  font-size:14px;
+  line-height:1.4;
+}
+.reporte-pendiente{
+  display:inline-block;
+  padding:6px 9px;
+  color:#ffc477;
+  background:rgba(255,140,0,.10);
+  border:1px solid rgba(255,140,0,.3);
+  border-radius:7px;
+  font-size:11px;
+}
+.reporte-lista{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+.reporte-fila{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px;
+  background:#111;
+  border:1px solid #353535;
+  border-radius:9px;
+}
+.reporte-fila span{
+  color:#ddd;
+  font-size:12px;
+}
+.reporte-fila strong{
+  color:var(--claro);
+  font-size:12px;
+  text-align:right;
+}
+.reportes-nota{
+  padding:13px;
+  color:#aaa;
+  background:#191919;
+  border-left:3px solid var(--naranja);
+  border-radius:7px;
+  font-size:12px;
+  line-height:1.6;
+}
+
 @media(max-width:850px){
   .app{padding:17px;gap:15px}
   .workspace{grid-template-columns:1fr;min-height:0}
@@ -165,8 +261,15 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
   .acciones-reserva{flex-direction:column}
   .admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .admin-ventana{padding:17px}
+  .reportes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .reportes-seccion{padding:13px}
+  .reporte-fila{align-items:flex-start;flex-direction:column;gap:6px}
+  .reporte-fila strong{text-align:left}
 }
-@media(max-width:380px){.admin-grid{grid-template-columns:1fr}}
+@media(max-width:380px){
+  .admin-grid{grid-template-columns:1fr}
+  .reportes-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 
@@ -400,6 +503,7 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
         <div class="modulo-aviso" id="adminModuloAviso">
           Esta sección está preparada para conectar sus funciones.
         </div>
+        <div id="adminReporteContenido" style="display:none"></div>
       </div>
 
       <div class="admin-dashboard-pie">EL PERRO AI · Administración interna</div>
@@ -1156,6 +1260,9 @@ function mostrarPanelAdministrativo() {
   volverInicioAdmin();
 }
 
+/****************************************************
+ * 9. MÓDULOS ADMINISTRATIVOS
+ ****************************************************/
 function abrirModuloAdmin(modulo) {
   const modulos = {
     reservaciones:{
@@ -1176,7 +1283,7 @@ function abrirModuloAdmin(modulo) {
     reportes:{
       titulo:"📊 Reportes",
       descripcion:"Consulta información de actividad, reservaciones, promociones y resultados.",
-      aviso:"Los indicadores y reportes se conectarán a las fuentes de datos del negocio en la siguiente etapa."
+      aviso:""
     },
     usuarios:{
       titulo:"👥 Usuarios",
@@ -1200,19 +1307,197 @@ function abrirModuloAdmin(modulo) {
   }
 
   document.getElementById("adminMenuPrincipal").style.display = "none";
-  document.getElementById("adminModulo").classList.add("visible");
+
+  const moduloPanel = document.getElementById("adminModulo");
+  const aviso = document.getElementById("adminModuloAviso");
+  const reportes = document.getElementById("adminReporteContenido");
+
+  moduloPanel.classList.add("visible");
+
   document.getElementById("adminModuloTitulo").textContent = datos.titulo;
   document.getElementById("adminModuloDescripcion").textContent = datos.descripcion;
-  document.getElementById("adminModuloAviso").textContent = datos.aviso;
+
+  if(modulo === "reportes") {
+    aviso.style.display = "none";
+    reportes.style.display = "block";
+
+    reportes.innerHTML = `
+      <div class="reportes-contenido">
+
+        <div class="reportes-intro">
+          <strong>🐕 Centro de información de El Perro Caliente</strong><br>
+          Desde aquí podrás consultar el comportamiento del negocio,
+          conocer la actividad de tus clientes y evaluar los resultados
+          de promociones y eventos.
+          <br><br>
+          <span class="reporte-pendiente">Panel preparado · Datos pendientes de conexión</span>
+        </div>
+
+        <section class="reportes-seccion">
+          <h4>📈 1. Resumen general del negocio</h4>
+          <div class="reportes-grid">
+            <div class="reporte-indicador">
+              <span>Clientes atendidos</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Actividad general</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Tendencia del negocio</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="reportes-seccion">
+          <h4>📅 2. Reporte de reservaciones</h4>
+          <div class="reportes-grid">
+            <div class="reporte-indicador">
+              <span>Reservaciones recibidas</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Reservaciones canceladas</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Clientes que asistieron</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+          </div>
+          <div class="reportes-nota" style="margin-top:12px">
+            Aquí podremos consultar las reservaciones por fecha,
+            identificar cancelaciones y medir la asistencia de los clientes.
+          </div>
+        </section>
+
+        <section class="reportes-seccion">
+          <h4>🍗 3. Rendimiento de promociones</h4>
+          <div class="reportes-grid">
+            <div class="reporte-indicador">
+              <span>Promociones activas</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Promoción más utilizada</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Usos de promociones</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+          </div>
+          <div class="reportes-nota" style="margin-top:12px">
+            Podremos identificar qué promociones atraen más clientes,
+            cuáles tienen mayor aceptación y cuáles conviene mejorar.
+          </div>
+        </section>
+
+        <section class="reportes-seccion">
+          <h4>🎸 4. Eventos y actividades</h4>
+          <div class="reporte-lista">
+            <div class="reporte-fila">
+              <span>Próximos eventos</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-fila">
+              <span>Eventos realizados</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-fila">
+              <span>Resultados y asistencia</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="reportes-seccion">
+          <h4>📆 5. Actividad por periodo</h4>
+          <div class="reportes-grid">
+            <div class="reporte-indicador">
+              <span>Actividad diaria</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Actividad semanal</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-indicador">
+              <span>Actividad mensual</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+          </div>
+          <div class="reportes-nota" style="margin-top:12px">
+            Esta sección permitirá comparar distintos periodos,
+            identificar los días de mayor movimiento y observar
+            cómo evoluciona la actividad del negocio.
+          </div>
+        </section>
+
+        <section class="reportes-seccion">
+          <h4>💰 Próxima etapa: reportes financieros</h4>
+          <div class="reporte-lista">
+            <div class="reporte-fila">
+              <span>Ventas y gastos</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-fila">
+              <span>Efectivo, transferencias y tarjeta</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-fila">
+              <span>Ventas por responsable</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-fila">
+              <span>Utilidad estimada</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+            <div class="reporte-fila">
+              <span>Dinero pendiente de comprobar o entregar</span>
+              <strong>Pendiente de conexión</strong>
+            </div>
+          </div>
+        </section>
+
+        <div class="reportes-nota">
+          <strong>Nota:</strong> Este panel es una estructura visual.
+          Todavía no consulta información real ni modifica registros.
+          En la siguiente etapa conectaremos las fuentes de datos
+          correspondientes para mostrar indicadores actualizados.
+        </div>
+
+      </div>
+    `;
+  } else {
+    aviso.style.display = "block";
+    aviso.textContent = datos.aviso;
+    reportes.style.display = "none";
+    reportes.innerHTML = "";
+  }
 }
 
 function volverInicioAdmin() {
   document.getElementById("adminMenuPrincipal").style.display = "block";
   document.getElementById("adminModulo").classList.remove("visible");
+
+  const reportes = document.getElementById("adminReporteContenido");
+  const aviso = document.getElementById("adminModuloAviso");
+
+  if(reportes) {
+    reportes.style.display = "none";
+    reportes.innerHTML = "";
+  }
+
+  if(aviso) {
+    aviso.style.display = "block";
+  }
 }
 
 /****************************************************
- * 9. INICIAR EL SISTEMA
+ * 10. INICIAR EL SISTEMA
  ****************************************************/
 window.addEventListener("load",function() {
   prepararMicrofono();
