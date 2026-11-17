@@ -1,554 +1,195 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EL PERRO AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EL PERRO AI</title>
 
-  <script type="module"
-    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js">
-  </script>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 850px;
-      min-height: 100vh;
-      margin: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    header {
-      text-align: center;
-      padding: 12px;
-    }
-
-    header h1 {
-      margin: 0;
-      color: #ff8c00;
-      font-size: 32px;
-      letter-spacing: 2px;
-    }
-
-    header p {
-      color: #ccc;
-      margin: 8px 0 0;
-    }
-
-    .avatar-container {
-      width: 100%;
-      height: 330px;
-      background: radial-gradient(circle, #292929, #151515);
-      border: 1px solid #383838;
-      border-radius: 18px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    model-viewer {
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      --poster-color: transparent;
-    }
-
-    .status {
-      text-align: center;
-      color: #ffad42;
-      font-size: 13px;
-      min-height: 18px;
-    }
-
-    .chat {
-      flex: 1;
-      min-height: 220px;
-      max-height: 400px;
-      overflow-y: auto;
-      padding: 15px;
-      background: #1c1c1c;
-      border: 1px solid #333;
-      border-radius: 15px;
-    }
-
-    .mensaje {
-      max-width: 90%;
-      padding: 12px 15px;
-      margin: 10px 0;
-      border-radius: 14px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .usuario {
-      margin-left: auto;
-      background: #b85c00;
-      color: white;
-    }
-
-    .perro {
-      margin-right: auto;
-      background: #333;
-      color: white;
-    }
-
-    .entrada {
-      display: flex;
-      gap: 8px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      min-width: 0;
-      padding: 13px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: #252525;
-      color: white;
-      font-size: 15px;
-      outline: none;
-      font-family: Arial, sans-serif;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: #ff8c00;
-    }
-
-    .entrada input {
-      flex: 1;
-      padding: 15px;
-      font-size: 16px;
-    }
-
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 13px 16px;
-      background: #ff8c00;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    button:hover {
-      background: #e87900;
-    }
-
-    button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .controles {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      justify-content: center;
-    }
-
-    .controles button {
-      flex: 1;
-      min-width: 125px;
-    }
-
-    .secundario {
-      background: #333;
-    }
-
-    .secundario:hover {
-      background: #484848;
-    }
-
-    .activo {
-      background: #b83232;
-    }
-
-    .reservar-boton {
-      width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      background: #b85c00;
-      border: 1px solid #ff8c00;
-    }
-
-    .reservar-boton:hover {
-      background: #d96d00;
-    }
-
-    .reserva-panel {
-      display: none;
-      background: #1c1c1c;
-      border: 1px solid #444;
-      border-radius: 15px;
-      padding: 18px;
-      gap: 13px;
-    }
-
-    .reserva-panel.visible {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .reserva-panel h2 {
-      color: #ff8c00;
-      text-align: center;
-      margin: 0 0 5px;
-      font-size: 23px;
-    }
-
-    .reserva-panel p {
-      color: #ccc;
-      font-size: 13px;
-      line-height: 1.5;
-      margin: 0;
-      text-align: center;
-    }
-
-    .campo {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .campo label {
-      color: #ffad42;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 75px;
-    }
-
-    .aviso-reserva {
-      padding: 11px;
-      background: #292929;
-      border-radius: 9px;
-      color: #ccc;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .resultado-reserva {
-      display: none;
-      padding: 13px;
-      border-radius: 10px;
-      font-size: 14px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-
-    .resultado-reserva.exito {
-      display: block;
-      background: #173522;
-      border: 1px solid #32854b;
-      color: #a8f0bd;
-    }
-
-    .resultado-reserva.error {
-      display: block;
-      background: #401d1d;
-      border: 1px solid #a33;
-      color: #ffbaba;
-    }
-
-    .acciones-reserva {
-      display: flex;
-      gap: 9px;
-    }
-
-    .acciones-reserva button {
-      flex: 1;
-    }
-
-    .boton-cerrar {
-      background: #333;
-    }
-
-    footer {
-      text-align: center;
-      color: #777;
-      font-size: 12px;
-      padding: 10px;
-    }
-
-    .puente-oculto {
-      position: fixed;
-      width: 1px;
-      height: 1px;
-      left: -10000px;
-      top: -10000px;
-      border: 0;
-      visibility: hidden;
-    }
-
-    @media (max-width: 600px) {
-      .app {
-        padding: 12px;
-      }
-
-      .avatar-container {
-        height: 270px;
-      }
-
-      header h1 {
-        font-size: 27px;
-      }
-
-      .entrada {
-        flex-wrap: wrap;
-      }
-
-      .entrada input {
-        flex-basis: 100%;
-      }
-
-      .entrada button {
-        flex: 1;
-      }
-
-      .reserva-panel {
-        padding: 13px;
-      }
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#111;color:white;font-family:Arial,sans-serif}
+.app{width:100%;max-width:850px;min-height:100vh;margin:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+header{text-align:center;padding:12px}
+header h1{margin:0;color:#ff8c00;font-size:32px;letter-spacing:2px}
+header p{color:#ccc;margin:8px 0 0}
+.avatar-container{width:100%;height:330px;background:radial-gradient(circle,#292929,#151515);border:1px solid #383838;border-radius:18px;overflow:hidden}
+model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent}
+.status{text-align:center;color:#ffad42;font-size:13px;min-height:18px}
+.chat{flex:1;min-height:220px;max-height:400px;overflow-y:auto;padding:15px;background:#1c1c1c;border:1px solid #333;border-radius:15px}
+.mensaje{max-width:90%;padding:12px 15px;margin:10px 0;border-radius:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.usuario{margin-left:auto;background:#b85c00;color:white}
+.perro{margin-right:auto;background:#333;color:white}
+.entrada{display:flex;gap:8px}
+input,select,textarea{width:100%;min-width:0;padding:13px;border-radius:10px;border:1px solid #444;background:#252525;color:white;font-size:15px;outline:none;font-family:Arial,sans-serif}
+input:focus,select:focus,textarea:focus{border-color:#ff8c00}
+.entrada input{flex:1;padding:15px;font-size:16px}
+button{border:none;border-radius:10px;padding:13px 16px;background:#ff8c00;color:white;font-weight:bold;cursor:pointer;font-size:14px}
+button:hover{background:#e87900}
+button:disabled{opacity:.5;cursor:not-allowed}
+.controles{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.controles button{flex:1;min-width:125px}
+.secundario{background:#333}
+.secundario:hover{background:#484848}
+.activo{background:#b83232}
+.reservar-boton{width:100%;padding:16px;font-size:16px;background:#b85c00;border:1px solid #ff8c00}
+.reservar-boton:hover{background:#d96d00}
+.reserva-panel{display:none;background:#1c1c1c;border:1px solid #444;border-radius:15px;padding:18px;gap:13px}
+.reserva-panel.visible{display:flex;flex-direction:column}
+.reserva-panel h2{color:#ff8c00;text-align:center;margin:0 0 5px;font-size:23px}
+.reserva-panel p{color:#ccc;font-size:13px;line-height:1.5;margin:0;text-align:center}
+.campo{display:flex;flex-direction:column;gap:6px}
+.campo label{color:#ffad42;font-size:13px;font-weight:bold}
+textarea{resize:vertical;min-height:75px}
+.aviso-reserva{padding:11px;background:#292929;border-radius:9px;color:#ccc;font-size:12px;line-height:1.5}
+.resultado-reserva{display:none;padding:13px;border-radius:10px;font-size:14px;line-height:1.5;white-space:pre-wrap}
+.resultado-reserva.exito{display:block;background:#173522;border:1px solid #32854b;color:#a8f0bd}
+.resultado-reserva.error{display:block;background:#401d1d;border:1px solid #a33;color:#ffbaba}
+.acciones-reserva{display:flex;gap:9px}
+.acciones-reserva button{flex:1}
+.boton-cerrar{background:#333}
+footer{text-align:center;color:#777;font-size:12px;padding:10px}
+.puente-oculto{position:fixed;width:1px;height:1px;left:-10000px;top:-10000px;border:0;visibility:hidden}
+@media(max-width:600px){
+.app{padding:12px}
+.avatar-container{height:270px}
+header h1{font-size:27px}
+.entrada{flex-wrap:wrap}
+.entrada input{flex-basis:100%}
+.entrada button{flex:1}
+.reserva-panel{padding:13px}
+}
+</style>
 </head>
 
 <body>
-
 <div class="app">
 
-  <header>
-    <h1>🐕 EL PERRO AI</h1>
-    <p>Tu asistente virtual de El Perro Caliente</p>
-  </header>
+<header>
+<h1>🐕 EL PERRO AI</h1>
+<p>Tu asistente virtual de El Perro Caliente</p>
+</header>
 
-  <div class="avatar-container">
-    <model-viewer
-      id="avatar"
-      src="https://raw.githubusercontent.com/strock2910-ship-it/el-perro-ai/main/perro-ai.glb"
-      alt="Mascota de El Perro Caliente"
-      camera-controls
-      auto-rotate
-      rotation-per-second="15deg"
-      shadow-intensity="1"
-      exposure="1">
-    </model-viewer>
-  </div>
-
-  <div class="status" id="estado">
-    Conectando con EL PERRO AI...
-  </div>
-
-  <div class="chat" id="chat">
-    <div class="mensaje perro">
-      ¡Hola! 🐕 Soy EL PERRO AI. Bienvenido a El Perro Caliente.
-      ¿Qué se te antoja hoy?
-    </div>
-  </div>
-
-  <div class="entrada">
-    <input
-      id="mensaje"
-      type="text"
-      placeholder="Escribe tu mensaje..."
-      autocomplete="off">
-
-    <button id="btnEnviar" onclick="enviarMensaje()">
-      Enviar
-    </button>
-  </div>
-
-  <div class="controles">
-    <button id="btnMicrofono" onclick="escuchar()">
-      🎤 Hablar
-    </button>
-
-    <button class="secundario" onclick="activarVoz()">
-      🔊 Activar voz
-    </button>
-
-    <button class="secundario" onclick="detenerVoz()">
-      ⏹ Detener
-    </button>
-  </div>
-
-  <!-- BOTÓN PARA ABRIR RESERVACIONES -->
-
-  <button
-    class="reservar-boton"
-    type="button"
-    onclick="mostrarReservaciones()">
-    📅 Reservar una mesa
-  </button>
-
-
-  <!-- FORMULARIO DE RESERVACIONES -->
-
-  <section
-    class="reserva-panel"
-    id="panelReservaciones">
-
-    <h2>🐕 Reserva tu mesa</h2>
-
-    <p>
-      Completa tus datos y solicita tu reservación
-      en El Perro Caliente.
-    </p>
-
-    <form id="formReservacion">
-
-      <div class="campo">
-        <label for="resNombre">Nombre completo</label>
-        <input
-          id="resNombre"
-          name="nombre"
-          type="text"
-          maxlength="100"
-          placeholder="Escribe tu nombre"
-          autocomplete="name"
-          required>
-      </div>
-
-      <div class="campo">
-        <label for="resTelefono">Teléfono</label>
-        <input
-          id="resTelefono"
-          name="telefono"
-          type="tel"
-          maxlength="20"
-          placeholder="Ej. 5544761827"
-          autocomplete="tel"
-          required>
-      </div>
-
-      <div class="campo">
-        <label for="resFecha">Fecha de reservación</label>
-        <input
-          id="resFecha"
-          name="fecha"
-          type="date"
-          required>
-      </div>
-
-      <div class="campo">
-        <label for="resHora">Hora de llegada</label>
-        <select id="resHora" name="hora" required>
-          <option value="">Selecciona una hora</option>
-          <option value="17:00">5:00 p. m.</option>
-          <option value="18:00">6:00 p. m.</option>
-          <option value="19:00">7:00 p. m.</option>
-          <option value="20:00">8:00 p. m.</option>
-          <option value="21:00">9:00 p. m.</option>
-          <option value="22:00">10:00 p. m.</option>
-          <option value="23:00">11:00 p. m.</option>
-        </select>
-      </div>
-
-      <div class="campo">
-        <label for="resPersonas">Número de personas</label>
-        <select id="resPersonas" name="personas" required>
-          <option value="">Selecciona cuántas personas</option>
-          <option value="1">1 persona</option>
-          <option value="2">2 personas</option>
-          <option value="3">3 personas</option>
-          <option value="4">4 personas</option>
-          <option value="5">5 personas</option>
-          <option value="6">6 personas</option>
-          <option value="7">7 personas</option>
-          <option value="8">8 personas</option>
-          <option value="9">9 personas</option>
-          <option value="10">10 personas</option>
-        </select>
-      </div>
-
-      <div class="campo">
-        <label for="resObservaciones">
-          Observaciones (opcional)
-        </label>
-
-        <textarea
-          id="resObservaciones"
-          name="observaciones"
-          maxlength="500"
-          placeholder="¿Alguna indicación especial?">
-        </textarea>
-      </div>
-
-      <div class="aviso-reserva">
-        <strong>Horarios de reservación:</strong><br>
-        Jueves y domingo: de 5:00 p. m. a 11:00 p. m.<br>
-        Viernes y sábado: de 5:00 p. m. a 11:00 p. m.<br><br>
-
-        Aceptamos reservaciones de jueves a domingo,
-        con al menos un día de anticipación y para
-        grupos de 1 a 10 personas.
-      </div>
-
-      <div
-        id="resultadoReservacion"
-        class="resultado-reserva">
-      </div>
-
-      <div class="acciones-reserva">
-
-        <button
-          id="btnConfirmarReserva"
-          type="submit">
-          Confirmar reservación
-        </button>
-
-        <button
-          type="button"
-          class="boton-cerrar"
-          onclick="ocultarReservaciones()">
-          Cerrar
-        </button>
-
-      </div>
-
-    </form>
-
-  </section>
-
-  <footer>
-    EL PERRO AI · El Perro Caliente Tultepec
-  </footer>
-
+<div class="avatar-container">
+<model-viewer
+id="avatar"
+src="https://raw.githubusercontent.com/strock2910-ship-it/el-perro-ai/main/perro-ai.glb"
+alt="Mascota de El Perro Caliente"
+camera-controls
+auto-rotate
+rotation-per-second="15deg"
+shadow-intensity="1"
+exposure="1">
+</model-viewer>
 </div>
 
+<div class="status" id="estado">Conectando con EL PERRO AI...</div>
 
-<!-- PUENTE OCULTO DE GOOGLE APPS SCRIPT -->
+<div class="chat" id="chat">
+<div class="mensaje perro">
+¡Hola! 🐕 Soy EL PERRO AI. Bienvenido a El Perro Caliente.
+¿Qué se te antoja hoy?
+</div>
+</div>
 
-<iframe
-  id="reservacionesBridge"
-  class="puente-oculto"
-  title="Conexión segura de reservaciones">
-</iframe>
+<div class="entrada">
+<input id="mensaje" type="text" placeholder="Escribe tu mensaje..." autocomplete="off">
+<button id="btnEnviar" onclick="enviarMensaje()">Enviar</button>
+</div>
 
+<div class="controles">
+<button id="btnMicrofono" onclick="escuchar()">🎤 Hablar</button>
+<button class="secundario" onclick="activarVoz()">🔊 Activar voz</button>
+<button class="secundario" onclick="detenerVoz()">⏹ Detener</button>
+</div>
+
+<button class="reservar-boton" type="button" onclick="mostrarReservaciones()">📅 Reservar una mesa</button>
+
+<section class="reserva-panel" id="panelReservaciones">
+<h2>🐕 Reserva tu mesa</h2>
+<p>Completa tus datos y solicita tu reservación en El Perro Caliente.</p>
+
+<form id="formReservacion">
+
+<div class="campo">
+<label for="resNombre">Nombre completo</label>
+<input id="resNombre" name="nombre" type="text" maxlength="100" placeholder="Escribe tu nombre" autocomplete="name" required>
+</div>
+
+<div class="campo">
+<label for="resTelefono">Teléfono</label>
+<input id="resTelefono" name="telefono" type="tel" maxlength="20" placeholder="Ej. 5544761827" autocomplete="tel" required>
+</div>
+
+<div class="campo">
+<label for="resFecha">Fecha de reservación</label>
+<input id="resFecha" name="fecha" type="date" required>
+</div>
+
+<div class="campo">
+<label for="resHora">Hora de llegada</label>
+<select id="resHora" name="hora" required>
+<option value="">Selecciona una hora</option>
+<option value="17:00">5:00 p. m.</option>
+<option value="18:00">6:00 p. m.</option>
+<option value="19:00">7:00 p. m.</option>
+<option value="20:00">8:00 p. m.</option>
+<option value="21:00">9:00 p. m.</option>
+<option value="22:00">10:00 p. m.</option>
+<option value="23:00">11:00 p. m.</option>
+</select>
+</div>
+
+<div class="campo">
+<label for="resPersonas">Número de personas</label>
+<select id="resPersonas" name="personas" required>
+<option value="">Selecciona cuántas personas</option>
+<option value="1">1 persona</option>
+<option value="2">2 personas</option>
+<option value="3">3 personas</option>
+<option value="4">4 personas</option>
+<option value="5">5 personas</option>
+<option value="6">6 personas</option>
+<option value="7">7 personas</option>
+<option value="8">8 personas</option>
+<option value="9">9 personas</option>
+<option value="10">10 personas</option>
+</select>
+</div>
+
+<div class="campo">
+<label for="resObservaciones">Observaciones (opcional)</label>
+<textarea id="resObservaciones" name="observaciones" maxlength="500" placeholder="¿Alguna indicación especial?"></textarea>
+</div>
+
+<div class="aviso-reserva">
+<strong>Horarios de reservación:</strong><br>
+Jueves y domingo: de 5:00 p. m. a 11:00 p. m.<br>
+Viernes y sábado: de 5:00 p. m. a 11:00 p. m.<br><br>
+Aceptamos reservaciones de jueves a domingo, con al menos un día de anticipación y para grupos de 1 a 10 personas.
+</div>
+
+<div id="resultadoReservacion" class="resultado-reserva"></div>
+
+<div class="acciones-reserva">
+<button id="btnConfirmarReserva" type="submit">Confirmar reservación</button>
+<button type="button" class="boton-cerrar" onclick="ocultarReservaciones()">Cerrar</button>
+</div>
+
+</form>
+</section>
+
+<footer>EL PERRO AI · El Perro Caliente Tultepec</footer>
+</div>
+
+<iframe id="reservacionesBridge" class="puente-oculto" title="Conexión segura de reservaciones"></iframe>
 
 <script>
-
-/* =========================================
+/* =====================================
    1. CONFIGURACIÓN
-========================================= */
+===================================== */
 
 const URL_APPS_SCRIPT =
 "https://script.google.com/macros/s/AKfycbxwBmyFNByGO9u-83mkdJlw8OVLjcOJOcUbbsweRejXPhTcLgBAfzPg2Pl86o9cUDx0Bg/exec";
@@ -556,8 +197,7 @@ const URL_APPS_SCRIPT =
 const ORIGEN_PERMITIDO =
 "https://strock2910-ship-it.github.io";
 
-const URL_PUENTE =
-URL_APPS_SCRIPT + "?bridge=1";
+const URL_PUENTE = URL_APPS_SCRIPT + "?bridge=1";
 
 let historial = [];
 let reconocimiento = null;
@@ -569,1212 +209,922 @@ let puenteListo = false;
 let reservaEnviandose = false;
 let solicitudReservaActual = null;
 let temporizadorReserva = null;
+let temporizadorInicioPuente = null;
 let resolverReservaActual = null;
 let rechazarReservaActual = null;
 
 
-/* =========================================
+/* =====================================
    2. CONEXIÓN JSONP CON GOOGLE
-========================================= */
+===================================== */
 
 function llamarGoogle(parametros) {
+return new Promise((resolve,reject)=>{
 
-  return new Promise((resolve, reject) => {
+const callback = "perroCallback_" + Date.now() + "_" + Math.floor(Math.random()*100000);
+const url = new URL(URL_APPS_SCRIPT);
 
-    const callback =
-      "perroCallback_" +
-      Date.now() +
-      "_" +
-      Math.floor(Math.random() * 100000);
+Object.keys(parametros).forEach(clave=>{
+url.searchParams.set(clave,parametros[clave]);
+});
 
-    const url = new URL(URL_APPS_SCRIPT);
+url.searchParams.set("callback",callback);
 
-    Object.keys(parametros).forEach(clave => {
-      url.searchParams.set(clave, parametros[clave]);
-    });
+const script = document.createElement("script");
+let terminado = false;
 
-    url.searchParams.set("callback", callback);
+const temporizador = setTimeout(()=>{
+finalizar();
+reject(new Error("Tiempo de espera agotado al conectar con Google."));
+},45000);
 
-    const script = document.createElement("script");
+function finalizar(){
+if(terminado)return;
+terminado=true;
+clearTimeout(temporizador);
+if(script.parentNode)script.parentNode.removeChild(script);
+delete window[callback];
+}
 
-    let terminado = false;
+window[callback]=function(resultado){
+finalizar();
+resolve(resultado);
+};
 
-    const temporizador = setTimeout(() => {
+script.onerror=function(){
+finalizar();
+reject(new Error("No se pudo conectar con Google."));
+};
 
-      finalizar();
+script.src=url.toString();
+document.body.appendChild(script);
 
-      reject(
-        new Error(
-          "Tiempo de espera agotado al conectar con Google."
-        )
-      );
-
-    }, 45000);
-
-    function finalizar() {
-
-      if (terminado) return;
-
-      terminado = true;
-
-      clearTimeout(temporizador);
-
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-
-      delete window[callback];
-
-    }
-
-    window[callback] = function(resultado) {
-
-      finalizar();
-
-      resolve(resultado);
-
-    };
-
-    script.onerror = function() {
-
-      finalizar();
-
-      reject(
-        new Error("No se pudo conectar con Google.")
-      );
-
-    };
-
-    script.src = url.toString();
-
-    document.body.appendChild(script);
-
-  });
-
+});
 }
 
 
-/* =========================================
+/* =====================================
    3. CONEXIÓN DEL CHAT
-========================================= */
+===================================== */
 
-async function conectarGoogle() {
+async function conectarGoogle(){
 
-  const estado = document.getElementById("estado");
+const estado=document.getElementById("estado");
 
-  try {
+try{
 
-    const respuesta = await llamarGoogle({
-      action: "ping"
-    });
+const respuesta=await llamarGoogle({action:"ping"});
 
-    if (respuesta && respuesta.correcto) {
+if(respuesta && respuesta.correcto){
 
-      estado.textContent =
-        "🐕 EL PERRO AI está conectado";
+estado.textContent="🐕 EL PERRO AI está conectado";
+estado.style.color="#54d67a";
 
-      estado.style.color = "#54d67a";
+}else{
 
-    } else {
+estado.textContent="No se pudo comprobar la conexión";
 
-      estado.textContent =
-        "No se pudo comprobar la conexión";
+}
 
-    }
+}catch(error){
 
-  } catch (error) {
+estado.textContent="Error de conexión con Google";
+console.error(error);
 
-    estado.textContent =
-      "Error de conexión con Google";
-
-    console.error(error);
-
-  }
+}
 
 }
 
 
-/* =========================================
+/* =====================================
    4. CHAT
-========================================= */
+===================================== */
 
-function agregarMensaje(texto, tipo) {
+function agregarMensaje(texto,tipo){
 
-  const chat = document.getElementById("chat");
+const chat=document.getElementById("chat");
+const elemento=document.createElement("div");
 
-  const elemento = document.createElement("div");
+elemento.className="mensaje "+tipo;
+elemento.textContent=texto;
 
-  elemento.className = "mensaje " + tipo;
+chat.appendChild(elemento);
+chat.scrollTop=chat.scrollHeight;
 
-  elemento.textContent = texto;
+}
 
-  chat.appendChild(elemento);
+async function enviarMensaje(){
 
-  chat.scrollTop = chat.scrollHeight;
+if(esperandoRespuesta)return;
+
+const input=document.getElementById("mensaje");
+const texto=input.value.trim();
+
+if(!texto)return;
+
+agregarMensaje(texto,"usuario");
+input.value="";
+
+esperandoRespuesta=true;
+document.getElementById("btnEnviar").disabled=true;
+document.getElementById("estado").textContent="🐕 Estoy pensando...";
+
+try{
+
+const respuesta=await llamarGoogle({
+action:"responder",
+texto:texto,
+historial:JSON.stringify(historial)
+});
+
+if(!respuesta)throw new Error("Google no devolvió una respuesta.");
+
+if(respuesta.correcto===false){
+throw new Error(respuesta.error||respuesta.mensaje||"No pude procesar tu mensaje.");
+}
+
+const contenido=typeof respuesta==="string"
+?respuesta
+:respuesta.respuesta||respuesta.texto||respuesta.mensaje||respuesta.response||respuesta.text;
+
+if(!contenido)throw new Error("La respuesta llegó vacía.");
+
+ultimaRespuesta=contenido;
+
+historial.push({role:"user",text:texto});
+historial.push({role:"model",text:contenido});
+
+if(historial.length>20)historial=historial.slice(-20);
+
+agregarMensaje(contenido,"perro");
+
+document.getElementById("estado").textContent="🐕 Aquí estoy para ayudarte";
+
+if(vozAutomatica)hablar(contenido);
+
+}catch(error){
+
+console.error(error);
+
+agregarMensaje("Disculpa, tuve un problema al responder. Inténtalo nuevamente.","perro");
+
+document.getElementById("estado").textContent="Problema de conexión";
+
+}finally{
+
+esperandoRespuesta=false;
+document.getElementById("btnEnviar").disabled=false;
+
+}
+
+}
+
+document.getElementById("mensaje").addEventListener("keydown",function(event){
+if(event.key==="Enter")enviarMensaje();
+});
+
+
+/* =====================================
+   5. NÚMEROS A PALABRAS
+===================================== */
+
+function numeroATexto(numero){
+
+numero=Number(numero);
+
+if(!Number.isFinite(numero))return String(numero);
+if(numero>999999999||numero<0)return String(numero);
+
+const unidades=[
+"cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve",
+"diez","once","doce","trece","catorce","quince","dieciséis","diecisiete",
+"dieciocho","diecinueve","veinte","veintiuno","veintidós","veintitrés",
+"veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"
+];
+
+const decenas=["","","","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa"];
+
+const centenas=["","ciento","doscientos","trescientos","cuatrocientos","quinientos","seiscientos","setecientos","ochocientos","novecientos"];
+
+function menorMil(n){
+
+if(n<30)return unidades[n];
+
+if(n<100){
+const d=Math.floor(n/10);
+const u=n%10;
+return u===0?decenas[d]:decenas[d]+" y "+unidades[u];
+}
+
+if(n===100)return "cien";
+
+const c=Math.floor(n/100);
+const resto=n%100;
+
+return centenas[c]+(resto?" "+menorMil(resto):"");
+
+}
+
+function convertir(n){
+
+if(n<1000)return menorMil(n);
+
+if(n<1000000){
+
+const miles=Math.floor(n/1000);
+const resto=n%1000;
+
+const textoMiles=miles===1?"mil":menorMil(miles)+" mil";
+
+return textoMiles+(resto?" "+menorMil(resto):"");
+
+}
+
+const millones=Math.floor(n/1000000);
+const resto=n%1000000;
+
+const textoMillones=millones===1?"un millón":convertir(millones)+" millones";
+
+return textoMillones+(resto?" "+convertir(resto):"");
+
+}
+
+if(Number.isInteger(numero))return convertir(numero);
+
+const partes=numero.toString().split(".");
+const entero=convertir(Number(partes[0]));
+const decimal=partes[1].split("").map(d=>unidades[Number(d)]).join(" ");
+
+return entero+" punto "+decimal;
 
 }
 
 
-async function enviarMensaje() {
+/* =====================================
+   6. LIMPIAR TEXTO PARA LA VOZ
+===================================== */
 
-  if (esperandoRespuesta) return;
+function limpiarTextoParaVoz(texto){
 
-  const input = document.getElementById("mensaje");
+let limpio=String(texto);
 
-  const texto = input.value.trim();
+limpio=limpio.replace(/https?:\/\/\S+/gi," ");
+limpio=limpio.replace(/\[([^\]]+)\]\([^)]+\)/g,"$1");
+limpio=limpio.replace(/[*_~`#]/g,"");
 
-  if (!texto) return;
+limpio=limpio.replace(/\$(\d+(?:\.\d+)?)/g,function(match,numero){
+return numeroATexto(numero)+" pesos";
+});
 
-  agregarMensaje(texto, "usuario");
+limpio=limpio.replace(/(\d[\d,]*(?:\.\d+)?)/g,function(numero){
+return numeroATexto(Number(numero.replace(/,/g,"")));
+});
 
-  input.value = "";
+limpio=limpio.replace(/\p{Extended_Pictographic}/gu," ");
+limpio=limpio.replace(/[|•*_#~`=<>[\]{}]/g," ");
+limpio=limpio.replace(/[ \t]+/g," ");
+limpio=limpio.replace(/\n{2,}/g,". ");
 
-  esperandoRespuesta = true;
-
-  document.getElementById("btnEnviar").disabled = true;
-
-  document.getElementById("estado").textContent =
-    "🐕 Estoy pensando...";
-
-  try {
-
-    const respuesta = await llamarGoogle({
-
-      action: "responder",
-
-      texto: texto,
-
-      historial: JSON.stringify(historial)
-
-    });
-
-    if (!respuesta) {
-
-      throw new Error(
-        "Google no devolvió una respuesta."
-      );
-
-    }
-
-    if (respuesta.correcto === false) {
-
-      throw new Error(
-        respuesta.error ||
-        respuesta.mensaje ||
-        "No pude procesar tu mensaje."
-      );
-
-    }
-
-    const contenido =
-      typeof respuesta === "string"
-        ? respuesta
-        : respuesta.respuesta ||
-          respuesta.texto ||
-          respuesta.mensaje ||
-          respuesta.response ||
-          respuesta.text;
-
-    if (!contenido) {
-
-      throw new Error(
-        "La respuesta llegó vacía."
-      );
-
-    }
-
-    ultimaRespuesta = contenido;
-
-    // El backend espera role y text/content/mensaje.
-    // Se guarda el historial en ese formato.
-
-    historial.push({
-      role: "user",
-      text: texto
-    });
-
-    historial.push({
-      role: "model",
-      text: contenido
-    });
-
-    // Evitar que el historial crezca indefinidamente.
-    if (historial.length > 20) {
-      historial = historial.slice(-20);
-    }
-
-    agregarMensaje(contenido, "perro");
-
-    document.getElementById("estado").textContent =
-      "🐕 Aquí estoy para ayudarte";
-
-    if (vozAutomatica) {
-      hablar(contenido);
-    }
-
-  } catch (error) {
-
-    console.error(error);
-
-    agregarMensaje(
-      "Disculpa, tuve un problema al responder. Inténtalo nuevamente.",
-      "perro"
-    );
-
-    document.getElementById("estado").textContent =
-      "Problema de conexión";
-
-  } finally {
-
-    esperandoRespuesta = false;
-
-    document.getElementById("btnEnviar").disabled = false;
-
-  }
+return limpio.trim();
 
 }
 
 
-document.getElementById("mensaje").addEventListener(
-  "keydown",
-  function(event) {
+/* =====================================
+   7. SELECCIÓN DE VOZ
+===================================== */
 
-    if (event.key === "Enter") {
-      enviarMensaje();
-    }
+function seleccionarVoz(){
 
-  }
+const voces=speechSynthesis.getVoices();
+
+if(!voces.length)return null;
+
+const vocesMexico=voces.filter(voz=>voz.lang.toLowerCase()==="es-mx");
+const vocesEspanol=voces.filter(voz=>voz.lang.toLowerCase().startsWith("es"));
+
+const candidatas=vocesMexico.length?vocesMexico:vocesEspanol;
+
+if(!candidatas.length)return null;
+
+const vozNeuronal=candidatas.find(voz=>/natural|neural|online|enhanced|premium/i.test(voz.name));
+
+if(vozNeuronal)return vozNeuronal;
+
+const vozMicrosoft=candidatas.find(voz=>/microsoft/i.test(voz.name));
+
+if(vozMicrosoft)return vozMicrosoft;
+
+const vozGoogle=candidatas.find(voz=>/google/i.test(voz.name));
+
+if(vozGoogle)return vozGoogle;
+
+return candidatas[0];
+
+}
+
+
+/* =====================================
+   8. HABLAR
+===================================== */
+
+function hablar(texto){
+
+if(!("speechSynthesis" in window))return;
+
+const textoLimpio=limpiarTextoParaVoz(texto);
+
+if(!textoLimpio)return;
+
+speechSynthesis.cancel();
+
+const mensaje=new SpeechSynthesisUtterance(textoLimpio);
+const voz=seleccionarVoz();
+
+mensaje.lang=voz?voz.lang:"es-MX";
+
+if(voz)mensaje.voice=voz;
+
+mensaje.rate=0.98;
+mensaje.pitch=0.98;
+mensaje.volume=1;
+
+mensaje.onstart=function(){
+document.getElementById("estado").textContent="🐕 EL PERRO AI está hablando...";
+};
+
+mensaje.onend=function(){
+document.getElementById("estado").textContent="🐕 Aquí estoy para ayudarte";
+};
+
+mensaje.onerror=function(event){
+console.error("Error de voz:",event);
+document.getElementById("estado").textContent="No se pudo reproducir la voz";
+};
+
+speechSynthesis.speak(mensaje);
+
+}
+
+function activarVoz(){
+
+vozAutomatica=true;
+
+if(ultimaRespuesta)hablar(ultimaRespuesta);
+
+document.getElementById("estado").textContent="Voz activada";
+
+}
+
+function detenerVoz(){
+
+speechSynthesis.cancel();
+
+document.getElementById("estado").textContent="Voz detenida";
+
+}
+
+
+/* =====================================
+   9. RECONOCIMIENTO DE VOZ
+===================================== */
+
+function prepararMicrofono(){
+
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+
+document.getElementById("estado").textContent="Tu navegador no admite reconocimiento de voz";
+return;
+
+}
+
+reconocimiento=new SpeechRecognition();
+
+reconocimiento.lang="es-MX";
+reconocimiento.continuous=false;
+reconocimiento.interimResults=false;
+
+reconocimiento.onstart=function(){
+
+document.getElementById("btnMicrofono").classList.add("activo");
+document.getElementById("estado").textContent="🎤 Te estoy escuchando...";
+
+};
+
+reconocimiento.onresult=function(event){
+
+document.getElementById("mensaje").value=event.results[0][0].transcript;
+
+enviarMensaje();
+
+};
+
+reconocimiento.onerror=function(event){
+
+console.error("Error de micrófono:",event.error);
+
+document.getElementById("estado").textContent="Error de voz: "+event.error;
+
+document.getElementById("btnMicrofono").classList.remove("activo");
+
+};
+
+reconocimiento.onend=function(){
+
+document.getElementById("btnMicrofono").classList.remove("activo");
+
+};
+
+}
+
+function escuchar(){
+
+if(!reconocimiento)prepararMicrofono();
+
+if(!reconocimiento)return;
+
+try{
+reconocimiento.start();
+}catch(error){
+console.error(error);
+}
+
+}
+
+
+/* =====================================
+   10. FORMULARIO
+===================================== */
+
+function mostrarReservaciones(){
+
+const panel=document.getElementById("panelReservaciones");
+
+panel.classList.add("visible");
+
+panel.scrollIntoView({behavior:"smooth",block:"start"});
+
+}
+
+function ocultarReservaciones(){
+
+document.getElementById("panelReservaciones").classList.remove("visible");
+
+}
+
+
+/* =====================================
+   11. FECHA MÍNIMA
+===================================== */
+
+function obtenerFechaLocal(diasAdicionales){
+
+const fecha=new Date();
+
+fecha.setHours(0,0,0,0);
+fecha.setDate(fecha.getDate()+diasAdicionales);
+
+const anio=fecha.getFullYear();
+const mes=String(fecha.getMonth()+1).padStart(2,"0");
+const dia=String(fecha.getDate()).padStart(2,"0");
+
+return anio+"-"+mes+"-"+dia;
+
+}
+
+function configurarFechaMinima(){
+
+document.getElementById("resFecha").min=obtenerFechaLocal(1);
+
+}
+
+
+/* =====================================
+   12. VALIDAR FECHA
+===================================== */
+
+function validarFechaCliente(fechaTexto){
+
+if(!fechaTexto)return "Selecciona una fecha.";
+
+const partes=fechaTexto.split("-").map(Number);
+
+const fecha=new Date(partes[0],partes[1]-1,partes[2]);
+
+const diaSemana=fecha.getDay();
+
+if(fechaTexto<=obtenerFechaLocal(0)){
+return "Las reservaciones deben realizarse con al menos un día de anticipación.";
+}
+
+if(![0,4,5,6].includes(diaSemana)){
+return "Solo aceptamos reservaciones de jueves a domingo.";
+}
+
+return "";
+
+}
+
+
+/* =====================================
+   13. PREPARAR PUENTE
+===================================== */
+
+function prepararPuenteReservaciones(){
+
+const iframe=document.getElementById("reservacionesBridge");
+const estado=document.getElementById("estado");
+
+puenteListo=false;
+
+iframe.src=URL_PUENTE;
+
+clearTimeout(temporizadorInicioPuente);
+
+temporizadorInicioPuente=setTimeout(function(){
+
+if(!puenteListo){
+
+console.warn("El puente no confirmó que está listo.");
+
+estado.textContent="Chat conectado; reservaciones aún conectando";
+estado.style.color="#ffad42";
+
+}
+
+},20000);
+
+}
+
+
+/* =====================================
+   14. RECIBIR MENSAJES DEL PUENTE
+===================================== */
+
+window.addEventListener("message",function(event){
+
+const iframe=document.getElementById("reservacionesBridge");
+
+if(!iframe||event.source!==iframe.contentWindow)return;
+
+let origenGoogle=false;
+
+try{
+
+const host=new URL(event.origin).hostname;
+
+origenGoogle=
+host==="script.google.com"||
+host==="google.com"||
+host.endsWith(".google.com")||
+host==="googleusercontent.com"||
+host.endsWith(".googleusercontent.com");
+
+}catch(error){
+
+return;
+
+}
+
+if(!origenGoogle)return;
+
+const mensaje=event.data;
+
+if(!mensaje||typeof mensaje!=="object")return;
+
+
+/* GOOGLE CONFIRMA QUE EL PUENTE ESTÁ LISTO */
+
+if(mensaje.tipo==="EL_PERRO_AI_BRIDGE_READY"){
+
+puenteListo=true;
+
+clearTimeout(temporizadorInicioPuente);
+
+console.log("Puente de reservaciones listo.");
+
+document.getElementById("estado").textContent="🐕 EL PERRO AI está conectado";
+document.getElementById("estado").style.color="#54d67a";
+
+return;
+
+}
+
+
+/* ERROR AL INICIAR EL PUENTE */
+
+if(mensaje.tipo==="EL_PERRO_AI_BRIDGE_ERROR"){
+
+puenteListo=false;
+
+clearTimeout(temporizadorInicioPuente);
+
+console.error("Error del puente:",mensaje.error);
+
+document.getElementById("estado").textContent="Error al iniciar reservaciones";
+document.getElementById("estado").style.color="#ff7777";
+
+return;
+
+}
+
+
+/* RESULTADO DE UNA RESERVACIÓN */
+
+if(mensaje.tipo!=="EL_PERRO_AI_RESULTADO"||!mensaje.requestId)return;
+
+if(!solicitudReservaActual||mensaje.requestId!==solicitudReservaActual)return;
+
+clearTimeout(temporizadorReserva);
+temporizadorReserva=null;
+
+const resultado=mensaje.resultado||{};
+
+reservaEnviandose=false;
+
+document.getElementById("btnConfirmarReserva").disabled=false;
+
+solicitudReservaActual=null;
+
+const resolver=resolverReservaActual;
+const rechazar=rechazarReservaActual;
+
+resolverReservaActual=null;
+rechazarReservaActual=null;
+
+if(resultado.correcto&&resultado.confirmada){
+
+mostrarResultadoReserva(
+resultado.mensaje||"¡Tu reservación quedó registrada!",
+"exito"
 );
 
+document.getElementById("formReservacion").reset();
 
-/* =========================================
-   5. NÚMEROS A PALABRAS
-========================================= */
+configurarFechaMinima();
 
-function numeroATexto(numero) {
+if(resolver)resolver(resultado);
 
-  numero = Number(numero);
+}else{
 
-  if (!Number.isFinite(numero)) {
-    return String(numero);
-  }
+const error=new Error(
+resultado.error||"No fue posible registrar la reservación."
+);
 
-  if (numero > 999999999 || numero < 0) {
-    return String(numero);
-  }
-
-  const unidades = [
-    "cero", "uno", "dos", "tres", "cuatro",
-    "cinco", "seis", "siete", "ocho", "nueve",
-    "diez", "once", "doce", "trece", "catorce",
-    "quince", "dieciséis", "diecisiete",
-    "dieciocho", "diecinueve", "veinte",
-    "veintiuno", "veintidós", "veintitrés",
-    "veinticuatro", "veinticinco", "veintiséis",
-    "veintisiete", "veintiocho", "veintinueve"
-  ];
-
-  const decenas = [
-    "", "", "", "treinta", "cuarenta",
-    "cincuenta", "sesenta", "setenta",
-    "ochenta", "noventa"
-  ];
-
-  const centenas = [
-    "", "ciento", "doscientos", "trescientos",
-    "cuatrocientos", "quinientos", "seiscientos",
-    "setecientos", "ochocientos", "novecientos"
-  ];
-
-  function menorMil(n) {
-
-    if (n < 30) return unidades[n];
-
-    if (n < 100) {
-
-      const d = Math.floor(n / 10);
-      const u = n % 10;
-
-      return u === 0
-        ? decenas[d]
-        : decenas[d] + " y " + unidades[u];
-
-    }
-
-    if (n === 100) return "cien";
-
-    const c = Math.floor(n / 100);
-    const resto = n % 100;
-
-    return centenas[c] +
-      (resto ? " " + menorMil(resto) : "");
-
-  }
-
-  function convertir(n) {
-
-    if (n < 1000) {
-      return menorMil(n);
-    }
-
-    if (n < 1000000) {
-
-      const miles = Math.floor(n / 1000);
-      const resto = n % 1000;
-
-      const textoMiles =
-        miles === 1
-          ? "mil"
-          : menorMil(miles) + " mil";
-
-      return textoMiles +
-        (resto ? " " + menorMil(resto) : "");
-
-    }
-
-    const millones = Math.floor(n / 1000000);
-    const resto = n % 1000000;
-
-    const textoMillones =
-      millones === 1
-        ? "un millón"
-        : convertir(millones) + " millones";
-
-    return textoMillones +
-      (resto ? " " + convertir(resto) : "");
-
-  }
-
-  if (Number.isInteger(numero)) {
-    return convertir(numero);
-  }
-
-  const partes = numero.toString().split(".");
-
-  const entero = convertir(Number(partes[0]));
-
-  const decimal = partes[1]
-    .split("")
-    .map(d => unidades[Number(d)])
-    .join(" ");
-
-  return entero + " punto " + decimal;
+if(rechazar)rechazar(error);
+else mostrarResultadoReserva(error.message,"error");
 
 }
-
-
-/* =========================================
-   6. LIMPIAR TEXTO PARA LA VOZ
-========================================= */
-
-function limpiarTextoParaVoz(texto) {
-
-  let limpio = String(texto);
-
-  limpio = limpio.replace(
-    /https?:\/\/\S+/gi,
-    " "
-  );
-
-  limpio = limpio.replace(
-    /\[([^\]]+)\]\([^)]+\)/g,
-    "$1"
-  );
-
-  limpio = limpio.replace(
-    /[*_~`#]/g,
-    ""
-  );
-
-  limpio = limpio.replace(
-    /\$(\d+(?:\.\d+)?)/g,
-    function(match, numero) {
-
-      return numeroATexto(numero) + " pesos";
-
-    }
-  );
-
-  limpio = limpio.replace(
-    /(\d[\d,]*(?:\.\d+)?)/g,
-    function(numero) {
-
-      return numeroATexto(
-        Number(numero.replace(/,/g, ""))
-      );
-
-    }
-  );
-
-  limpio = limpio.replace(
-    /\p{Extended_Pictographic}/gu,
-    " "
-  );
-
-  limpio = limpio.replace(
-    /[|•*_#~`=<>[\]{}]/g,
-    " "
-  );
-
-  limpio = limpio.replace(
-    /[ \t]+/g,
-    " "
-  );
-
-  limpio = limpio.replace(
-    /\n{2,}/g,
-    ". "
-  );
-
-  return limpio.trim();
-
-}
-
-
-/* =========================================
-   7. SELECCIÓN DE VOZ
-========================================= */
-
-function seleccionarVoz() {
-
-  const voces = speechSynthesis.getVoices();
-
-  if (!voces.length) return null;
-
-  const vocesMexico = voces.filter(voz =>
-    voz.lang.toLowerCase() === "es-mx"
-  );
-
-  const vocesEspanol = voces.filter(voz =>
-    voz.lang.toLowerCase().startsWith("es")
-  );
-
-  const candidatas = vocesMexico.length
-    ? vocesMexico
-    : vocesEspanol;
-
-  if (!candidatas.length) return null;
-
-  const vozNeuronal = candidatas.find(voz =>
-    /natural|neural|online|enhanced|premium/i.test(voz.name)
-  );
-
-  if (vozNeuronal) return vozNeuronal;
-
-  const vozMicrosoft = candidatas.find(voz =>
-    /microsoft/i.test(voz.name)
-  );
-
-  if (vozMicrosoft) return vozMicrosoft;
-
-  const vozGoogle = candidatas.find(voz =>
-    /google/i.test(voz.name)
-  );
-
-  if (vozGoogle) return vozGoogle;
-
-  return candidatas[0];
-
-}
-
-
-/* =========================================
-   8. HABLAR
-========================================= */
-
-function hablar(texto) {
-
-  if (!("speechSynthesis" in window)) {
-    return;
-  }
-
-  const textoLimpio =
-    limpiarTextoParaVoz(texto);
-
-  if (!textoLimpio) return;
-
-  speechSynthesis.cancel();
-
-  const mensaje =
-    new SpeechSynthesisUtterance(textoLimpio);
-
-  const voz = seleccionarVoz();
-
-  mensaje.lang = voz ? voz.lang : "es-MX";
-
-  if (voz) {
-    mensaje.voice = voz;
-  }
-
-  mensaje.rate = 0.98;
-  mensaje.pitch = 0.98;
-  mensaje.volume = 1;
-
-  mensaje.onstart = function() {
-
-    document.getElementById("estado").textContent =
-      "🐕 EL PERRO AI está hablando...";
-
-  };
-
-  mensaje.onend = function() {
-
-    document.getElementById("estado").textContent =
-      "🐕 Aquí estoy para ayudarte";
-
-  };
-
-  mensaje.onerror = function(event) {
-
-    console.error("Error de voz:", event);
-
-    document.getElementById("estado").textContent =
-      "No se pudo reproducir la voz";
-
-  };
-
-  speechSynthesis.speak(mensaje);
-
-}
-
-
-function activarVoz() {
-
-  vozAutomatica = true;
-
-  if (ultimaRespuesta) {
-    hablar(ultimaRespuesta);
-  }
-
-  document.getElementById("estado").textContent =
-    "Voz activada";
-
-}
-
-
-function detenerVoz() {
-
-  speechSynthesis.cancel();
-
-  document.getElementById("estado").textContent =
-    "Voz detenida";
-
-}
-
-
-/* =========================================
-   9. RECONOCIMIENTO DE VOZ
-========================================= */
-
-function prepararMicrofono() {
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-
-    document.getElementById("estado").textContent =
-      "Tu navegador no admite reconocimiento de voz";
-
-    return;
-
-  }
-
-  reconocimiento = new SpeechRecognition();
-
-  reconocimiento.lang = "es-MX";
-  reconocimiento.continuous = false;
-  reconocimiento.interimResults = false;
-
-  reconocimiento.onstart = function() {
-
-    document
-      .getElementById("btnMicrofono")
-      .classList.add("activo");
-
-    document.getElementById("estado").textContent =
-      "🎤 Te estoy escuchando...";
-
-  };
-
-  reconocimiento.onresult = function(event) {
-
-    const texto =
-      event.results[0][0].transcript;
-
-    document.getElementById("mensaje").value =
-      texto;
-
-    enviarMensaje();
-
-  };
-
-  reconocimiento.onerror = function(event) {
-
-    console.error(
-      "Error de micrófono:",
-      event.error
-    );
-
-    document.getElementById("estado").textContent =
-      "Error de voz: " + event.error;
-
-    document
-      .getElementById("btnMicrofono")
-      .classList.remove("activo");
-
-  };
-
-  reconocimiento.onend = function() {
-
-    document
-      .getElementById("btnMicrofono")
-      .classList.remove("activo");
-
-  };
-
-}
-
-
-function escuchar() {
-
-  if (!reconocimiento) {
-    prepararMicrofono();
-  }
-
-  if (!reconocimiento) return;
-
-  try {
-
-    reconocimiento.start();
-
-  } catch (error) {
-
-    console.error(error);
-
-  }
-
-}
-
-
-/* =========================================
-   10. FORMULARIO DE RESERVACIONES
-========================================= */
-
-function mostrarReservaciones() {
-
-  const panel =
-    document.getElementById("panelReservaciones");
-
-  panel.classList.add("visible");
-
-  panel.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-
-}
-
-
-function ocultarReservaciones() {
-
-  document
-    .getElementById("panelReservaciones")
-    .classList.remove("visible");
-
-}
-
-
-/* =========================================
-   11. FECHA MÍNIMA
-========================================= */
-
-function obtenerFechaLocal(diasAdicionales) {
-
-  const fecha = new Date();
-
-  fecha.setHours(0, 0, 0, 0);
-
-  fecha.setDate(
-    fecha.getDate() + diasAdicionales
-  );
-
-  const anio = fecha.getFullYear();
-
-  const mes = String(
-    fecha.getMonth() + 1
-  ).padStart(2, "0");
-
-  const dia = String(
-    fecha.getDate()
-  ).padStart(2, "0");
-
-  return anio + "-" + mes + "-" + dia;
-
-}
-
-
-function configurarFechaMinima() {
-
-  document.getElementById("resFecha").min =
-    obtenerFechaLocal(1);
-
-}
-
-
-/* =========================================
-   12. VALIDAR DÍA DE RESERVACIÓN
-========================================= */
-
-function validarFechaCliente(fechaTexto) {
-
-  if (!fechaTexto) {
-    return "Selecciona una fecha.";
-  }
-
-  const partes = fechaTexto.split("-").map(Number);
-
-  const fecha = new Date(
-    partes[0],
-    partes[1] - 1,
-    partes[2]
-  );
-
-  const diaSemana = fecha.getDay();
-
-  if (fechaTexto <= obtenerFechaLocal(0)) {
-
-    return "Las reservaciones deben realizarse con al menos un día de anticipación.";
-
-  }
-
-  if (![0, 4, 5, 6].includes(diaSemana)) {
-
-    return "Solo aceptamos reservaciones de jueves a domingo.";
-
-  }
-
-  return "";
-
-}
-
-
-/* =========================================
-   13. PREPARAR EL PUENTE
-========================================= */
-
-function prepararPuenteReservaciones() {
-
-  const iframe =
-    document.getElementById("reservacionesBridge");
-
-  iframe.addEventListener("load", function() {
-
-    puenteListo = true;
-
-    console.log(
-      "Puente de reservaciones cargado."
-    );
-
-  });
-
-  iframe.src = URL_PUENTE;
-
-}
-
-
-/* =========================================
-   14. ESCUCHAR RESPUESTAS DEL PUENTE
-========================================= */
-
-window.addEventListener("message", function(event) {
-
-  const iframe = document.getElementById("reservacionesBridge");
-
-  // La identidad de la ventana emisora es la comprobación principal.
-  if (!iframe || event.source !== iframe.contentWindow) return;
-
-  // El iframe de Apps Script puede responder desde distintos
-  // subdominios oficiales de Google.
-  let origenGoogle = false;
-
-  try {
-    const host = new URL(event.origin).hostname;
-    origenGoogle =
-      host === "script.google.com" ||
-      host === "google.com" ||
-      host.endsWith(".google.com") ||
-      host === "googleusercontent.com" ||
-      host.endsWith(".googleusercontent.com");
-  } catch (error) {
-    return;
-  }
-
-  if (!origenGoogle) return;
-
-  const mensaje = event.data;
-
-  if (
-    !mensaje ||
-    mensaje.tipo !== "EL_PERRO_AI_RESULTADO" ||
-    !mensaje.requestId
-  ) return;
-
-  if (
-    !solicitudReservaActual ||
-    mensaje.requestId !== solicitudReservaActual
-  ) return;
-
-  clearTimeout(temporizadorReserva);
-  temporizadorReserva = null;
-
-  const resultado = mensaje.resultado || {};
-
-  reservaEnviandose = false;
-
-  const boton = document.getElementById("btnConfirmarReserva");
-  if (boton) boton.disabled = false;
-
-  solicitudReservaActual = null;
-
-  const resolver = resolverReservaActual;
-  const rechazar = rechazarReservaActual;
-  resolverReservaActual = null;
-  rechazarReservaActual = null;
-
-  if (resultado.correcto && resultado.confirmada) {
-
-    mostrarResultadoReserva(
-      resultado.mensaje || "¡Tu reservación quedó registrada!",
-      "exito"
-    );
-
-    document.getElementById("formReservacion").reset();
-    configurarFechaMinima();
-
-    if (resolver) resolver(resultado);
-
-  } else {
-
-    const error = new Error(
-      resultado.error ||
-      "No fue posible registrar la reservación."
-    );
-
-    if (rechazar) {
-      rechazar(error);
-    } else {
-      mostrarResultadoReserva(error.message, "error");
-    }
-
-  }
 
 });
 
 
-/* =========================================
+/* =====================================
    15. MOSTRAR RESULTADO
-========================================= */
+===================================== */
 
-function mostrarResultadoReserva(texto, tipo) {
+function mostrarResultadoReserva(texto,tipo){
 
-  const resultado = document.getElementById(
-    "resultadoReservacion"
-  );
+const resultado=document.getElementById("resultadoReservacion");
 
-  resultado.textContent = texto;
+resultado.textContent=texto;
+resultado.className="resultado-reserva "+tipo;
 
-  resultado.className =
-    "resultado-reserva " + tipo;
-
-  resultado.scrollIntoView({
-    behavior: "smooth",
-    block: "nearest"
-  });
+resultado.scrollIntoView({behavior:"smooth",block:"nearest"});
 
 }
 
 
-/* =========================================
-   16. ENVIAR RESERVACIÓN AL PUENTE
-========================================= */
+/* =====================================
+   16. ENVIAR RESERVACIÓN
+===================================== */
 
-function enviarAlPuente(datos) {
+function enviarAlPuente(datos){
 
-  return new Promise((resolve, reject) => {
+return new Promise((resolve,reject)=>{
 
-    const iframe = document.getElementById("reservacionesBridge");
+const iframe=document.getElementById("reservacionesBridge");
 
-    if (!puenteListo || !iframe || !iframe.contentWindow) {
-      reject(new Error(
-        "La conexión de reservaciones todavía está iniciando. Espera unos segundos e inténtalo nuevamente."
-      ));
-      return;
-    }
+if(!puenteListo||!iframe||!iframe.contentWindow){
 
-    const requestId =
-      "reserva_" + Date.now() + "_" +
-      Math.floor(Math.random() * 100000);
+reject(new Error(
+"La conexión de reservaciones todavía no está lista. Espera a que EL PERRO AI confirme la conexión."
+));
 
-    solicitudReservaActual = requestId;
-    resolverReservaActual = resolve;
-    rechazarReservaActual = reject;
+return;
 
-    temporizadorReserva = setTimeout(() => {
+}
 
-      solicitudReservaActual = null;
-      resolverReservaActual = null;
-      rechazarReservaActual = null;
-      temporizadorReserva = null;
+const requestId="reserva_"+Date.now()+"_"+Math.floor(Math.random()*100000);
 
-      reject(new Error(
-        "No recibimos respuesta de Google. Antes de volver a enviar la solicitud, verifica si quedó registrada."
-      ));
+solicitudReservaActual=requestId;
+resolverReservaActual=resolve;
+rechazarReservaActual=reject;
 
-    }, 45000);
+temporizadorReserva=setTimeout(function(){
 
-    try {
-      iframe.contentWindow.postMessage({
-        tipo: "EL_PERRO_AI_RESERVAR",
-        requestId: requestId,
-        datos: datos
-      }, "*");
+solicitudReservaActual=null;
+resolverReservaActual=null;
+rechazarReservaActual=null;
+temporizadorReserva=null;
 
-    } catch (error) {
-      clearTimeout(temporizadorReserva);
-      temporizadorReserva = null;
-      solicitudReservaActual = null;
-      resolverReservaActual = null;
-      rechazarReservaActual = null;
-      reject(error);
-    }
+reject(new Error(
+"No recibimos respuesta de Google. No vuelvas a enviar todavía: primero verifica si la reservación aparece en Google Sheets."
+));
 
-  });
+},45000);
+
+try{
+
+iframe.contentWindow.postMessage({
+
+tipo:"EL_PERRO_AI_RESERVAR",
+requestId:requestId,
+datos:datos
+
+},ORIGEN_PERMITIDO);
+
+}catch(error){
+
+clearTimeout(temporizadorReserva);
+
+temporizadorReserva=null;
+solicitudReservaActual=null;
+resolverReservaActual=null;
+rechazarReservaActual=null;
+
+reject(error);
+
+}
+
+});
 
 }
 
 
-/* =========================================
+/* =====================================
    17. PROCESAR FORMULARIO
-========================================= */
+===================================== */
 
-document.getElementById(
-  "formReservacion"
-).addEventListener("submit", async function(event) {
+document.getElementById("formReservacion").addEventListener("submit",async function(event){
 
-  event.preventDefault();
+event.preventDefault();
 
-  if (reservaEnviandose) return;
+if(reservaEnviandose)return;
 
-  const nombre =
-    document.getElementById("resNombre").value.trim();
+const nombre=document.getElementById("resNombre").value.trim();
+const telefono=document.getElementById("resTelefono").value.trim();
+const fecha=document.getElementById("resFecha").value;
+const hora=document.getElementById("resHora").value;
+const personas=Number(document.getElementById("resPersonas").value);
+const observaciones=document.getElementById("resObservaciones").value.trim();
 
-  const telefono =
-    document.getElementById("resTelefono").value.trim();
+if(!nombre||!telefono||!fecha||!hora){
 
-  const fecha =
-    document.getElementById("resFecha").value;
+mostrarResultadoReserva("Completa todos los campos obligatorios.","error");
+return;
 
-  const hora =
-    document.getElementById("resHora").value;
+}
 
-  const personas =
-    Number(document.getElementById("resPersonas").value);
+if(!/^[0-9+\-\s()]{7,20}$/.test(telefono)){
 
-  const observaciones =
-    document.getElementById("resObservaciones").value.trim();
+mostrarResultadoReserva("Escribe un número telefónico válido.","error");
+return;
 
-  // Validaciones antes de enviar.
+}
 
-  if (!nombre || !telefono || !fecha || !hora) {
+if(nombre.length>100){
 
-    mostrarResultadoReserva(
-      "Completa todos los campos obligatorios.",
-      "error"
-    );
+mostrarResultadoReserva("El nombre es demasiado largo.","error");
+return;
 
-    return;
+}
 
-  }
+const errorFecha=validarFechaCliente(fecha);
 
-  if (!/^[0-9+\-\s()]{7,20}$/.test(telefono)) {
+if(errorFecha){
 
-    mostrarResultadoReserva(
-      "Escribe un número telefónico válido.",
-      "error"
-    );
+mostrarResultadoReserva(errorFecha,"error");
+return;
 
-    return;
+}
 
-  }
+if(!Number.isInteger(personas)||personas<1||personas>10){
 
-  if (nombre.length > 100) {
+mostrarResultadoReserva("La reservación debe ser de 1 a 10 personas.","error");
+return;
 
-    mostrarResultadoReserva(
-      "El nombre es demasiado largo.",
-      "error"
-    );
+}
 
-    return;
+if(!/^\d{2}:\d{2}$/.test(hora)){
 
-  }
+mostrarResultadoReserva("Selecciona un horario válido.","error");
+return;
 
-  const errorFecha = validarFechaCliente(fecha);
+}
 
-  if (errorFecha) {
+if(hora<"17:00"||hora>"23:00"){
 
-    mostrarResultadoReserva(
-      errorFecha,
-      "error"
-    );
+mostrarResultadoReserva("El horario permitido es de 5:00 p. m. a 11:00 p. m.","error");
+return;
 
-    return;
+}
 
-  }
+if(observaciones.length>500){
 
-  if (!Number.isInteger(personas) || personas < 1 || personas > 10) {
+mostrarResultadoReserva("Las observaciones no pueden superar los 500 caracteres.","error");
+return;
 
-    mostrarResultadoReserva(
-      "La reservación debe ser de 1 a 10 personas.",
-      "error"
-    );
+}
 
-    return;
 
-  }
+/* NO ENVIAR SI EL PUENTE NO ESTÁ LISTO */
 
-  if (!/^\d{2}:\d{2}$/.test(hora)) {
+if(!puenteListo){
 
-    mostrarResultadoReserva(
-      "Selecciona un horario válido.",
-      "error"
-    );
+mostrarResultadoReserva(
+"La conexión de reservaciones todavía está iniciando. Espera unos segundos y vuelve a intentarlo.",
+"error"
+);
 
-    return;
+return;
 
-  }
+}
 
-  if (hora < "17:00" || hora > "23:00") {
+const datos={
+nombre:nombre,
+telefono:telefono,
+fecha:fecha,
+hora:hora,
+personas:personas,
+observaciones:observaciones
+};
 
-    mostrarResultadoReserva(
-      "El horario permitido es de 5:00 p. m. a 11:00 p. m.",
-      "error"
-    );
+reservaEnviandose=true;
 
-    return;
+document.getElementById("btnConfirmarReserva").disabled=true;
 
-  }
+mostrarResultadoReserva(
+"🐕 Estamos procesando tu reservación. Espera un momento...",
+"exito"
+);
 
-  if (observaciones.length > 500) {
+try{
 
-    mostrarResultadoReserva(
-      "Las observaciones no pueden superar los 500 caracteres.",
-      "error"
-    );
+const resultado=await enviarAlPuente(datos);
 
-    return;
+if(resultado&&resultado.correcto&&resultado.confirmada){
 
-  }
+mostrarResultadoReserva(
+resultado.mensaje||"¡Tu reservación quedó confirmada!",
+"exito"
+);
 
-  const datos = {
+}
 
-    nombre: nombre,
+}catch(error){
 
-    telefono: telefono,
+console.error("Error de reservación:",error);
 
-    fecha: fecha,
+reservaEnviandose=false;
 
-    hora: hora,
+document.getElementById("btnConfirmarReserva").disabled=false;
 
-    personas: personas,
+mostrarResultadoReserva(
+error.message||"No fue posible enviar tu reservación.",
+"error"
+);
 
-    observaciones: observaciones
-
-  };
-
-  reservaEnviandose = true;
-
-  document.getElementById(
-    "btnConfirmarReserva"
-  ).disabled = true;
-
-  mostrarResultadoReserva(
-    "🐕 Estamos procesando tu reservación. Espera un momento...",
-    "exito"
-  );
-
-  try {
-
-    const resultado = await enviarAlPuente(datos);
-
-    // La respuesta real se recibe por postMessage.
-    // Esta línea es una protección adicional.
-    if (
-      resultado &&
-      resultado.correcto &&
-      resultado.confirmada
-    ) {
-
-      mostrarResultadoReserva(
-        resultado.mensaje ||
-        "¡Tu reservación quedó confirmada!",
-        "exito"
-      );
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Error de reservación:",
-      error
-    );
-
-    reservaEnviandose = false;
-
-    document.getElementById(
-      "btnConfirmarReserva"
-    ).disabled = false;
-
-    mostrarResultadoReserva(
-      error.message ||
-      "No fue posible enviar tu reservación.",
-      "error"
-    );
-
-  }
+}
 
 });
 
 
-/* =========================================
+/* =====================================
    18. INICIAR EL ASISTENTE
-========================================= */
+===================================== */
 
-window.addEventListener("load", function() {
+window.addEventListener("load",function(){
 
-  prepararMicrofono();
+prepararMicrofono();
+conectarGoogle();
+configurarFechaMinima();
+prepararPuenteReservaciones();
 
-  conectarGoogle();
+if("speechSynthesis" in window){
 
-  configurarFechaMinima();
+speechSynthesis.getVoices();
 
-  prepararPuenteReservaciones();
+speechSynthesis.onvoiceschanged=function(){
+seleccionarVoz();
+};
 
-  if ("speechSynthesis" in window) {
-
-    speechSynthesis.getVoices();
-
-    speechSynthesis.onvoiceschanged = function() {
-      seleccionarVoz();
-    };
-
-  }
+}
 
 });
 
 </script>
-
 </body>
 </html>
