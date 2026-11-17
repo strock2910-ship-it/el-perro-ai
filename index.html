@@ -206,6 +206,7 @@ let reservaEnviandose = false;
 let solicitudReservaActual = null;
 let temporizadorReserva = null;
 let temporizadorInicioPuente = null;
+let intervaloPingPuente = null;
 let resolverReservaActual = null;
 let rechazarReservaActual = null;
 
@@ -576,18 +577,49 @@ function prepararPuenteReservaciones() {
   const estado = document.getElementById("estado");
 
   puenteListo = false;
-  estado.textContent = "Chat conectado; comprobando reservaciones...";
-  iframe.src = URL_PUENTE;
 
   clearTimeout(temporizadorInicioPuente);
+  clearInterval(intervaloPingPuente);
+
+  estado.textContent = "Chat conectado; comprobando reservaciones...";
+  estado.style.color = "#ffad42";
+
+  iframe.src = URL_PUENTE;
+
+  // Preguntar repetidamente si el puente ya está listo.
+  intervaloPingPuente = setInterval(function() {
+
+    if (puenteListo) {
+      clearInterval(intervaloPingPuente);
+      intervaloPingPuente = null;
+      return;
+    }
+
+    try {
+      iframe.contentWindow.postMessage({
+        tipo: "EL_PERRO_AI_BRIDGE_PING"
+      }, "*");
+    } catch(error) {
+      console.warn("Esperando conexión del puente:", error);
+    }
+
+  }, 1000);
 
   temporizadorInicioPuente = setTimeout(function() {
+
     if (!puenteListo) {
+      clearInterval(intervaloPingPuente);
+      intervaloPingPuente = null;
+
       console.warn("El puente no confirmó que está listo.");
-      estado.textContent = "Chat conectado; reservaciones aún conectando";
+
+      estado.textContent =
+        "Chat conectado; reservaciones aún conectando";
+
       estado.style.color = "#ffad42";
     }
-  }, 20000);
+
+  }, 30000);
 }
 
 window.addEventListener("message", function(event) {
@@ -601,6 +633,8 @@ window.addEventListener("message", function(event) {
   if (mensaje.tipo === "EL_PERRO_AI_BRIDGE_READY") {
     puenteListo = true;
     clearTimeout(temporizadorInicioPuente);
+    clearInterval(intervaloPingPuente);
+    intervaloPingPuente = null;
 
     console.log("Puente de reservaciones listo. Origen:", event.origin);
 
@@ -612,6 +646,8 @@ window.addEventListener("message", function(event) {
   if (mensaje.tipo === "EL_PERRO_AI_BRIDGE_ERROR") {
     puenteListo = false;
     clearTimeout(temporizadorInicioPuente);
+    clearInterval(intervaloPingPuente);
+    intervaloPingPuente = null;
 
     console.error("Error del puente:", mensaje.error);
 
