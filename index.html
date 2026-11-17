@@ -1091,7 +1091,17 @@ window.addEventListener("message",function(event) {
 
   if(mensaje.tipo==="EL_PERRO_ADMIN_BRIDGE_READY") {
     const iframe=document.getElementById("adminBridge");
-    if(event.source!==iframe.contentWindow)return;
+    if(mensaje.tipo==="EL_PERRO_ADMIN_BRIDGE_READY") {
+  const iframe=document.getElementById("adminBridge");
+
+  adminBridgeVentana=event.source;
+  adminBridgeListo=true;
+
+  document.getElementById("adminEstado").textContent="Sistema administrativo conectado.";
+
+  console.log("ADMIN: puente conectado.");
+  return;
+}
     adminBridgeVentana=event.source;
     adminBridgeListo=true;
     document.getElementById("adminEstado").textContent="Sistema administrativo conectado.";
