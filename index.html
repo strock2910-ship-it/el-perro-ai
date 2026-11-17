@@ -1043,14 +1043,22 @@ function limpiarMensajeAdmin() {
   elemento.textContent="";
   elemento.className="admin-mensaje";
 }
-
 function origenAdminPermitido(origen) {
   try {
-    const url=new URL(origen);
-    return url.hostname==="script.google.com"||url.hostname.endsWith(".googleusercontent.com");
-  } catch(error){return false}
-}
+    const url = new URL(origen);
 
+    return (
+      url.protocol === "https:" &&
+      (
+        url.hostname === "script.google.com" ||
+        url.hostname === "script.googleusercontent.com" ||
+        url.hostname.endsWith(".googleusercontent.com")
+      )
+    );
+  } catch (error) {
+    return false;
+  }
+}
 function enviarMensajeAdmin(tipo,datos) {
   return new Promise((resolve,reject)=>{
     if(!adminBridgeListo||!adminBridgeVentana) {
