@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -570,6 +569,8 @@ let puenteListo = false;
 let reservaEnviandose = false;
 let solicitudReservaActual = null;
 let temporizadorReserva = null;
+let resolverReservaActual = null;
+let rechazarReservaActual = null;
 
 
 /* =========================================
@@ -1389,18 +1390,28 @@ function prepararPuenteReservaciones() {
 
 window.addEventListener("message", function(event) {
 
-  const iframe =
-    document.getElementById("reservacionesBridge");
+  const iframe = document.getElementById("reservacionesBridge");
 
-  // Aceptar solamente mensajes del iframe esperado.
-  if (!iframe || event.source !== iframe.contentWindow) {
+  // La identidad de la ventana emisora es la comprobación principal.
+  if (!iframe || event.source !== iframe.contentWindow) return;
+
+  // El iframe de Apps Script puede responder desde distintos
+  // subdominios oficiales de Google.
+  let origenGoogle = false;
+
+  try {
+    const host = new URL(event.origin).hostname;
+    origenGoogle =
+      host === "script.google.com" ||
+      host === "google.com" ||
+      host.endsWith(".google.com") ||
+      host === "googleusercontent.com" ||
+      host.endsWith(".googleusercontent.com");
+  } catch (error) {
     return;
   }
 
-  // Verificar el origen de la página principal.
-  if (event.origin !== ORIGEN_PERMITIDO) {
-    return;
-  }
+  if (!origenGoogle) return;
 
   const mensaje = event.data;
 
@@ -1408,57 +1419,56 @@ window.addEventListener("message", function(event) {
     !mensaje ||
     mensaje.tipo !== "EL_PERRO_AI_RESULTADO" ||
     !mensaje.requestId
-  ) {
-    return;
-  }
+  ) return;
 
   if (
     !solicitudReservaActual ||
     mensaje.requestId !== solicitudReservaActual
-  ) {
-    return;
-  }
+  ) return;
 
   clearTimeout(temporizadorReserva);
-
   temporizadorReserva = null;
 
   const resultado = mensaje.resultado || {};
 
   reservaEnviandose = false;
 
-  document.getElementById(
-    "btnConfirmarReserva"
-  ).disabled = false;
+  const boton = document.getElementById("btnConfirmarReserva");
+  if (boton) boton.disabled = false;
 
-  if (
-    resultado.correcto &&
-    resultado.confirmada
-  ) {
+  solicitudReservaActual = null;
+
+  const resolver = resolverReservaActual;
+  const rechazar = rechazarReservaActual;
+  resolverReservaActual = null;
+  rechazarReservaActual = null;
+
+  if (resultado.correcto && resultado.confirmada) {
 
     mostrarResultadoReserva(
-      resultado.mensaje ||
-      "¡Tu reservación quedó confirmada!",
+      resultado.mensaje || "¡Tu reservación quedó registrada!",
       "exito"
     );
 
-    document.getElementById(
-      "formReservacion"
-    ).reset();
-
+    document.getElementById("formReservacion").reset();
     configurarFechaMinima();
+
+    if (resolver) resolver(resultado);
 
   } else {
 
-    mostrarResultadoReserva(
+    const error = new Error(
       resultado.error ||
-      "No fue posible confirmar tu reservación. Inténtalo nuevamente.",
-      "error"
+      "No fue posible registrar la reservación."
     );
 
-  }
+    if (rechazar) {
+      rechazar(error);
+    } else {
+      mostrarResultadoReserva(error.message, "error");
+    }
 
-  solicitudReservaActual = null;
+  }
 
 });
 
@@ -1494,63 +1504,50 @@ function enviarAlPuente(datos) {
 
   return new Promise((resolve, reject) => {
 
-    const iframe =
-      document.getElementById("reservacionesBridge");
+    const iframe = document.getElementById("reservacionesBridge");
 
-    if (!puenteListo || !iframe.contentWindow) {
-
-      reject(
-        new Error(
-          "La conexión de reservaciones todavía está iniciando. Espera unos segundos e inténtalo nuevamente."
-        )
-      );
-
+    if (!puenteListo || !iframe || !iframe.contentWindow) {
+      reject(new Error(
+        "La conexión de reservaciones todavía está iniciando. Espera unos segundos e inténtalo nuevamente."
+      ));
       return;
-
     }
 
     const requestId =
-      "reserva_" +
-      Date.now() +
-      "_" +
+      "reserva_" + Date.now() + "_" +
       Math.floor(Math.random() * 100000);
 
     solicitudReservaActual = requestId;
+    resolverReservaActual = resolve;
+    rechazarReservaActual = reject;
 
     temporizadorReserva = setTimeout(() => {
 
       solicitudReservaActual = null;
+      resolverReservaActual = null;
+      rechazarReservaActual = null;
+      temporizadorReserva = null;
 
-      reject(
-        new Error(
-          "No recibimos respuesta de Google. Verifica la conexión antes de volver a enviar la solicitud."
-        )
-      );
+      reject(new Error(
+        "No recibimos respuesta de Google. Antes de volver a enviar la solicitud, verifica si quedó registrada."
+      ));
 
     }, 45000);
 
     try {
-
       iframe.contentWindow.postMessage({
-
         tipo: "EL_PERRO_AI_RESERVAR",
-
         requestId: requestId,
-
         datos: datos
-
       }, "*");
 
     } catch (error) {
-
       clearTimeout(temporizadorReserva);
-
       temporizadorReserva = null;
-
       solicitudReservaActual = null;
-
+      resolverReservaActual = null;
+      rechazarReservaActual = null;
       reject(error);
-
     }
 
   });
