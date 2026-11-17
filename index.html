@@ -6,638 +6,172 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#090909">
 <title>EL PERRO AI | El Perro Caliente</title>
-
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <style>
 :root {
   --naranja:#ff8c00;
-  --naranja-claro:#ffb347;
+  --claro:#ffb347;
   --fondo:#090909;
-  --panel:#151515;
-  --borde:rgba(255,140,0,.3);
+  --panel:#171717;
+  --borde:rgba(255,140,0,.35);
   --texto:#fff;
   --secundario:#aaa;
 }
-
-* {box-sizing:border-box}
-
-body {
-  margin:0;
-  min-height:100vh;
-  background:
-    radial-gradient(ellipse at 15% 20%,rgba(255,115,0,.12),transparent 35%),
-    radial-gradient(ellipse at 90% 80%,rgba(255,140,0,.07),transparent 35%),
-    var(--fondo);
-  color:var(--texto);
-  font-family:Arial,sans-serif;
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:var(--texto);
+  background:radial-gradient(ellipse at 15% 20%,rgba(255,115,0,.12),transparent 35%),
+  radial-gradient(ellipse at 90% 80%,rgba(255,140,0,.07),transparent 35%),var(--fondo);
+  font-family:Arial,sans-serif
 }
-
-button,input,select,textarea {font-family:inherit}
-
-.app {
-  width:100%;
-  max-width:1450px;
-  min-height:100vh;
-  margin:auto;
-  padding:24px 32px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-}
-
-header {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:8px 5px 16px;
-  border-bottom:1px solid rgba(255,140,0,.2);
-}
-
-.marca h1 {
-  margin:0;
-  color:var(--naranja);
-  font-size:30px;
-  font-weight:900;
-  letter-spacing:3px;
-  text-shadow:0 0 15px rgba(255,140,0,.35);
-}
-
-.marca p {
-  margin:7px 0 0;
-  color:#aaa;
-  font-size:13px;
-}
-
-.etiqueta {
-  color:var(--naranja-claro);
-  background:rgba(255,140,0,.08);
-  border:1px solid var(--borde);
-  border-radius:30px;
-  padding:9px 15px;
-  font-size:12px;
-}
-
-.workspace {
-  display:grid;
-  grid-template-columns:minmax(320px,.88fr) minmax(0,1.12fr);
-  gap:22px;
-  min-height:540px;
-}
-
-.avatar-panel {
-  display:flex;
-  flex-direction:column;
-  gap:13px;
-  min-width:0;
-}
-
-.avatar-container {
-  position:relative;
-  flex:1;
-  min-height:470px;
-  background:
-    radial-gradient(ellipse at center,rgba(255,125,0,.2),transparent 58%),
-    linear-gradient(145deg,#242424,#101010);
-  border:1px solid rgba(255,140,0,.42);
-  border-radius:25px;
-  overflow:hidden;
-  box-shadow:0 0 28px rgba(255,115,0,.1),inset 0 0 40px rgba(255,140,0,.06);
-}
-
-.avatar-container::before {
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:1;
-  border-radius:inherit;
-  box-shadow:inset 0 0 55px rgba(255,140,0,.12);
-}
-
-.avatar-container::after {
-  content:"EL PERRO AI";
-  position:absolute;
-  bottom:18px;
-  left:0;
-  right:0;
-  text-align:center;
-  color:rgba(255,179,71,.55);
-  font-size:12px;
-  font-weight:bold;
-  letter-spacing:5px;
-  pointer-events:none;
-}
-
-model-viewer {
-  width:100%;
-  height:100%;
-  background:transparent;
-  --poster-color:transparent;
-}
-
-.status {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:42px;
-  padding:10px 15px;
-  background:#171717;
-  border:1px solid #333;
-  border-radius:12px;
-  color:#65e68a;
-  font-size:13px;
-  text-align:center;
-}
-
-.conversacion-panel {
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-  min-height:540px;
-  padding:20px;
-  background:linear-gradient(145deg,#191919,#101010);
-  border:1px solid #383838;
-  border-radius:25px;
-  box-shadow:0 10px 35px rgba(0,0,0,.25);
-}
-
-.bienvenida {
-  display:flex;
-  align-items:center;
-  gap:13px;
-  padding:4px 2px 17px;
-  border-bottom:1px solid #333;
-}
-
-.icono-bienvenida {
-  width:48px;
-  height:48px;
-  flex-shrink:0;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(145deg,#ff9b16,#a94e00);
-  border-radius:15px;
-  font-size:25px;
-}
-
-.bienvenida h2 {
-  margin:0;
-  font-size:19px;
-}
-
-.bienvenida p {
-  margin:5px 0 0;
-  color:#999;
-  font-size:12px;
-}
-
-.chat {
-  flex:1;
-  min-height:350px;
-  max-height:470px;
-  overflow-y:auto;
-  padding:18px 5px;
-  scroll-behavior:smooth;
-}
-
-.chat::-webkit-scrollbar {width:6px}
-.chat::-webkit-scrollbar-thumb {
-  background:#694016;
-  border-radius:10px;
-}
-
-.mensaje {
-  max-width:88%;
-  padding:14px 17px;
-  margin:11px 0;
-  border-radius:16px;
-  line-height:1.55;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font-size:14px;
-}
-
-.usuario {
-  margin-left:auto;
-  background:linear-gradient(135deg,#e87800,#a84b00);
-  border-bottom-right-radius:4px;
-}
-
-.perro {
-  margin-right:auto;
-  background:linear-gradient(145deg,#333,#252525);
-  border:1px solid #414141;
-  border-bottom-left-radius:4px;
-}
-
-.composer-panel {
-  padding:17px;
-  background:linear-gradient(145deg,#1d1d1d,#111);
-  border:1px solid var(--borde);
-  border-radius:20px;
-}
-
-.composer-titulo {
-  margin:0 0 11px 3px;
-  color:#aaa;
-  font-size:12px;
-  letter-spacing:.7px;
-  text-transform:uppercase;
-}
-
-.entrada {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:6px;
-  background:#101010;
-  border:1px solid #454545;
-  border-radius:15px;
-}
-
-input,select,textarea {
-  width:100%;
-  min-width:0;
-  padding:14px;
-  border-radius:10px;
-  border:1px solid #414141;
-  background:#242424;
-  color:white;
-  font-size:15px;
-  outline:none;
-}
-
-input:focus,select:focus,textarea:focus {
-  border-color:var(--naranja);
-  box-shadow:0 0 8px rgba(255,140,0,.15);
-}
-
-.entrada input {
-  flex:1;
-  padding:13px;
-  background:transparent;
-  border:none;
-  box-shadow:none;
-}
-
-button {
-  border:1px solid transparent;
-  border-radius:11px;
-  padding:13px 17px;
+button,input,select,textarea{font-family:inherit}
+button{
+  border:1px solid transparent;border-radius:11px;padding:13px 17px;
   background:linear-gradient(135deg,#ff9b16,#e56d00);
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  font-size:14px;
-  transition:.2s ease;
+  color:white;font-weight:bold;cursor:pointer;font-size:14px;transition:.2s
 }
-
-button:hover {
-  filter:brightness(1.12);
-  transform:translateY(-1px);
+button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+input,select,textarea{
+  width:100%;min-width:0;padding:14px;border-radius:10px;
+  border:1px solid #414141;background:#242424;color:white;font-size:15px;outline:none
 }
-
-button:disabled {
-  opacity:.5;
-  cursor:not-allowed;
-  transform:none;
+input:focus,select:focus,textarea:focus{border-color:var(--naranja);box-shadow:0 0 8px rgba(255,140,0,.15)}
+textarea{resize:vertical;min-height:85px}
+.app{width:100%;max-width:1450px;min-height:100vh;margin:auto;padding:24px 32px;display:flex;flex-direction:column;gap:20px}
+header{display:flex;align-items:center;justify-content:space-between;padding:8px 5px 16px;border-bottom:1px solid rgba(255,140,0,.2)}
+.marca h1{margin:0;color:var(--naranja);font-size:30px;font-weight:900;letter-spacing:3px;text-shadow:0 0 15px rgba(255,140,0,.35)}
+.marca p{margin:7px 0 0;color:#aaa;font-size:13px}
+.etiqueta{color:var(--claro);background:rgba(255,140,0,.08);border:1px solid var(--borde);border-radius:30px;padding:9px 15px;font-size:12px}
+.workspace{display:grid;grid-template-columns:minmax(320px,.88fr) minmax(0,1.12fr);gap:22px;min-height:540px}
+.avatar-panel{display:flex;flex-direction:column;gap:13px;min-width:0}
+.avatar-container{
+  position:relative;flex:1;min-height:470px;overflow:hidden;border-radius:25px;
+  background:radial-gradient(ellipse at center,rgba(255,125,0,.2),transparent 58%),linear-gradient(145deg,#242424,#101010);
+  border:1px solid rgba(255,140,0,.42);box-shadow:0 0 28px rgba(255,115,0,.1),inset 0 0 40px rgba(255,140,0,.06)
 }
-
-.btn-enviar {
-  min-width:105px;
-  min-height:48px;
-}
-
-.btn-microfono {
-  width:52px;
-  height:48px;
-  flex-shrink:0;
-  padding:0;
-  font-size:21px;
-}
-
-.controles {
-  display:flex;
-  gap:10px;
-  margin-top:13px;
-}
-
-.controles button {
-  flex:1;
-  min-height:43px;
-  font-size:12px;
-}
-
-.secundario {
-  background:linear-gradient(145deg,#303030,#202020);
-  border:1px solid #454545;
-}
-
-.activo {
-  background:#a52626!important;
-  border-color:#ff6969!important;
-}
-
-.reservar-boton {
-  width:100%;
-  padding:17px;
-  font-size:15px;
-  background:linear-gradient(100deg,#a94e00,#ff9000,#a94e00);
-  border:1px solid #ffad42;
-  border-radius:14px;
-}
-
-.reserva-panel {
-  display:none;
-  background:linear-gradient(145deg,#1d1d1d,#111);
-  border:1px solid rgba(255,140,0,.4);
-  border-radius:19px;
-  padding:22px;
-  gap:14px;
-}
-
-.reserva-panel.visible {
-  display:flex;
-  flex-direction:column;
-}
-
-.reserva-panel h2 {
-  color:var(--naranja);
-  text-align:center;
-  margin:0 0 5px;
-  font-size:24px;
-}
-
-.reserva-panel p {
-  color:#ccc;
-  font-size:13px;
-  line-height:1.5;
-  margin:0;
-  text-align:center;
-}
-
-.campo {
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.campo label {
-  color:var(--naranja-claro);
-  font-size:13px;
-  font-weight:bold;
-}
-
-textarea {
-  resize:vertical;
-  min-height:85px;
-}
-
-.aviso-reserva {
-  padding:14px;
-  background:#242424;
-  border:1px solid #393939;
-  border-radius:11px;
-  color:#ccc;
-  font-size:12px;
-  line-height:1.6;
-}
-
-.resultado-reserva {
-  display:none;
-  padding:14px;
-  border-radius:11px;
-  font-size:14px;
-  line-height:1.5;
-  white-space:pre-wrap;
-}
-
-.resultado-reserva.exito {
-  display:block;
-  background:#173522;
-  border:1px solid #32854b;
-  color:#a8f0bd;
-}
-
-.resultado-reserva.error {
-  display:block;
-  background:#401d1d;
-  border:1px solid #a33;
-  color:#ffbaba;
-}
-
-.acciones-reserva {
-  display:flex;
-  gap:10px;
-}
-
-.acciones-reserva button {
-  flex:1;
-  min-height:47px;
-}
-
-.boton-cerrar {
-  background:#303030;
-  border:1px solid #484848;
-}
-
-footer {
-  text-align:center;
-  color:#777;
-  font-size:12px;
-  padding:12px;
-  letter-spacing:.5px;
-  border-top:1px solid #242424;
-}
-
-.admin-acceso {
-  display:inline-block;
-  margin-top:9px;
-  padding:7px 12px;
-  color:#aaa;
-  background:transparent;
-  border:1px solid #444;
-  border-radius:8px;
-  font-size:11px;
-}
-
-.admin-acceso:hover {
-  color:var(--naranja-claro);
-  border-color:var(--naranja);
-  background:rgba(255,140,0,.08);
-}
+.avatar-container:after{content:"EL PERRO AI";position:absolute;bottom:18px;left:0;right:0;text-align:center;color:rgba(255,179,71,.55);font-size:12px;font-weight:bold;letter-spacing:5px;pointer-events:none}
+model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent}
+.status{display:flex;justify-content:center;align-items:center;min-height:42px;padding:10px 15px;background:#171717;border:1px solid #333;border-radius:12px;color:#65e68a;font-size:13px;text-align:center}
+.conversacion-panel{display:flex;flex-direction:column;min-width:0;min-height:540px;padding:20px;background:linear-gradient(145deg,#191919,#101010);border:1px solid #383838;border-radius:25px}
+.bienvenida{display:flex;align-items:center;gap:13px;padding:4px 2px 17px;border-bottom:1px solid #333}
+.icono-bienvenida{width:48px;height:48px;flex-shrink:0;display:grid;place-items:center;background:linear-gradient(145deg,#ff9b16,#a94e00);border-radius:15px;font-size:25px}
+.bienvenida h2{margin:0;font-size:19px}
+.bienvenida p{margin:5px 0 0;color:#999;font-size:12px}
+.chat{flex:1;min-height:350px;max-height:470px;overflow-y:auto;padding:18px 5px;scroll-behavior:smooth}
+.chat::-webkit-scrollbar{width:6px}
+.chat::-webkit-scrollbar-thumb{background:#694016;border-radius:10px}
+.mensaje{max-width:88%;padding:14px 17px;margin:11px 0;border-radius:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.usuario{margin-left:auto;background:linear-gradient(135deg,#e87800,#a84b00);border-bottom-right-radius:4px}
+.perro{margin-right:auto;background:linear-gradient(145deg,#333,#252525);border:1px solid #414141;border-bottom-left-radius:4px}
+.composer-panel{padding:17px;background:linear-gradient(145deg,#1d1d1d,#111);border:1px solid var(--borde);border-radius:20px}
+.composer-titulo{margin:0 0 11px 3px;color:#aaa;font-size:12px;letter-spacing:.7px;text-transform:uppercase}
+.entrada{display:flex;align-items:center;gap:10px;padding:6px;background:#101010;border:1px solid #454545;border-radius:15px}
+.entrada input{flex:1;padding:13px;background:transparent;border:none;box-shadow:none}
+.btn-enviar{min-width:105px;min-height:48px}
+.btn-microfono{width:52px;height:48px;flex-shrink:0;padding:0;font-size:21px}
+.controles{display:flex;gap:10px;margin-top:13px}
+.controles button{flex:1;min-height:43px;font-size:12px}
+.secundario{background:linear-gradient(145deg,#303030,#202020);border:1px solid #454545}
+.activo{background:#a52626!important;border-color:#ff6969!important}
+.reservar-boton{width:100%;padding:17px;font-size:15px;background:linear-gradient(100deg,#a94e00,#ff9000,#a94e00);border:1px solid #ffad42;border-radius:14px}
+.reserva-panel{display:none;background:linear-gradient(145deg,#1d1d1d,#111);border:1px solid var(--borde);border-radius:19px;padding:22px;gap:14px}
+.reserva-panel.visible{display:flex;flex-direction:column}
+.reserva-panel h2{color:var(--naranja);text-align:center;margin:0 0 5px;font-size:24px}
+.reserva-panel p{color:#ccc;font-size:13px;line-height:1.5;margin:0;text-align:center}
+.campo{display:flex;flex-direction:column;gap:7px}
+.campo label,.admin-formulario label{color:var(--claro);font-size:13px;font-weight:bold}
+.aviso-reserva{padding:14px;background:#242424;border:1px solid #393939;border-radius:11px;color:#ccc;font-size:12px;line-height:1.6}
+.resultado-reserva{display:none;padding:14px;border-radius:11px;font-size:14px;line-height:1.5;white-space:pre-wrap}
+.resultado-reserva.exito{display:block;background:#173522;border:1px solid #32854b;color:#a8f0bd}
+.resultado-reserva.error{display:block;background:#401d1d;border:1px solid #a33;color:#ffbaba}
+.acciones-reserva{display:flex;gap:10px}
+.acciones-reserva button{flex:1;min-height:47px}
+.boton-cerrar{background:#303030;border:1px solid #484848}
+footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.5px;border-top:1px solid #242424}
+.admin-acceso{display:inline-block;margin-top:9px;padding:7px 12px;color:#aaa;background:transparent;border:1px solid #444;border-radius:8px;font-size:11px}
+.admin-acceso:hover{color:var(--claro);border-color:var(--naranja);background:rgba(255,140,0,.08)}
+.puente-oculto{position:fixed;width:1px;height:1px;left:-10000px;top:-10000px;border:0;visibility:hidden}
 
 /* VENTANA ADMINISTRATIVA */
+.admin-overlay{display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.9);backdrop-filter:blur(7px)}
+.admin-overlay.visible{display:flex}
+.admin-ventana{width:100%;max-width:980px;max-height:94vh;overflow-y:auto;padding:25px;background:linear-gradient(145deg,#202020,#101010);border:1px solid rgba(255,140,0,.5);border-radius:20px;box-shadow:0 0 35px rgba(255,140,0,.15)}
+.admin-ventana.login{max-width:430px}
+.admin-ventana h2{margin:0 0 8px;color:var(--naranja);text-align:center}
+.admin-descripcion{color:#aaa;font-size:13px;text-align:center;line-height:1.5;margin-bottom:20px}
+.admin-formulario{display:flex;flex-direction:column;gap:13px}
+.admin-formulario input{margin-top:7px}
+.admin-acciones{display:flex;gap:10px;margin-top:8px}
+.admin-acciones button{flex:1}
+.admin-mensaje{display:none;padding:12px;border-radius:9px;font-size:13px;line-height:1.5;white-space:pre-wrap;margin-top:12px}
+.admin-mensaje.visible{display:block}
+.admin-mensaje.error{background:#401d1d;border:1px solid #a33;color:#ffbaba}
+.admin-mensaje.exito{background:#173522;border:1px solid #32854b;color:#a8f0bd}
+.admin-estado{color:#aaa;font-size:12px;text-align:center;margin-top:12px}
 
-.admin-overlay {
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:10000;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  background:rgba(0,0,0,.88);
-  backdrop-filter:blur(7px);
+/* PANEL PRINCIPAL */
+.admin-dashboard{display:none}
+.admin-dashboard.visible{display:block}
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:15px;background:#151515;border:1px solid #393939;border-radius:14px;margin:18px 0}
+.admin-identidad{display:flex;flex-direction:column;gap:5px}
+.admin-identidad strong{color:var(--claro);font-size:16px}
+.admin-identidad span{color:#aaa;font-size:12px}
+.admin-top-acciones{display:flex;gap:8px;flex-wrap:wrap}
+.admin-top-acciones button{font-size:12px;padding:10px 13px}
+.admin-titulo-seccion{color:var(--claro);font-size:14px;letter-spacing:1px;text-transform:uppercase;margin:23px 0 12px}
+.admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.admin-card{min-height:145px;padding:18px;text-align:left;background:linear-gradient(145deg,#242424,#151515);border:1px solid #414141;border-radius:15px;color:#fff}
+.admin-card:hover{border-color:var(--naranja);background:linear-gradient(145deg,#302315,#171717)}
+.admin-card .card-icono{font-size:28px;display:block;margin-bottom:12px}
+.admin-card strong{display:block;color:var(--claro);font-size:15px;margin-bottom:7px}
+.admin-card small{display:block;color:#aaa;font-size:12px;line-height:1.4;font-weight:normal}
+.admin-modulo{display:none;margin-top:18px;padding:20px;background:#151515;border:1px solid #444;border-radius:15px}
+.admin-modulo.visible{display:block}
+.admin-modulo h3{color:var(--naranja);margin:0 0 12px}
+.admin-modulo p{color:#bbb;font-size:13px;line-height:1.6}
+.modulo-cabecera{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.modulo-cabecera button{padding:9px 13px;font-size:12px}
+.modulo-aviso{padding:14px;background:#242424;border:1px solid #494949;border-radius:10px;color:#ccc;font-size:12px;line-height:1.6;margin-top:12px}
+.admin-dashboard-pie{margin-top:20px;text-align:center;color:#777;font-size:11px}
+.admin-cerrar-panel{background:#572323;border-color:#8d3b3b}
+@media(max-width:850px){
+  .app{padding:17px;gap:15px}
+  .workspace{grid-template-columns:1fr;min-height:0}
+  .avatar-container{min-height:340px;height:340px}
+  .conversacion-panel{min-height:480px}
+  .chat{min-height:280px}
 }
-
-.admin-overlay.visible {display:flex}
-
-.admin-ventana {
-  width:100%;
-  max-width:430px;
-  max-height:90vh;
-  overflow-y:auto;
-  padding:25px;
-  background:linear-gradient(145deg,#202020,#101010);
-  border:1px solid rgba(255,140,0,.5);
-  border-radius:20px;
-  box-shadow:0 0 35px rgba(255,140,0,.15);
+@media(max-width:600px){
+  .app{padding:12px;gap:13px}
+  header{padding:8px 3px 13px}
+  .marca h1{font-size:24px;letter-spacing:2px}
+  .marca p{font-size:11px}
+  .etiqueta{display:none}
+  .avatar-container{height:290px;min-height:290px;border-radius:19px}
+  .conversacion-panel{min-height:440px;padding:14px;border-radius:19px}
+  .bienvenida h2{font-size:17px}
+  .chat{min-height:260px;max-height:390px;padding:12px 2px}
+  .mensaje{max-width:94%;font-size:13px;padding:12px 14px}
+  .composer-panel{padding:12px}
+  .entrada{gap:6px}
+  .entrada input{font-size:13px;padding:10px 5px}
+  .btn-enviar{min-width:76px;padding:11px;font-size:12px}
+  .btn-microfono{width:43px;height:44px}
+  .controles{gap:7px}
+  .controles button{font-size:11px;padding:10px 5px}
+  .reserva-panel{padding:15px}
+  .acciones-reserva{flex-direction:column}
+  .admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-ventana{padding:17px}
 }
-
-.admin-ventana h2 {
-  margin:0 0 8px;
-  color:var(--naranja);
-  text-align:center;
-}
-
-.admin-descripcion {
-  color:#aaa;
-  font-size:13px;
-  text-align:center;
-  line-height:1.5;
-  margin-bottom:20px;
-}
-
-.admin-formulario {
-  display:flex;
-  flex-direction:column;
-  gap:13px;
-}
-
-.admin-formulario label {
-  color:var(--naranja-claro);
-  font-size:13px;
-  font-weight:bold;
-}
-
-.admin-formulario input {margin-top:7px}
-
-.admin-acciones {
-  display:flex;
-  gap:10px;
-  margin-top:8px;
-}
-
-.admin-acciones button {flex:1}
-
-.admin-mensaje {
-  display:none;
-  padding:12px;
-  border-radius:9px;
-  font-size:13px;
-  line-height:1.5;
-  white-space:pre-wrap;
-  margin-top:12px;
-}
-
-.admin-mensaje.visible {display:block}
-
-.admin-mensaje.error {
-  background:#401d1d;
-  border:1px solid #a33;
-  color:#ffbaba;
-}
-
-.admin-mensaje.exito {
-  background:#173522;
-  border:1px solid #32854b;
-  color:#a8f0bd;
-}
-
-.admin-estado {
-  color:#aaa;
-  font-size:12px;
-  text-align:center;
-  margin-top:12px;
-}
-
-.puente-oculto {
-  position:fixed;
-  width:1px;
-  height:1px;
-  left:-10000px;
-  top:-10000px;
-  border:0;
-  visibility:hidden;
-}
-
-@media(max-width:850px) {
-  .app {padding:17px;gap:15px}
-  .workspace {grid-template-columns:1fr;min-height:0}
-  .avatar-container {min-height:340px;height:340px}
-  .conversacion-panel {min-height:480px}
-  .chat {min-height:280px}
-}
-
-@media(max-width:520px) {
-  .app {padding:12px;gap:13px}
-  header {padding:8px 3px 13px}
-  .marca h1 {font-size:24px;letter-spacing:2px}
-  .marca p {font-size:11px}
-  .etiqueta {display:none}
-  .avatar-container {
-    height:290px;
-    min-height:290px;
-    border-radius:19px;
-  }
-  .conversacion-panel {
-    min-height:440px;
-    padding:14px;
-    border-radius:19px;
-  }
-  .bienvenida h2 {font-size:17px}
-  .chat {
-    min-height:260px;
-    max-height:390px;
-    padding:12px 2px;
-  }
-  .mensaje {
-    max-width:94%;
-    font-size:13px;
-    padding:12px 14px;
-  }
-  .composer-panel {padding:12px}
-  .entrada {gap:6px}
-  .entrada input {
-    font-size:13px;
-    padding:10px 5px;
-  }
-  .btn-enviar {
-    min-width:76px;
-    padding:11px;
-    font-size:12px;
-  }
-  .btn-microfono {
-    width:43px;
-    height:44px;
-  }
-  .controles {gap:7px}
-  .controles button {
-    font-size:11px;
-    padding:10px 5px;
-  }
-  .reserva-panel {padding:15px}
-  .acciones-reserva {flex-direction:column}
-}
+@media(max-width:380px){.admin-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
 <body>
-
 <div class="app">
-
 <header>
   <div class="marca">
     <h1>🐕 EL PERRO AI</h1>
@@ -647,28 +181,19 @@ footer {
 </header>
 
 <main class="workspace">
-
   <section class="avatar-panel">
     <div class="avatar-container">
-      <model-viewer
-        id="avatar"
+      <model-viewer id="avatar"
         src="https://raw.githubusercontent.com/strock2910-ship-it/el-perro-ai/main/perro-ai.glb"
         alt="Mascota de El Perro Caliente"
-        camera-controls
-        auto-rotate
-        rotation-per-second="15deg"
-        shadow-intensity="1"
-        exposure="1">
+        camera-controls auto-rotate rotation-per-second="15deg"
+        shadow-intensity="1" exposure="1">
       </model-viewer>
     </div>
-
-    <div class="status" id="estado">
-      Conectando con EL PERRO AI...
-    </div>
+    <div class="status" id="estado">Conectando con EL PERRO AI...</div>
   </section>
 
   <section class="conversacion-panel">
-
     <div class="bienvenida">
       <div class="icono-bienvenida">🐕</div>
       <div>
@@ -676,82 +201,43 @@ footer {
         <p>Estoy aquí para ayudarte. ¿Qué necesitas hoy?</p>
       </div>
     </div>
-
     <div class="chat" id="chat">
-      <div class="mensaje perro">
-        ¡Hola! 🐕 Soy EL PERRO AI. Bienvenido a El Perro Caliente.
-        ¿Qué se te antoja hoy?
-      </div>
+      <div class="mensaje perro">¡Hola! 🐕 Soy EL PERRO AI. Bienvenido a El Perro Caliente. ¿Qué se te antoja hoy?</div>
     </div>
-
   </section>
-
 </main>
 
 <section class="composer-panel">
   <p class="composer-titulo">Conversa conmigo</p>
-
   <div class="entrada">
-    <button
-      id="btnMicrofono"
-      class="btn-microfono"
-      type="button"
-      onclick="escuchar()"
-      title="Hablar">🎤</button>
-
-    <input
-      id="mensaje"
-      type="text"
-      placeholder="Escribe tu mensaje..."
-      autocomplete="off">
-
-    <button
-      id="btnEnviar"
-      class="btn-enviar"
-      type="button"
-      onclick="enviarMensaje()">Enviar</button>
+    <button id="btnMicrofono" class="btn-microfono" type="button" onclick="escuchar()" title="Hablar">🎤</button>
+    <input id="mensaje" type="text" placeholder="Escribe tu mensaje..." autocomplete="off">
+    <button id="btnEnviar" class="btn-enviar" type="button" onclick="enviarMensaje()">Enviar</button>
   </div>
-
   <div class="controles">
-    <button type="button" class="secundario" onclick="activarVoz()">
-      🔊 Activar voz
-    </button>
-    <button type="button" class="secundario" onclick="detenerVoz()">
-      ⏹ Detener voz
-    </button>
+    <button type="button" class="secundario" onclick="activarVoz()">🔊 Activar voz</button>
+    <button type="button" class="secundario" onclick="detenerVoz()">⏹ Detener voz</button>
   </div>
 </section>
 
-<button
-  class="reservar-boton"
-  type="button"
-  onclick="mostrarReservaciones()">
-  📅 Reservar una mesa
-</button>
+<button class="reservar-boton" type="button" onclick="mostrarReservaciones()">📅 Reservar una mesa</button>
 
 <section class="reserva-panel" id="panelReservaciones">
   <h2>🐕 Reserva tu mesa</h2>
   <p>Completa tus datos y solicita tu reservación en El Perro Caliente.</p>
-
   <form id="formReservacion">
-
     <div class="campo">
       <label for="resNombre">Nombre completo</label>
-      <input id="resNombre" name="nombre" type="text" maxlength="100"
-        placeholder="Escribe tu nombre" autocomplete="name" required>
+      <input id="resNombre" name="nombre" type="text" maxlength="100" placeholder="Escribe tu nombre" autocomplete="name" required>
     </div>
-
     <div class="campo">
       <label for="resTelefono">Teléfono</label>
-      <input id="resTelefono" name="telefono" type="tel" maxlength="20"
-        placeholder="Ej. 5544761827" autocomplete="tel" required>
+      <input id="resTelefono" name="telefono" type="tel" maxlength="20" placeholder="Ej. 5544761827" autocomplete="tel" required>
     </div>
-
     <div class="campo">
       <label for="resFecha">Fecha de reservación</label>
       <input id="resFecha" name="fecha" type="date" required>
     </div>
-
     <div class="campo">
       <label for="resHora">Hora de llegada</label>
       <select id="resHora" name="hora" required>
@@ -765,152 +251,162 @@ footer {
         <option value="23:00">11:00 p. m.</option>
       </select>
     </div>
-
     <div class="campo">
       <label for="resPersonas">Número de personas</label>
       <select id="resPersonas" name="personas" required>
         <option value="">Selecciona cuántas personas</option>
-        <option value="1">1 persona</option>
-        <option value="2">2 personas</option>
-        <option value="3">3 personas</option>
-        <option value="4">4 personas</option>
-        <option value="5">5 personas</option>
-        <option value="6">6 personas</option>
-        <option value="7">7 personas</option>
-        <option value="8">8 personas</option>
-        <option value="9">9 personas</option>
-        <option value="10">10 personas</option>
+        <option value="1">1 persona</option><option value="2">2 personas</option>
+        <option value="3">3 personas</option><option value="4">4 personas</option>
+        <option value="5">5 personas</option><option value="6">6 personas</option>
+        <option value="7">7 personas</option><option value="8">8 personas</option>
+        <option value="9">9 personas</option><option value="10">10 personas</option>
       </select>
     </div>
-
     <div class="campo">
       <label for="resObservaciones">Observaciones (opcional)</label>
-      <textarea id="resObservaciones" name="observaciones"
-        maxlength="500" placeholder="¿Alguna indicación especial?"></textarea>
+      <textarea id="resObservaciones" name="observaciones" maxlength="500" placeholder="¿Alguna indicación especial?"></textarea>
     </div>
-
     <div class="aviso-reserva">
       <strong>Horarios de reservación:</strong><br>
       Jueves y domingo: de 5:00 p. m. a 11:00 p. m.<br>
       Viernes y sábado: de 5:00 p. m. a 11:00 p. m.<br><br>
-      Aceptamos reservaciones de jueves a domingo, con al menos un día
-      de anticipación y para grupos de 1 a 10 personas.
+      Aceptamos reservaciones de jueves a domingo, con al menos un día de anticipación y para grupos de 1 a 10 personas.
     </div>
-
     <div id="resultadoReservacion" class="resultado-reserva"></div>
-
     <div class="acciones-reserva">
-      <button id="btnConfirmarReserva" type="submit">
-        Confirmar reservación
-      </button>
-      <button type="button" class="boton-cerrar"
-        onclick="ocultarReservaciones()">Cerrar</button>
+      <button id="btnConfirmarReserva" type="submit">Confirmar reservación</button>
+      <button type="button" class="boton-cerrar" onclick="ocultarReservaciones()">Cerrar</button>
     </div>
-
   </form>
 </section>
 
 <footer>
-  🐕 EL PERRO AI · El Perro Caliente Tultepec
-  <br>
-  <button type="button" class="admin-acceso"
-    onclick="abrirAdministracion()">
-    ⚙ Acceso administrativo
-  </button>
+  🐕 EL PERRO AI · El Perro Caliente Tultepec<br>
+  <button type="button" class="admin-acceso" onclick="abrirAdministracion()">⚙ Acceso administrativo</button>
 </footer>
-
 </div>
 
-<!-- IFRAME ORIGINAL DE RESERVACIONES: NO MODIFICAR -->
+<!-- PUENTES INDEPENDIENTES -->
+<iframe id="reservacionesBridge" name="reservacionesBridge" class="puente-oculto" title="Procesamiento de reservaciones"></iframe>
+<iframe id="adminBridge" class="puente-oculto" title="Conexión administrativa"></iframe>
 
-<iframe
-  id="reservacionesBridge"
-  name="reservacionesBridge"
-  class="puente-oculto"
-  title="Procesamiento de reservaciones">
-</iframe>
-
-<!-- IFRAME INDEPENDIENTE DE ADMINISTRACIÓN -->
-
-<iframe
-  id="adminBridge"
-  class="puente-oculto"
-  title="Conexión administrativa">
-</iframe>
-
-<!-- VENTANA DE ADMINISTRACIÓN -->
-
+<!-- VENTANA ADMINISTRATIVA -->
 <section class="admin-overlay" id="adminOverlay">
-  <div class="admin-ventana">
+  <div class="admin-ventana login" id="adminVentana">
 
-    <h2>🐕 Administración</h2>
+    <div id="adminAccesoVista">
+      <h2>🐕 Administración</h2>
+      <p class="admin-descripcion" id="adminDescripcion">Acceso exclusivo para el equipo de El Perro Caliente.</p>
 
-    <p class="admin-descripcion" id="adminDescripcion">
-      Acceso exclusivo para el equipo de El Perro Caliente.
-    </p>
+      <form id="adminLogin" class="admin-formulario">
+        <div>
+          <label for="adminUsuario">Usuario</label>
+          <input id="adminUsuario" type="text" autocomplete="username" placeholder="Tu usuario" maxlength="80" required>
+        </div>
+        <div>
+          <label for="adminPassword">Contraseña</label>
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña" maxlength="200" required>
+        </div>
+        <div class="admin-acciones">
+          <button type="submit" id="adminBtnLogin">Iniciar sesión</button>
+          <button type="button" class="boton-cerrar" onclick="cerrarAdministracion()">Cerrar</button>
+        </div>
+      </form>
 
-    <form id="adminLogin" class="admin-formulario">
-
-      <div>
-        <label for="adminUsuario">Usuario</label>
-        <input id="adminUsuario" type="text"
-          autocomplete="username" placeholder="Tu usuario"
-          maxlength="80" required>
-      </div>
-
-      <div>
-        <label for="adminPassword">Contraseña</label>
-        <input id="adminPassword" type="password"
-          autocomplete="current-password"
-          placeholder="Tu contraseña" maxlength="200" required>
-      </div>
-
-      <div class="admin-acciones">
-        <button type="submit" id="adminBtnLogin">Iniciar sesión</button>
-        <button type="button" class="boton-cerrar"
-          onclick="cerrarAdministracion()">Cerrar</button>
-      </div>
-
-    </form>
-
-    <form id="adminCambioPassword"
-      class="admin-formulario" style="display:none">
-
-      <div>
-        <label for="adminPasswordActual">Contraseña actual</label>
-        <input id="adminPasswordActual" type="password"
-          autocomplete="current-password" required>
-      </div>
-
-      <div>
-        <label for="adminPasswordNueva">Nueva contraseña</label>
-        <input id="adminPasswordNueva" type="password"
-          autocomplete="new-password" minlength="10"
-          maxlength="200" required>
-      </div>
-
-      <div>
-        <label for="adminPasswordRepetida">Confirmar nueva contraseña</label>
-        <input id="adminPasswordRepetida" type="password"
-          autocomplete="new-password" minlength="10"
-          maxlength="200" required>
-      </div>
-
-      <div class="admin-acciones">
-        <button type="submit" id="adminBtnCambio">
-          Cambiar contraseña
-        </button>
-        <button type="button" class="boton-cerrar"
-          onclick="cerrarAdministracion()">Cancelar</button>
-      </div>
-
-    </form>
-
-    <div id="adminMensaje" class="admin-mensaje"></div>
-    <div id="adminEstado" class="admin-estado">
-      Preparando conexión administrativa...
+      <form id="adminCambioPassword" class="admin-formulario" style="display:none">
+        <div>
+          <label for="adminPasswordActual">Contraseña actual</label>
+          <input id="adminPasswordActual" type="password" autocomplete="current-password" required>
+        </div>
+        <div>
+          <label for="adminPasswordNueva">Nueva contraseña</label>
+          <input id="adminPasswordNueva" type="password" autocomplete="new-password" minlength="10" maxlength="200" required>
+        </div>
+        <div>
+          <label for="adminPasswordRepetida">Confirmar nueva contraseña</label>
+          <input id="adminPasswordRepetida" type="password" autocomplete="new-password" minlength="10" maxlength="200" required>
+        </div>
+        <div class="admin-acciones">
+          <button type="submit" id="adminBtnCambio">Cambiar contraseña</button>
+          <button type="button" class="boton-cerrar" onclick="cerrarAdministracion()">Cancelar</button>
+        </div>
+      </form>
     </div>
 
+    <!-- PANEL PRINCIPAL -->
+    <div class="admin-dashboard" id="adminDashboard">
+      <h2>🐕 Panel de administración</h2>
+      <p class="admin-descripcion">Centro de control de El Perro Caliente</p>
+
+      <div class="admin-topbar">
+        <div class="admin-identidad">
+          <strong id="adminNombrePanel">Usuario</strong>
+          <span id="adminRolPanel">Rol</span>
+        </div>
+        <div class="admin-top-acciones">
+          <button type="button" class="secundario" onclick="volverInicioAdmin()">Inicio</button>
+          <button type="button" class="admin-cerrar-panel" onclick="cerrarAdministracion()">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div id="adminMenuPrincipal">
+        <div class="admin-titulo-seccion">Operación del negocio</div>
+        <div class="admin-grid">
+          <button class="admin-card" onclick="abrirModuloAdmin('reservaciones')">
+            <span class="card-icono">📅</span>
+            <strong>Reservaciones</strong>
+            <small>Consulta y administración de reservaciones.</small>
+          </button>
+          <button class="admin-card" onclick="abrirModuloAdmin('promociones')">
+            <span class="card-icono">🍗</span>
+            <strong>Promociones</strong>
+            <small>Organiza promociones y ofertas del negocio.</small>
+          </button>
+          <button class="admin-card" onclick="abrirModuloAdmin('eventos')">
+            <span class="card-icono">🎸</span>
+            <strong>Eventos</strong>
+            <small>Organiza eventos, música y actividades.</small>
+          </button>
+          <button class="admin-card" onclick="abrirModuloAdmin('reportes')">
+            <span class="card-icono">📊</span>
+            <strong>Reportes</strong>
+            <small>Consulta indicadores y resultados.</small>
+          </button>
+        </div>
+
+        <div id="adminZonaPrivada" style="display:none">
+          <div class="admin-titulo-seccion">Administración del sistema</div>
+          <div class="admin-grid">
+            <button class="admin-card" onclick="abrirModuloAdmin('usuarios')">
+              <span class="card-icono">👥</span>
+              <strong>Usuarios</strong>
+              <small>Administración de cuentas y permisos.</small>
+            </button>
+            <button class="admin-card" onclick="abrirModuloAdmin('configuracion')">
+              <span class="card-icono">⚙️</span>
+              <strong>Configuración</strong>
+              <small>Preferencias y configuración de EL PERRO AI.</small>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-modulo" id="adminModulo">
+        <div class="modulo-cabecera">
+          <h3 id="adminModuloTitulo">Módulo</h3>
+          <button type="button" class="secundario" onclick="volverInicioAdmin()">← Volver al panel</button>
+        </div>
+        <p id="adminModuloDescripcion"></p>
+        <div class="modulo-aviso" id="adminModuloAviso">
+          Esta sección está preparada para conectar sus funciones.
+        </div>
+      </div>
+
+      <div class="admin-dashboard-pie">EL PERRO AI · Administración interna</div>
+    </div>
+
+    <div id="adminMensaje" class="admin-mensaje"></div>
+    <div id="adminEstado" class="admin-estado">Preparando conexión administrativa...</div>
   </div>
 </section>
 
@@ -918,17 +414,10 @@ footer {
 /****************************************************
  * 1. CONFIGURACIÓN GENERAL
  ****************************************************/
-
 const URL_APPS_SCRIPT =
 "https://script.google.com/macros/s/AKfycbxwBmyFNByGO9u-83mkdJlw8OVLjcOJOcUbbsweRejXPhTcLgBAfzPg2Pl86o9cUDx0Bg/exec";
 
-const ORIGEN_APPS_SCRIPT = [
-  "https://script.google.com",
-  "https://script.googleusercontent.com"
-];
-
-const ORIGEN_GITHUB =
-"https://strock2910-ship-it.github.io";
+const ORIGEN_GITHUB = "https://strock2910-ship-it.github.io";
 
 let historial = [];
 let reconocimiento = null;
@@ -943,23 +432,21 @@ let temporizadorReserva = null;
 let resolverReservaActual = null;
 let rechazarReservaActual = null;
 
+let adminBridgeListo = false;
+let adminBridgeVentana = null;
+let adminToken = null;
+let adminUsuarioActual = null;
+let adminSolicitudes = {};
+
 /****************************************************
  * 2. CONEXIÓN JSONP CON GOOGLE APPS SCRIPT
  ****************************************************/
-
 function llamarGoogle(parametros) {
   return new Promise((resolve,reject) => {
-
-    const callback = "perroCallback_" +
-      Date.now() + "_" +
-      Math.floor(Math.random()*100000);
-
+    const callback = "perroCallback_" + Date.now() + "_" + Math.floor(Math.random()*100000);
     const url = new URL(URL_APPS_SCRIPT);
 
-    Object.keys(parametros).forEach(clave => {
-      url.searchParams.set(clave,parametros[clave]);
-    });
-
+    Object.keys(parametros).forEach(clave => url.searchParams.set(clave,parametros[clave]));
     url.searchParams.set("callback",callback);
 
     const script = document.createElement("script");
@@ -971,10 +458,10 @@ function llamarGoogle(parametros) {
     },45000);
 
     function finalizar() {
-      if (terminado) return;
+      if(terminado)return;
       terminado = true;
       clearTimeout(temporizador);
-      if (script.parentNode) script.parentNode.removeChild(script);
+      if(script.parentNode)script.parentNode.removeChild(script);
       delete window[callback];
     }
 
@@ -994,586 +481,309 @@ function llamarGoogle(parametros) {
 }
 
 /****************************************************
- * 3. COMPROBAR CONEXIÓN
+ * 3. CONEXIÓN Y CHAT
  ****************************************************/
-
 async function conectarGoogle() {
   const estado = document.getElementById("estado");
-
   try {
     const respuesta = await llamarGoogle({action:"ping"});
-
-    if (respuesta && respuesta.correcto) {
+    if(respuesta && respuesta.correcto) {
       estado.textContent = "🐕 EL PERRO AI está conectado";
       estado.style.color = "#54d67a";
     } else {
       estado.textContent = "No se pudo comprobar la conexión";
     }
-
   } catch(error) {
     estado.textContent = "Error de conexión con Google";
     console.error(error);
   }
 }
 
-/****************************************************
- * 4. MENSAJES DEL CHAT
- ****************************************************/
-
 function agregarMensaje(texto,tipo) {
   const chat = document.getElementById("chat");
   const elemento = document.createElement("div");
-
   elemento.className = "mensaje " + tipo;
   elemento.textContent = texto;
-
   chat.appendChild(elemento);
   chat.scrollTop = chat.scrollHeight;
 }
 
-/****************************************************
- * 5. ENVIAR MENSAJES A GEMINI
- ****************************************************/
-
 async function enviarMensaje() {
-  if (esperandoRespuesta) return;
-
+  if(esperandoRespuesta)return;
   const input = document.getElementById("mensaje");
   const texto = input.value.trim();
-
-  if (!texto) return;
+  if(!texto)return;
 
   agregarMensaje(texto,"usuario");
   input.value = "";
-
   esperandoRespuesta = true;
   document.getElementById("btnEnviar").disabled = true;
   document.getElementById("estado").textContent = "🐕 Estoy pensando...";
 
   try {
-
     const respuesta = await llamarGoogle({
       action:"responder",
       texto:texto,
       historial:JSON.stringify(historial)
     });
 
-    if (!respuesta) {
-      throw new Error("Google no devolvió una respuesta.");
-    }
-
-    if (respuesta.correcto === false) {
-      throw new Error(
-        respuesta.error ||
-        respuesta.mensaje ||
-        "No pude procesar tu mensaje."
-      );
+    if(!respuesta)throw new Error("Google no devolvió una respuesta.");
+    if(respuesta.correcto === false) {
+      throw new Error(respuesta.error || respuesta.mensaje || "No pude procesar tu mensaje.");
     }
 
     const contenido = typeof respuesta === "string"
       ? respuesta
-      : respuesta.respuesta ||
-        respuesta.texto ||
-        respuesta.mensaje ||
-        respuesta.response ||
-        respuesta.text;
+      : respuesta.respuesta || respuesta.texto || respuesta.mensaje || respuesta.response || respuesta.text;
 
-    if (!contenido) {
-      throw new Error("La respuesta llegó vacía.");
-    }
+    if(!contenido)throw new Error("La respuesta llegó vacía.");
 
     ultimaRespuesta = contenido;
-
     historial.push({role:"user",text:texto});
     historial.push({role:"model",text:contenido});
-
-    if (historial.length > 20) {
-      historial = historial.slice(-20);
-    }
+    if(historial.length > 20)historial = historial.slice(-20);
 
     agregarMensaje(contenido,"perro");
-
-    document.getElementById("estado").textContent =
-      "🐕 Aquí estoy para ayudarte";
-
-    if (vozAutomatica) hablar(contenido);
+    document.getElementById("estado").textContent = "🐕 Aquí estoy para ayudarte";
+    if(vozAutomatica)hablar(contenido);
 
   } catch(error) {
-
     console.error(error);
-
-    agregarMensaje(
-      "Disculpa, tuve un problema al responder. Inténtalo nuevamente.",
-      "perro"
-    );
-
-    document.getElementById("estado").textContent =
-      "Problema de conexión";
-
+    agregarMensaje("Disculpa, tuve un problema al responder. Inténtalo nuevamente.","perro");
+    document.getElementById("estado").textContent = "Problema de conexión";
   } finally {
-
     esperandoRespuesta = false;
     document.getElementById("btnEnviar").disabled = false;
   }
 }
 
-document.getElementById("mensaje").addEventListener(
-  "keydown",
-  function(event) {
-    if (event.key === "Enter") enviarMensaje();
-  }
-);
+document.getElementById("mensaje").addEventListener("keydown",event => {
+  if(event.key === "Enter")enviarMensaje();
+});
 
 /****************************************************
- * 6. CONVERSIÓN DE NÚMEROS PARA LA VOZ
+ * 4. VOZ Y RECONOCIMIENTO
  ****************************************************/
-
 function numeroATexto(numero) {
   numero = Number(numero);
+  if(!Number.isFinite(numero))return String(numero);
+  if(numero > 999999999 || numero < 0)return String(numero);
 
-  if (!Number.isFinite(numero)) return String(numero);
-  if (numero > 999999999 || numero < 0) return String(numero);
-
-  const unidades = [
-    "cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve",
-    "diez","once","doce","trece","catorce","quince","dieciséis","diecisiete",
-    "dieciocho","diecinueve","veinte","veintiuno","veintidós","veintitrés",
-    "veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"
-  ];
-
-  const decenas = [
-    "","","","treinta","cuarenta","cincuenta",
-    "sesenta","setenta","ochenta","noventa"
-  ];
-
-  const centenas = [
-    "","ciento","doscientos","trescientos","cuatrocientos",
-    "quinientos","seiscientos","setecientos","ochocientos","novecientos"
-  ];
+  const unidades = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","veintiuno","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"];
+  const decenas = ["","","","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa"];
+  const centenas = ["","ciento","doscientos","trescientos","cuatrocientos","quinientos","seiscientos","setecientos","ochocientos","novecientos"];
 
   function menorMil(n) {
-    if (n < 30) return unidades[n];
-
-    if (n < 100) {
-      const d = Math.floor(n/10);
-      const u = n%10;
+    if(n < 30)return unidades[n];
+    if(n < 100) {
+      const d = Math.floor(n/10),u = n%10;
       return u === 0 ? decenas[d] : decenas[d] + " y " + unidades[u];
     }
-
-    if (n === 100) return "cien";
-
-    const c = Math.floor(n/100);
-    const resto = n%100;
-
+    if(n === 100)return "cien";
+    const c = Math.floor(n/100),resto = n%100;
     return centenas[c] + (resto ? " " + menorMil(resto) : "");
   }
 
   function convertir(n) {
-    if (n < 1000) return menorMil(n);
-
-    if (n < 1000000) {
-      const miles = Math.floor(n/1000);
-      const resto = n%1000;
-      const textoMiles = miles === 1
-        ? "mil"
-        : menorMil(miles) + " mil";
-
-      return textoMiles + (resto ? " " + menorMil(resto) : "");
+    if(n < 1000)return menorMil(n);
+    if(n < 1000000) {
+      const miles = Math.floor(n/1000),resto = n%1000;
+      return (miles === 1 ? "mil" : menorMil(miles) + " mil") + (resto ? " " + menorMil(resto) : "");
     }
-
-    const millones = Math.floor(n/1000000);
-    const resto = n%1000000;
-
-    const textoMillones = millones === 1
-      ? "un millón"
-      : convertir(millones) + " millones";
-
-    return textoMillones + (resto ? " " + convertir(resto) : "");
+    const millones = Math.floor(n/1000000),resto = n%1000000;
+    return (millones === 1 ? "un millón" : convertir(millones) + " millones") + (resto ? " " + convertir(resto) : "");
   }
 
-  if (Number.isInteger(numero)) return convertir(numero);
-
+  if(Number.isInteger(numero))return convertir(numero);
   const partes = numero.toString().split(".");
-  const entero = convertir(Number(partes[0]));
-  const decimal = partes[1]
-    .split("")
-    .map(d => unidades[Number(d)])
-    .join(" ");
-
-  return entero + " punto " + decimal;
+  return convertir(Number(partes[0])) + " punto " + partes[1].split("").map(d => unidades[Number(d)]).join(" ");
 }
-
-/****************************************************
- * 7. LIMPIEZA DE TEXTO PARA VOZ
- ****************************************************/
 
 function limpiarTextoParaVoz(texto) {
   let limpio = String(texto);
-
   limpio = limpio.replace(/https?:\/\/\S+/gi," ");
   limpio = limpio.replace(/\[([^\]]+)\]\([^)]+\)/g,"$1");
   limpio = limpio.replace(/[*_~`#]/g," ");
-
-  limpio = limpio.replace(/\$(\d+(?:\.\d+)?)/g,function(match,numero) {
-    return numeroATexto(numero) + " pesos";
-  });
-
-  limpio = limpio.replace(/(\d[\d,]*(?:\.\d+)?)/g,function(numero) {
-    return numeroATexto(Number(numero.replace(/,/g,"")));
-  });
-
+  limpio = limpio.replace(/\$(\d+(?:\.\d+)?)/g,(m,n) => numeroATexto(n) + " pesos");
+  limpio = limpio.replace(/(\d[\d,]*(?:\.\d+)?)/g,n => numeroATexto(Number(n.replace(/,/g,""))));
   limpio = limpio.replace(/\p{Extended_Pictographic}/gu," ");
   limpio = limpio.replace(/[|•*_#~`=<>[\]{}]/g," ");
   limpio = limpio.replace(/[ \t]+/g," ");
   limpio = limpio.replace(/\n{2,}/g,". ");
-
   return limpio.trim();
 }
 
-/****************************************************
- * 8. SELECCIONAR VOZ
- ****************************************************/
-
 function seleccionarVoz() {
   const voces = speechSynthesis.getVoices();
-
-  if (!voces.length) return null;
-
-  const vocesMexico = voces.filter(
-    voz => voz.lang.toLowerCase() === "es-mx"
-  );
-
-  const vocesEspanol = voces.filter(
-    voz => voz.lang.toLowerCase().startsWith("es")
-  );
-
-  const candidatas = vocesMexico.length
-    ? vocesMexico
-    : vocesEspanol;
-
-  if (!candidatas.length) return null;
-
-  const vozNeuronal = candidatas.find(
-    voz => /natural|neural|online|enhanced|premium/i.test(voz.name)
-  );
-
-  if (vozNeuronal) return vozNeuronal;
-
-  const vozMicrosoft = candidatas.find(
-    voz => /microsoft/i.test(voz.name)
-  );
-
-  if (vozMicrosoft) return vozMicrosoft;
-
-  const vozGoogle = candidatas.find(
-    voz => /google/i.test(voz.name)
-  );
-
-  if (vozGoogle) return vozGoogle;
-
-  return candidatas[0];
+  if(!voces.length)return null;
+  const mexicanas = voces.filter(v => v.lang.toLowerCase() === "es-mx");
+  const espanolas = voces.filter(v => v.lang.toLowerCase().startsWith("es"));
+  const candidatas = mexicanas.length ? mexicanas : espanolas;
+  if(!candidatas.length)return null;
+  return candidatas.find(v => /natural|neural|online|enhanced|premium/i.test(v.name))
+    || candidatas.find(v => /microsoft/i.test(v.name))
+    || candidatas.find(v => /google/i.test(v.name))
+    || candidatas[0];
 }
 
-/****************************************************
- * 9. REPRODUCIR VOZ
- ****************************************************/
-
 function hablar(texto) {
-  if (!("speechSynthesis" in window)) return;
-
-  const textoLimpio = limpiarTextoParaVoz(texto);
-  if (!textoLimpio) return;
-
+  if(!("speechSynthesis" in window))return;
+  const limpio = limpiarTextoParaVoz(texto);
+  if(!limpio)return;
   speechSynthesis.cancel();
-
-  const mensaje = new SpeechSynthesisUtterance(textoLimpio);
+  const mensaje = new SpeechSynthesisUtterance(limpio);
   const voz = seleccionarVoz();
-
   mensaje.lang = voz ? voz.lang : "es-MX";
-
-  if (voz) mensaje.voice = voz;
-
+  if(voz)mensaje.voice = voz;
   mensaje.rate = .98;
   mensaje.pitch = .98;
   mensaje.volume = 1;
-
-  mensaje.onstart = function() {
-    document.getElementById("estado").textContent =
-      "🐕 EL PERRO AI está hablando...";
-  };
-
-  mensaje.onend = function() {
-    document.getElementById("estado").textContent =
-      "🐕 Aquí estoy para ayudarte";
-  };
-
-  mensaje.onerror = function(event) {
+  mensaje.onstart = () => document.getElementById("estado").textContent = "🐕 EL PERRO AI está hablando...";
+  mensaje.onend = () => document.getElementById("estado").textContent = "🐕 Aquí estoy para ayudarte";
+  mensaje.onerror = event => {
     console.error("Error de voz:",event);
-    document.getElementById("estado").textContent =
-      "No se pudo reproducir la voz";
+    document.getElementById("estado").textContent = "No se pudo reproducir la voz";
   };
-
   speechSynthesis.speak(mensaje);
 }
 
 function activarVoz() {
   vozAutomatica = true;
-
-  if (ultimaRespuesta) hablar(ultimaRespuesta);
-
+  if(ultimaRespuesta)hablar(ultimaRespuesta);
   document.getElementById("estado").textContent = "Voz activada";
 }
 
 function detenerVoz() {
-  speechSynthesis.cancel();
+  if("speechSynthesis" in window)speechSynthesis.cancel();
   document.getElementById("estado").textContent = "Voz detenida";
 }
 
-/****************************************************
- * 10. RECONOCIMIENTO DE VOZ
- ****************************************************/
-
 function prepararMicrofono() {
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    document.getElementById("estado").textContent =
-      "Tu navegador no admite reconocimiento de voz";
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition) {
+    document.getElementById("estado").textContent = "Tu navegador no admite reconocimiento de voz";
     return;
   }
-
   reconocimiento = new SpeechRecognition();
   reconocimiento.lang = "es-MX";
   reconocimiento.continuous = false;
   reconocimiento.interimResults = false;
-
-  reconocimiento.onstart = function() {
+  reconocimiento.onstart = () => {
     document.getElementById("btnMicrofono").classList.add("activo");
-    document.getElementById("estado").textContent =
-      "🎤 Te estoy escuchando...";
+    document.getElementById("estado").textContent = "🎤 Te estoy escuchando...";
   };
-
-  reconocimiento.onresult = function(event) {
-    document.getElementById("mensaje").value =
-      event.results[0][0].transcript;
-
+  reconocimiento.onresult = event => {
+    document.getElementById("mensaje").value = event.results[0][0].transcript;
     enviarMensaje();
   };
-
-  reconocimiento.onerror = function(event) {
+  reconocimiento.onerror = event => {
     console.error("Error de micrófono:",event.error);
-    document.getElementById("estado").textContent =
-      "Error de voz: " + event.error;
-
+    document.getElementById("estado").textContent = "Error de voz: " + event.error;
     document.getElementById("btnMicrofono").classList.remove("activo");
   };
-
-  reconocimiento.onend = function() {
-    document.getElementById("btnMicrofono").classList.remove("activo");
-  };
+  reconocimiento.onend = () => document.getElementById("btnMicrofono").classList.remove("activo");
 }
 
 function escuchar() {
-  if (!reconocimiento) prepararMicrofono();
-  if (!reconocimiento) return;
-
-  try {
-    reconocimiento.start();
-  } catch(error) {
-    console.error(error);
-  }
+  if(!reconocimiento)prepararMicrofono();
+  if(!reconocimiento)return;
+  try{reconocimiento.start()}catch(error){console.error(error)}
 }
 
 /****************************************************
- * 11. MOSTRAR Y OCULTAR RESERVACIONES
+ * 5. RESERVACIONES
  ****************************************************/
-
 function mostrarReservaciones() {
   const panel = document.getElementById("panelReservaciones");
   panel.classList.add("visible");
   panel.scrollIntoView({behavior:"smooth",block:"start"});
 }
-
 function ocultarReservaciones() {
   document.getElementById("panelReservaciones").classList.remove("visible");
 }
-
-/****************************************************
- * 12. FECHAS Y VALIDACIONES DEL FORMULARIO
- ****************************************************/
-
 function obtenerFechaLocal(diasAdicionales) {
   const fecha = new Date();
-
   fecha.setHours(0,0,0,0);
   fecha.setDate(fecha.getDate()+diasAdicionales);
-
-  const anio = fecha.getFullYear();
-  const mes = String(fecha.getMonth()+1).padStart(2,"0");
-  const dia = String(fecha.getDate()).padStart(2,"0");
-
-  return anio + "-" + mes + "-" + dia;
+  return fecha.getFullYear() + "-" + String(fecha.getMonth()+1).padStart(2,"0") + "-" + String(fecha.getDate()).padStart(2,"0");
 }
-
 function configurarFechaMinima() {
   document.getElementById("resFecha").min = obtenerFechaLocal(1);
 }
-
 function validarFechaCliente(fechaTexto) {
-  if (!fechaTexto) return "Selecciona una fecha.";
-
+  if(!fechaTexto)return "Selecciona una fecha.";
   const partes = fechaTexto.split("-").map(Number);
   const fecha = new Date(partes[0],partes[1]-1,partes[2]);
-  const diaSemana = fecha.getDay();
-
-  if (fechaTexto <= obtenerFechaLocal(0)) {
-    return "Las reservaciones deben realizarse con al menos un día de anticipación.";
-  }
-
-  if (![0,4,5,6].includes(diaSemana)) {
-    return "Solo aceptamos reservaciones de jueves a domingo.";
-  }
-
+  if(fechaTexto <= obtenerFechaLocal(0))return "Las reservaciones deben realizarse con al menos un día de anticipación.";
+  if(![0,4,5,6].includes(fecha.getDay()))return "Solo aceptamos reservaciones de jueves a domingo.";
   return "";
 }
-
-/****************************************************
- * 13. VALIDAR ORIGEN DE RESPUESTA DE RESERVACIONES
- ****************************************************/
-
 function origenPostPermitido(origen) {
-  if (!origen || origen === "null") return false;
-
-  if (ORIGEN_APPS_SCRIPT.includes(origen)) return true;
-
+  if(!origen || origen === "null")return false;
   try {
     const host = new URL(origen).hostname;
-
-    return host === "script.google.com" ||
-      host.endsWith(".googleusercontent.com");
-
-  } catch(error) {
-    return false;
-  }
+    return host === "script.google.com" || host.endsWith(".googleusercontent.com");
+  } catch(error){return false}
 }
 
-/****************************************************
- * 14. RECIBIR RESPUESTA POST DE RESERVACIONES
- ****************************************************/
-
 window.addEventListener("message",function(event) {
-
-  if (!origenPostPermitido(event.origin)) {
-    console.warn("Origen de respuesta no reconocido:",event.origin);
-    return;
-  }
-
+  if(!origenPostPermitido(event.origin))return;
   const mensaje = event.data;
-
-  if (!mensaje || typeof mensaje !== "object") return;
-  if (mensaje.tipo !== "EL_PERRO_AI_POST_RESULTADO") return;
-  if (!mensaje.requestId) return;
-
-  if (!solicitudReservaActual ||
-      mensaje.requestId !== solicitudReservaActual) {
-    return;
-  }
+  if(!mensaje || typeof mensaje !== "object")return;
+  if(mensaje.tipo !== "EL_PERRO_AI_POST_RESULTADO" || !mensaje.requestId)return;
+  if(!solicitudReservaActual || mensaje.requestId !== solicitudReservaActual)return;
 
   clearTimeout(temporizadorReserva);
   temporizadorReserva = null;
-
   reservaEnviandose = false;
   reservaResultadoIncierto = false;
-
   document.getElementById("btnConfirmarReserva").disabled = false;
-
   solicitudReservaActual = null;
 
   const resolver = resolverReservaActual;
   const rechazar = rechazarReservaActual;
-
   resolverReservaActual = null;
   rechazarReservaActual = null;
-
   const resultado = mensaje.resultado || {};
 
-  if (resultado.correcto && resultado.confirmada) {
-
-    mostrarResultadoReserva(
-      "🐕 ¡Tu reservación quedó registrada correctamente! ¡Te esperamos en El Perro Caliente!",
-      "exito"
-    );
-
+  if(resultado.correcto && resultado.confirmada) {
+    mostrarResultadoReserva("🐕 ¡Tu reservación quedó registrada correctamente! ¡Te esperamos en El Perro Caliente!","exito");
     document.getElementById("formReservacion").reset();
     configurarFechaMinima();
-
-    if (resolver) resolver(resultado);
-
+    if(resolver)resolver(resultado);
   } else {
-
-    const error = new Error(
-      resultado.error || "No fue posible registrar la reservación."
-    );
-
-    if (rechazar) {
-      rechazar(error);
-    } else {
-      mostrarResultadoReserva(error.message,"error");
-    }
+    const error = new Error(resultado.error || "No fue posible registrar la reservación.");
+    if(rechazar)rechazar(error);
+    else mostrarResultadoReserva(error.message,"error");
   }
 });
 
-/****************************************************
- * 15. MOSTRAR RESULTADO DE RESERVACIÓN
- ****************************************************/
-
 function mostrarResultadoReserva(texto,tipo) {
   const resultado = document.getElementById("resultadoReservacion");
-
   resultado.textContent = texto;
   resultado.className = "resultado-reserva " + tipo;
   resultado.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
-/****************************************************
- * 16. ENVIAR RESERVACIÓN POR POST
- ****************************************************/
-
 function enviarReservacionPOST(datos) {
   return new Promise((resolve,reject) => {
-
-    if (reservaEnviandose || reservaResultadoIncierto) {
-      reject(new Error(
-        "Ya existe una solicitud pendiente o sin verificar. No envíes otra reservación."
-      ));
+    if(reservaEnviandose || reservaResultadoIncierto) {
+      reject(new Error("Ya existe una solicitud pendiente o sin verificar. No envíes otra reservación."));
       return;
     }
-
     const iframe = document.getElementById("reservacionesBridge");
-
-    if (!iframe) {
+    if(!iframe) {
       reject(new Error("No se encontró el canal de reservaciones."));
       return;
     }
 
-    const requestId = "reserva_" +
-      Date.now() + "_" +
-      Math.random().toString(36).substring(2,12);
-
-    const solicitud = {
-      requestId:requestId,
-      datos:datos
-    };
-
+    const requestId = "reserva_" + Date.now() + "_" + Math.random().toString(36).substring(2,12);
     reservaEnviandose = true;
     solicitudReservaActual = requestId;
     resolverReservaActual = resolve;
     rechazarReservaActual = reject;
 
     const formularioPost = document.createElement("form");
-
     formularioPost.method = "POST";
     formularioPost.action = URL_APPS_SCRIPT;
     formularioPost.target = "reservacionesBridge";
@@ -1582,263 +792,155 @@ function enviarReservacionPOST(datos) {
     formularioPost.style.display = "none";
 
     const campoPayload = document.createElement("input");
-
     campoPayload.type = "hidden";
     campoPayload.name = "payload";
-    campoPayload.value = JSON.stringify(solicitud);
-
+    campoPayload.value = JSON.stringify({requestId:requestId,datos:datos});
     formularioPost.appendChild(campoPayload);
     document.body.appendChild(formularioPost);
 
     temporizadorReserva = setTimeout(function() {
-
       temporizadorReserva = null;
       reservaEnviandose = false;
       reservaResultadoIncierto = true;
-
       solicitudReservaActual = null;
       resolverReservaActual = null;
       rechazarReservaActual = null;
-
       document.getElementById("btnConfirmarReserva").disabled = true;
-
-      reject(new Error(
-        "No recibimos respuesta de Google. La solicitud pudo haberse registrado. Verifica primero la hoja de Google Sheets antes de intentar otra vez. Actualiza la página solamente después de comprobar el registro."
-      ));
-
+      reject(new Error("No recibimos respuesta de Google. La solicitud pudo haberse registrado. Verifica primero la hoja de Google Sheets antes de intentar otra vez."));
     },45000);
 
     try {
-
       formularioPost.submit();
-
-      setTimeout(function() {
-        if (formularioPost.parentNode) {
-          formularioPost.parentNode.removeChild(formularioPost);
-        }
+      setTimeout(() => {
+        if(formularioPost.parentNode)formularioPost.parentNode.removeChild(formularioPost);
       },2000);
-
     } catch(error) {
-
       clearTimeout(temporizadorReserva);
       temporizadorReserva = null;
-
       reservaEnviandose = false;
       solicitudReservaActual = null;
       resolverReservaActual = null;
       rechazarReservaActual = null;
-
-      if (formularioPost.parentNode) {
-        formularioPost.parentNode.removeChild(formularioPost);
-      }
-
+      if(formularioPost.parentNode)formularioPost.parentNode.removeChild(formularioPost);
       reject(new Error("No se pudo enviar la solicitud: " + error.message));
     }
   });
 }
 
-/****************************************************
- * 17. PROCESAR FORMULARIO DE RESERVACIÓN
- ****************************************************/
-
-document.getElementById("formReservacion").addEventListener(
-  "submit",
-  async function(event) {
-
-    event.preventDefault();
-
-    if (reservaEnviandose) return;
-
-    if (reservaResultadoIncierto) {
-      mostrarResultadoReserva(
-        "Hay una solicitud cuyo resultado aún no se ha verificado. Revisa primero Google Sheets para evitar duplicar la reservación.",
-        "error"
-      );
-      return;
-    }
-
-    const nombre = document.getElementById("resNombre").value.trim();
-    const telefono = document.getElementById("resTelefono").value.trim();
-    const fecha = document.getElementById("resFecha").value;
-    const hora = document.getElementById("resHora").value;
-    const personas = Number(document.getElementById("resPersonas").value);
-    const observaciones =
-      document.getElementById("resObservaciones").value.trim();
-
-    if (!nombre || !telefono || !fecha || !hora) {
-      mostrarResultadoReserva("Completa todos los campos obligatorios.","error");
-      return;
-    }
-
-    if (!/^[0-9+\-\s()]{7,20}$/.test(telefono)) {
-      mostrarResultadoReserva("Escribe un número telefónico válido.","error");
-      return;
-    }
-
-    if (nombre.length > 100) {
-      mostrarResultadoReserva("El nombre es demasiado largo.","error");
-      return;
-    }
-
-    const errorFecha = validarFechaCliente(fecha);
-
-    if (errorFecha) {
-      mostrarResultadoReserva(errorFecha,"error");
-      return;
-    }
-
-    if (!Number.isInteger(personas) || personas < 1 || personas > 10) {
-      mostrarResultadoReserva(
-        "La reservación debe ser de 1 a 10 personas.",
-        "error"
-      );
-      return;
-    }
-
-    if (!/^\d{2}:\d{2}$/.test(hora) ||
-        hora < "17:00" || hora > "23:00") {
-      mostrarResultadoReserva(
-        "Selecciona un horario válido entre 5:00 p. m. y 11:00 p. m.",
-        "error"
-      );
-      return;
-    }
-
-    if (observaciones.length > 500) {
-      mostrarResultadoReserva(
-        "Las observaciones no pueden superar los 500 caracteres.",
-        "error"
-      );
-      return;
-    }
-
-    const datos = {
-      nombre:nombre,
-      telefono:telefono,
-      fecha:fecha,
-      hora:hora,
-      personas:personas,
-      observaciones:observaciones
-    };
-
-    document.getElementById("btnConfirmarReserva").disabled = true;
-
-    mostrarResultadoReserva(
-      "🐕 Estamos enviando tu solicitud. Espera un momento...",
-      "exito"
-    );
-
-    try {
-
-      await enviarReservacionPOST(datos);
-
-    } catch(error) {
-
-      console.error("Error de reservación:",error);
-
-      mostrarResultadoReserva(
-        error.message || "No fue posible enviar tu reservación.",
-        "error"
-      );
-
-      if (!reservaResultadoIncierto) {
-        reservaEnviandose = false;
-        document.getElementById("btnConfirmarReserva").disabled = false;
-      }
-    }
-  }
-);
-
-/****************************************************
- * 18. ADMINISTRACIÓN: VARIABLES Y CONEXIÓN
- ****************************************************/
-
-let adminBridgeListo = false;
-let adminBridgeVentana = null;
-let adminToken = null;
-let adminUsuarioActual = null;
-let adminSolicitudes = {};
-
-/*
- * El iframe de Apps Script puede utilizar un marco
- * intermedio de Google. Por eso no suponemos que el
- * mensaje READY proviene siempre directamente del
- * contentWindow del iframe.
- */
-
-function prepararAdminBridge() {
-  const iframe = document.getElementById("adminBridge");
-  const estado = document.getElementById("adminEstado");
-
-  if (!iframe) {
-    console.error("No se encontró el iframe administrativo.");
-    if (estado) {
-      estado.textContent = "Error: no se encontró el puente administrativo.";
-    }
+document.getElementById("formReservacion").addEventListener("submit",async function(event) {
+  event.preventDefault();
+  if(reservaEnviandose)return;
+  if(reservaResultadoIncierto) {
+    mostrarResultadoReserva("Hay una solicitud cuyo resultado aún no se ha verificado. Revisa primero Google Sheets para evitar duplicar la reservación.","error");
     return;
   }
 
-  const direccionActual = iframe.getAttribute("src");
+  const nombre = document.getElementById("resNombre").value.trim();
+  const telefono = document.getElementById("resTelefono").value.trim();
+  const fecha = document.getElementById("resFecha").value;
+  const hora = document.getElementById("resHora").value;
+  const personas = Number(document.getElementById("resPersonas").value);
+  const observaciones = document.getElementById("resObservaciones").value.trim();
 
-  if (!direccionActual || direccionActual === "about:blank") {
+  if(!nombre || !telefono || !fecha || !hora) {
+    mostrarResultadoReserva("Completa todos los campos obligatorios.","error");
+    return;
+  }
+  if(!/^[0-9+\-\s()]{7,20}$/.test(telefono)) {
+    mostrarResultadoReserva("Escribe un número telefónico válido.","error");
+    return;
+  }
+  if(nombre.length > 100) {
+    mostrarResultadoReserva("El nombre es demasiado largo.","error");
+    return;
+  }
+  const errorFecha = validarFechaCliente(fecha);
+  if(errorFecha) {
+    mostrarResultadoReserva(errorFecha,"error");
+    return;
+  }
+  if(!Number.isInteger(personas) || personas < 1 || personas > 10) {
+    mostrarResultadoReserva("La reservación debe ser de 1 a 10 personas.","error");
+    return;
+  }
+  if(!/^\d{2}:\d{2}$/.test(hora) || hora < "17:00" || hora > "23:00") {
+    mostrarResultadoReserva("Selecciona un horario válido entre 5:00 p. m. y 11:00 p. m.","error");
+    return;
+  }
+  if(observaciones.length > 500) {
+    mostrarResultadoReserva("Las observaciones no pueden superar los 500 caracteres.","error");
+    return;
+  }
+
+  const datos = {nombre,telefono,fecha,hora,personas,observaciones};
+  document.getElementById("btnConfirmarReserva").disabled = true;
+  mostrarResultadoReserva("🐕 Estamos enviando tu solicitud. Espera un momento...","exito");
+
+  try {
+    await enviarReservacionPOST(datos);
+  } catch(error) {
+    console.error("Error de reservación:",error);
+    mostrarResultadoReserva(error.message || "No fue posible enviar tu reservación.","error");
+    if(!reservaResultadoIncierto) {
+      reservaEnviandose = false;
+      document.getElementById("btnConfirmarReserva").disabled = false;
+    }
+  }
+});
+
+/****************************************************
+ * 6. ADMINISTRACIÓN Y COMUNICACIÓN CON ADMINBRIDGE
+ ****************************************************/
+function prepararAdminBridge() {
+  const iframe = document.getElementById("adminBridge");
+  const estado = document.getElementById("adminEstado");
+  if(!iframe) {
+    if(estado)estado.textContent = "Error: no se encontró el puente administrativo.";
+    return;
+  }
+  const actual = iframe.getAttribute("src");
+  if(!actual || actual === "about:blank") {
     adminBridgeListo = false;
     adminBridgeVentana = null;
-
-    if (estado) {
-      estado.textContent = "Cargando puente administrativo...";
-    }
-
+    if(estado)estado.textContent = "Cargando puente administrativo...";
     iframe.src = URL_APPS_SCRIPT + "?adminBridge=1";
-
-    console.log(
-      "EL PERRO AI: cargando puente administrativo",
-      iframe.src
-    );
   }
 }
 
 function abrirAdministracion() {
   document.getElementById("adminOverlay").classList.add("visible");
-
+  document.getElementById("adminVentana").classList.add("login");
+  document.getElementById("adminAccesoVista").style.display = "block";
+  document.getElementById("adminDashboard").classList.remove("visible");
   limpiarMensajeAdmin();
   mostrarFormularioAdmin("login");
-
-  if (!adminBridgeListo) {
-    document.getElementById("adminEstado").textContent =
-      "Conectando con el sistema administrativo...";
-
+  if(!adminBridgeListo) {
+    document.getElementById("adminEstado").textContent = "Conectando con el sistema administrativo...";
     prepararAdminBridge();
   } else {
-    document.getElementById("adminEstado").textContent =
-      "Sistema administrativo conectado.";
+    document.getElementById("adminEstado").textContent = "Sistema administrativo conectado.";
   }
 }
 
 function cerrarAdministracion() {
-  if (adminToken && adminBridgeListo) {
-    enviarMensajeAdmin("EL_PERRO_ADMIN_CERRAR", {
-      token:adminToken
-    }).catch(console.error);
+  if(adminToken && adminBridgeListo) {
+    enviarMensajeAdmin("EL_PERRO_ADMIN_CERRAR",{token:adminToken}).catch(console.error);
   }
-
   adminToken = null;
   adminUsuarioActual = null;
-
   document.getElementById("adminOverlay").classList.remove("visible");
   document.getElementById("adminLogin").reset();
   document.getElementById("adminCambioPassword").reset();
-
+  document.getElementById("adminAccesoVista").style.display = "block";
+  document.getElementById("adminDashboard").classList.remove("visible");
+  document.getElementById("adminVentana").classList.add("login");
   mostrarFormularioAdmin("login");
   limpiarMensajeAdmin();
 }
 
 function mostrarFormularioAdmin(tipo) {
-  document.getElementById("adminLogin").style.display =
-    tipo === "login" ? "flex" : "none";
-
-  document.getElementById("adminCambioPassword").style.display =
-    tipo === "cambio" ? "flex" : "none";
-
+  document.getElementById("adminLogin").style.display = tipo === "login" ? "flex" : "none";
+  document.getElementById("adminCambioPassword").style.display = tipo === "cambio" ? "flex" : "none";
   document.getElementById("adminDescripcion").textContent =
     tipo === "cambio"
       ? "Por seguridad debes establecer una nueva contraseña para continuar."
@@ -1850,65 +952,37 @@ function mostrarMensajeAdmin(texto,tipo) {
   elemento.textContent = texto;
   elemento.className = "admin-mensaje visible " + tipo;
 }
-
 function limpiarMensajeAdmin() {
   const elemento = document.getElementById("adminMensaje");
   elemento.textContent = "";
   elemento.className = "admin-mensaje";
 }
 
-/****************************************************
- * 19. MENSAJES ENTRE INDEX Y ADMINBRIDGE
- ****************************************************/
-
 function origenAdminPermitido(origen) {
   try {
     const host = new URL(origen).hostname;
-
-    return host === "script.google.com" ||
-      host.endsWith(".googleusercontent.com");
-
-  } catch (error) {
-    return false;
-  }
+    return host === "script.google.com" || host.endsWith(".googleusercontent.com");
+  } catch(error){return false}
 }
 
-function enviarMensajeAdmin(tipo, datos) {
-  return new Promise((resolve, reject) => {
-
-    if (!adminBridgeListo || !adminBridgeVentana) {
-      reject(new Error(
-        "El puente administrativo todavía no está conectado."
-      ));
+function enviarMensajeAdmin(tipo,datos) {
+  return new Promise((resolve,reject) => {
+    if(!adminBridgeListo || !adminBridgeVentana) {
+      reject(new Error("El puente administrativo todavía no está conectado."));
       return;
     }
 
-    const requestId = "admin_" +
-      Date.now() + "_" +
-      Math.random().toString(36).substring(2, 10);
-
-    const temporizador = setTimeout(function() {
+    const requestId = "admin_" + Date.now() + "_" + Math.random().toString(36).substring(2,10);
+    const temporizador = setTimeout(() => {
       delete adminSolicitudes[requestId];
-      reject(new Error(
-        "El sistema administrativo no respondió a tiempo."
-      ));
-    }, 30000);
+      reject(new Error("El sistema administrativo no respondió a tiempo."));
+    },30000);
 
-    adminSolicitudes[requestId] = {
-      resolve: resolve,
-      reject: reject,
-      temporizador: temporizador
-    };
+    adminSolicitudes[requestId] = {resolve,reject,temporizador};
 
     try {
-      adminBridgeVentana.postMessage(
-        Object.assign({
-          tipo: tipo,
-          requestId: requestId
-        }, datos || {}),
-        "*"
-      );
-    } catch (error) {
+      adminBridgeVentana.postMessage(Object.assign({tipo,requestId},datos || {}),"*");
+    } catch(error) {
       clearTimeout(temporizador);
       delete adminSolicitudes[requestId];
       reject(error);
@@ -1916,270 +990,241 @@ function enviarMensajeAdmin(tipo, datos) {
   });
 }
 
-/*
- * Recibe el aviso READY del puente.
- * La ventana que envía READY queda identificada
- * y se utiliza para enviarle las solicitudes.
- */
-
-window.addEventListener("message", function(event) {
-
-  if (!origenAdminPermitido(event.origin)) return;
-
+window.addEventListener("message",function(event) {
+  if(!origenAdminPermitido(event.origin))return;
   const mensaje = event.data;
+  if(!mensaje || typeof mensaje !== "object")return;
 
-  if (!mensaje || typeof mensaje !== "object") return;
-
-  if (mensaje.tipo === "EL_PERRO_ADMIN_BRIDGE_READY") {
-
+  if(mensaje.tipo === "EL_PERRO_ADMIN_BRIDGE_READY") {
     adminBridgeVentana = event.source;
     adminBridgeListo = true;
-
-    document.getElementById("adminEstado").textContent =
-      "Sistema administrativo conectado.";
-
-    console.log("ADMIN: puente conectado.");
-    console.log("ADMIN: origen:", event.origin);
-
+    document.getElementById("adminEstado").textContent = "Sistema administrativo conectado.";
+    console.log("ADMIN: puente conectado desde",event.origin);
     return;
   }
 
-  if (mensaje.tipo !== "EL_PERRO_ADMIN_RESULTADO") return;
-  if (!mensaje.requestId) return;
-
-  // Los resultados deben provenir de la misma ventana
-  // que notificó que el puente estaba preparado.
-  if (event.source !== adminBridgeVentana) return;
+  if(mensaje.tipo !== "EL_PERRO_ADMIN_RESULTADO" || !mensaje.requestId)return;
+  if(event.source !== adminBridgeVentana)return;
 
   const pendiente = adminSolicitudes[mensaje.requestId];
-
-  if (!pendiente) return;
+  if(!pendiente)return;
 
   clearTimeout(pendiente.temporizador);
   delete adminSolicitudes[mensaje.requestId];
-
   pendiente.resolve(mensaje.resultado || {});
 });
 
 /****************************************************
- * 20. INICIO DE SESIÓN ADMINISTRATIVO
+ * 7. LOGIN Y CAMBIO DE CONTRASEÑA
  ****************************************************/
+document.getElementById("adminLogin").addEventListener("submit",async function(event) {
+  event.preventDefault();
+  limpiarMensajeAdmin();
 
-document.getElementById("adminLogin").addEventListener(
-  "submit",
-  async function(event) {
-
-    event.preventDefault();
-    limpiarMensajeAdmin();
-
-    const usuario = document.getElementById("adminUsuario").value.trim();
-    const password = document.getElementById("adminPassword").value;
-
-    if (!usuario || !password) {
-      mostrarMensajeAdmin("Escribe tu usuario y contraseña.","error");
-      return;
-    }
-
-    const boton = document.getElementById("adminBtnLogin");
-
-    boton.disabled = true;
-    boton.textContent = "Verificando...";
-
-    try {
-
-      const resultado = await enviarMensajeAdmin(
-        "EL_PERRO_ADMIN_LOGIN",
-        {
-          username:usuario,
-          password:password
-        }
-      );
-
-      if (!resultado.correcto) {
-        throw new Error(
-          resultado.error || "Usuario o contraseña incorrectos."
-        );
-      }
-
-      if (!resultado.token) {
-        throw new Error("El servidor no entregó un token de sesión.");
-      }
-
-      adminToken = resultado.token;
-      adminUsuarioActual = resultado.usuario || {};
-
-      document.getElementById("adminPassword").value = "";
-
-      const debeCambiar =
-        adminUsuarioActual.forceChange === true;
-
-      if (debeCambiar) {
-
-        mostrarFormularioAdmin("cambio");
-
-        mostrarMensajeAdmin(
-          "Inicio de sesión correcto. Debes cambiar tu contraseña temporal.",
-          "exito"
-        );
-
-      } else {
-
-        mostrarMensajeAdmin(
-          "Inicio de sesión correcto.",
-          "exito"
-        );
-
-        const nombre = adminUsuarioActual.nombre ||
-          adminUsuarioActual.username ||
-          usuario;
-
-        document.getElementById("adminEstado").textContent =
-          "Sesión iniciada: " + nombre +
-          ". El panel de administración se integrará en la siguiente etapa.";
-      }
-
-    } catch(error) {
-
-      mostrarMensajeAdmin(error.message,"error");
-
-    } finally {
-
-      boton.disabled = false;
-      boton.textContent = "Iniciar sesión";
-    }
+  const usuario = document.getElementById("adminUsuario").value.trim();
+  const password = document.getElementById("adminPassword").value;
+  if(!usuario || !password) {
+    mostrarMensajeAdmin("Escribe tu usuario y contraseña.","error");
+    return;
   }
-);
+
+  const boton = document.getElementById("adminBtnLogin");
+  boton.disabled = true;
+  boton.textContent = "Verificando...";
+
+  try {
+    const resultado = await enviarMensajeAdmin("EL_PERRO_ADMIN_LOGIN",{username:usuario,password:password});
+    if(!resultado.correcto)throw new Error(resultado.error || "Usuario o contraseña incorrectos.");
+    if(!resultado.token)throw new Error("El servidor no entregó un token de sesión.");
+
+    adminToken = resultado.token;
+    adminUsuarioActual = resultado.usuario || {};
+    document.getElementById("adminPassword").value = "";
+
+    if(adminUsuarioActual.forceChange === true) {
+      mostrarFormularioAdmin("cambio");
+      mostrarMensajeAdmin("Inicio de sesión correcto. Debes cambiar tu contraseña temporal.","exito");
+    } else {
+      mostrarMensajeAdmin("Inicio de sesión correcto.","exito");
+      mostrarPanelAdministrativo();
+    }
+  } catch(error) {
+    mostrarMensajeAdmin(error.message,"error");
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "Iniciar sesión";
+  }
+});
+
+document.getElementById("adminCambioPassword").addEventListener("submit",async function(event) {
+  event.preventDefault();
+  limpiarMensajeAdmin();
+
+  if(!adminToken) {
+    mostrarMensajeAdmin("No existe una sesión administrativa activa.","error");
+    mostrarFormularioAdmin("login");
+    return;
+  }
+
+  const actual = document.getElementById("adminPasswordActual").value;
+  const nueva = document.getElementById("adminPasswordNueva").value;
+  const repetida = document.getElementById("adminPasswordRepetida").value;
+
+  if(nueva.length < 10) {
+    mostrarMensajeAdmin("La nueva contraseña debe tener al menos 10 caracteres.","error");
+    return;
+  }
+  if(nueva !== repetida) {
+    mostrarMensajeAdmin("Las contraseñas nuevas no coinciden.","error");
+    return;
+  }
+  if(actual === nueva) {
+    mostrarMensajeAdmin("La nueva contraseña debe ser diferente a la actual.","error");
+    return;
+  }
+
+  const boton = document.getElementById("adminBtnCambio");
+  boton.disabled = true;
+  boton.textContent = "Actualizando...";
+
+  try {
+    const resultado = await enviarMensajeAdmin("EL_PERRO_ADMIN_CAMBIAR_PASSWORD",{
+      token:adminToken,
+      passwordActual:actual,
+      passwordNueva:nueva
+    });
+
+    if(!resultado.correcto)throw new Error(resultado.error || "No fue posible cambiar la contraseña.");
+
+    document.getElementById("adminCambioPassword").reset();
+    adminToken = null;
+    adminUsuarioActual = null;
+    mostrarFormularioAdmin("login");
+    mostrarMensajeAdmin(resultado.mensaje || "Tu contraseña se actualizó correctamente. Inicia sesión nuevamente.","exito");
+  } catch(error) {
+    mostrarMensajeAdmin(error.message,"error");
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "Cambiar contraseña";
+  }
+});
 
 /****************************************************
- * 21. CAMBIAR CONTRASEÑA ADMINISTRATIVA
+ * 8. MOSTRAR PANEL Y CONTROLAR ACCESOS
  ****************************************************/
+function usuarioEsAdministrador(usuario) {
+  const rol = String(usuario.rol || "").toUpperCase();
+  const username = String(usuario.username || "").toLowerCase();
 
-document.getElementById("adminCambioPassword").addEventListener(
-  "submit",
-  async function(event) {
+  if(rol === "ADMINISTRADOR" || rol === "ADMIN")return true;
+  if(username === "brian.admin")return true;
 
-    event.preventDefault();
-    limpiarMensajeAdmin();
-
-    if (!adminToken) {
-      mostrarMensajeAdmin(
-        "No existe una sesión administrativa activa.",
-        "error"
-      );
-
-      mostrarFormularioAdmin("login");
-      return;
-    }
-
-    const actual =
-      document.getElementById("adminPasswordActual").value;
-
-    const nueva =
-      document.getElementById("adminPasswordNueva").value;
-
-    const repetida =
-      document.getElementById("adminPasswordRepetida").value;
-
-    if (nueva.length < 10) {
-      mostrarMensajeAdmin(
-        "La nueva contraseña debe tener al menos 10 caracteres.",
-        "error"
-      );
-      return;
-    }
-
-    if (nueva !== repetida) {
-      mostrarMensajeAdmin(
-        "Las contraseñas nuevas no coinciden.",
-        "error"
-      );
-      return;
-    }
-
-    if (actual === nueva) {
-      mostrarMensajeAdmin(
-        "La nueva contraseña debe ser diferente a la actual.",
-        "error"
-      );
-      return;
-    }
-
-    const boton = document.getElementById("adminBtnCambio");
-
-    boton.disabled = true;
-    boton.textContent = "Actualizando...";
-
-    try {
-
-      const resultado = await enviarMensajeAdmin(
-        "EL_PERRO_ADMIN_CAMBIAR_PASSWORD",
-        {
-          token:adminToken,
-          passwordActual:actual,
-          passwordNueva:nueva
-        }
-      );
-
-      if (!resultado.correcto) {
-        throw new Error(
-          resultado.error || "No fue posible cambiar la contraseña."
-        );
-      }
-
-      if (resultado.token) {
-        adminToken = resultado.token;
-      }
-
-      if (resultado.usuario) {
-        adminUsuarioActual = resultado.usuario;
-      }
-
-      document.getElementById("adminCambioPassword").reset();
-
-      mostrarFormularioAdmin("login");
-
-      mostrarMensajeAdmin(
-        resultado.mensaje ||
-        "Tu contraseña se actualizó correctamente. Inicia sesión nuevamente.",
-        "exito"
-      );
-
-      adminToken = null;
-      adminUsuarioActual = null;
-
-    } catch(error) {
-
-      mostrarMensajeAdmin(error.message,"error");
-
-    } finally {
-
-      boton.disabled = false;
-      boton.textContent = "Cambiar contraseña";
-    }
+  const permisos = usuario.permisos;
+  if(Array.isArray(permisos)) {
+    return permisos.some(p => /usuarios|configuracion|administrar_sistema/i.test(String(p)));
   }
-);
+  if(permisos && typeof permisos === "object") {
+    return Boolean(
+      permisos.usuarios ||
+      permisos.administrarUsuarios ||
+      permisos.configuracion ||
+      permisos.configurarSistema ||
+      permisos.administrarSistema
+    );
+  }
+  return false;
+}
+
+function mostrarPanelAdministrativo() {
+  if(!adminUsuarioActual || !adminToken)return;
+
+  document.getElementById("adminAccesoVista").style.display = "none";
+  document.getElementById("adminDashboard").classList.add("visible");
+  document.getElementById("adminVentana").classList.remove("login");
+  document.getElementById("adminMensaje").className = "admin-mensaje";
+
+  const nombre = adminUsuarioActual.nombre || adminUsuarioActual.username || "Usuario";
+  const rol = adminUsuarioActual.rol || "Personal autorizado";
+
+  document.getElementById("adminNombrePanel").textContent = nombre;
+  document.getElementById("adminRolPanel").textContent = "Rol: " + rol;
+
+  const esAdmin = usuarioEsAdministrador(adminUsuarioActual);
+  document.getElementById("adminZonaPrivada").style.display = esAdmin ? "block" : "none";
+
+  document.getElementById("adminEstado").textContent = "Sesión iniciada: " + nombre;
+  volverInicioAdmin();
+}
+
+function abrirModuloAdmin(modulo) {
+  const modulos = {
+    reservaciones:{
+      titulo:"📅 Reservaciones",
+      descripcion:"Desde esta sección se administrarán las solicitudes de reservación de los clientes.",
+      aviso:"La conexión con Google Sheets y las acciones para consultar, confirmar, editar y cancelar reservaciones se implementarán en la siguiente etapa."
+    },
+    promociones:{
+      titulo:"🍗 Promociones",
+      descripcion:"Administra las promociones activas de El Perro Caliente.",
+      aviso:"Aquí conectaremos el registro, edición, publicación y desactivación de promociones."
+    },
+    eventos:{
+      titulo:"🎸 Eventos",
+      descripcion:"Organiza eventos, música en vivo, concursos y actividades especiales.",
+      aviso:"Aquí conectaremos el calendario de eventos, sus detalles, publicaciones y cambios."
+    },
+    reportes:{
+      titulo:"📊 Reportes",
+      descripcion:"Consulta información de actividad, reservaciones, promociones y resultados.",
+      aviso:"Los indicadores y reportes se conectarán a las fuentes de datos del negocio en la siguiente etapa."
+    },
+    usuarios:{
+      titulo:"👥 Usuarios",
+      descripcion:"Administración de las cuentas del personal autorizado.",
+      aviso:"Esta sección estará disponible únicamente para el administrador principal. Las altas, bajas y permisos deberán validarse también desde el servidor."
+    },
+    configuracion:{
+      titulo:"⚙️ Configuración",
+      descripcion:"Preferencias generales y configuración de EL PERRO AI.",
+      aviso:"Aquí se conectarán las opciones de configuración del asistente y del sistema."
+    }
+  };
+
+  const datos = modulos[modulo];
+  if(!datos)return;
+
+  if((modulo === "usuarios" || modulo === "configuracion") &&
+      !usuarioEsAdministrador(adminUsuarioActual)) {
+    mostrarMensajeAdmin("No tienes permiso para acceder a esta sección.","error");
+    return;
+  }
+
+  document.getElementById("adminMenuPrincipal").style.display = "none";
+  document.getElementById("adminModulo").classList.add("visible");
+  document.getElementById("adminModuloTitulo").textContent = datos.titulo;
+  document.getElementById("adminModuloDescripcion").textContent = datos.descripcion;
+  document.getElementById("adminModuloAviso").textContent = datos.aviso;
+}
+
+function volverInicioAdmin() {
+  document.getElementById("adminMenuPrincipal").style.display = "block";
+  document.getElementById("adminModulo").classList.remove("visible");
+}
 
 /****************************************************
- * 22. INICIAR EL SISTEMA
+ * 9. INICIAR EL SISTEMA
  ****************************************************/
-
 window.addEventListener("load",function() {
-
   prepararMicrofono();
   conectarGoogle();
   configurarFechaMinima();
-
   prepararAdminBridge();
 
-  if ("speechSynthesis" in window) {
+  if("speechSynthesis" in window) {
     speechSynthesis.getVoices();
-
-    speechSynthesis.onvoiceschanged = function() {
-      seleccionarVoz();
-    };
+    speechSynthesis.onvoiceschanged = () => seleccionarVoz();
   }
 });
 </script>
-
 </body>
 </html>
