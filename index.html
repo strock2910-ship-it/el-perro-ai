@@ -1382,12 +1382,14 @@ function validarFormularioReservaAdmin(datos) {
   if(!reservaAdminNumeroFila&&datos.fecha<=obtenerFechaLocal(0))return "Para crear una reservación, selecciona al menos un día posterior.";
   return "";
 }
-
-document.getElementById("formReservaAdmin").addEventListener("submit",async function(event) {
+  document.getElementById("formReservaAdmin").addEventListener("submit",async function(event) {
   event.preventDefault();
+
   if(reservaAdminOcupado)return;
+
   if(!adminToken) {
-    mostrarMensajeReservaAdmin("La sesión administrativa expiró. Inicia sesión nuevamente.","error");return;
+    mostrarMensajeReservaAdmin("La sesión administrativa expiró. Inicia sesión nuevamente.","error");
+    return;
   }
 
   const datos={
@@ -1400,39 +1402,80 @@ document.getElementById("formReservaAdmin").addEventListener("submit",async func
   };
 
   const error=validarFormularioReservaAdmin(datos);
+
   if(error) {
-    mostrarMensajeReservaAdmin(error,"error");return;
+    mostrarMensajeReservaAdmin(error,"error");
+    return;
   }
 
   const boton=document.getElementById("raGuardar");
+  const numeroFila=reservaAdminNumeroFila;
+  const esEdicion=numeroFila!==null && numeroFila!==undefined;
+
+  let mensajeExito=null;
+  let mensajeError=null;
+
   reservaAdminOcupado=true;
   boton.disabled=true;
   boton.textContent="Guardando...";
 
   try {
     let resultado;
-    if(reservaAdminNumeroFila) {
-      resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_RESERVACIONES_EDITAR",{
-        token:adminToken,numeroFila:reservaAdminNumeroFila,datos:datos
-      });
+
+    if(esEdicion) {
+      resultado=await enviarMensajeAdmin(
+        "EL_PERRO_ADMIN_RESERVACION_EDITAR",
+        {
+          token:adminToken,
+          numeroFila:numeroFila,
+          datos:datos
+        }
+      );
     } else {
-      resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_RESERVACIONES_CREAR",{
-        token:adminToken,datos:datos
-      });
+      resultado=await enviarMensajeAdmin(
+        "EL_PERRO_ADMIN_RESERVACION_CREAR",
+        {
+          token:adminToken,
+          datos:datos
+        }
+      );
     }
 
-    if(!resultado.correcto)throw new Error(resultado.error||resultado.mensaje||"No fue posible guardar la reservación.");
+    if(!resultado.correcto) {
+      throw new Error(
+        resultado.error ||
+        resultado.mensaje ||
+        "No fue posible guardar la reservación."
+      );
+    }
 
-    cerrarFormularioReservaAdmin();
-    mostrarMensajeReservaAdmin(resultado.mensaje||(reservaAdminNumeroFila?"Reservación actualizada.":"Reservación creada."),"exito");
-    await cargarReservacionesAdmin();
+    mensajeExito=resultado.mensaje ||
+      (esEdicion
+        ?"Reservación actualizada correctamente."
+        :"Reservación creada correctamente.");
+
   } catch(error) {
-    mostrarMensajeReservaAdmin(error.message||"Ocurrió un error al guardar.","error");
+    mensajeError=error.message ||
+      "Ocurrió un error al guardar la reservación.";
+
   } finally {
     reservaAdminOcupado=false;
     boton.disabled=false;
-    boton.textContent=reservaAdminNumeroFila?"Guardar cambios":"Crear reservación";
+    boton.textContent=esEdicion
+      ?"Guardar cambios"
+      :"Crear reservación";
   }
+
+  if(mensajeError) {
+    mostrarMensajeReservaAdmin(mensajeError,"error");
+    return;
+  }
+
+  cerrarFormularioReservaAdmin();
+  mostrarMensajeReservaAdmin(mensajeExito,"exito");
+
+  // Ahora el bloqueo ya está liberado y la tabla puede actualizarse.
+  await cargarReservacionesAdmin();
 });
 
 /****************************************************
@@ -1542,11 +1585,16 @@ function pintarTablaReservacionesAdmin(lista) {
  ****************************************************/
 async function cambiarEstadoReservaAdmin(numeroFila,nuevoEstado) {
   if(reservaAdminOcupado)return;
+
   if(!adminToken) {
-    mostrarMensajeReservaAdmin("La sesión administrativa expiró.","error");return;
+    mostrarMensajeReservaAdmin("La sesión administrativa expiró.","error");
+    return;
   }
 
-  const reserva=reservasAdminDatos.find(r=>Number(r.numeroFila)===Number(numeroFila));
+  const reserva=reservasAdminDatos.find(
+    r=>Number(r.numeroFila)===Number(numeroFila)
+  );
+
   const nombre=reserva?reserva.nombre:"esta reservación";
 
   const pregunta=nuevoEstado==="Cancelada"
@@ -1555,21 +1603,49 @@ async function cambiarEstadoReservaAdmin(numeroFila,nuevoEstado) {
 
   if(!window.confirm(pregunta))return;
 
+  let mensajeExito=null;
+  let mensajeError=null;
+
   reservaAdminOcupado=true;
+
   try {
-    const resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_RESERVACIONES_ESTADO",{
-      token:adminToken,numeroFila:Number(numeroFila),nuevoEstado:nuevoEstado
-    });
+    const resultado=await enviarMensajeAdmin(
+      "EL_PERRO_ADMIN_RESERVACION_ESTADO",
+      {
+        token:adminToken,
+        numeroFila:Number(numeroFila),
+        nuevoEstado:nuevoEstado
+      }
+    );
 
-    if(!resultado.correcto)throw new Error(resultado.error||resultado.mensaje||"No se pudo actualizar el estado.");
+    if(!resultado.correcto) {
+      throw new Error(
+        resultado.error ||
+        resultado.mensaje ||
+        "No se pudo actualizar el estado."
+      );
+    }
 
-    mostrarMensajeReservaAdmin(resultado.mensaje||"Estado actualizado a "+nuevoEstado+".","exito");
-    await cargarReservacionesAdmin();
+    mensajeExito=resultado.mensaje ||
+      "Estado actualizado a "+nuevoEstado+".";
+
   } catch(error) {
-    mostrarMensajeReservaAdmin(error.message||"No se pudo actualizar la reservación.","error");
+    mensajeError=error.message ||
+      "No se pudo actualizar la reservación.";
+
   } finally {
     reservaAdminOcupado=false;
   }
+
+  if(mensajeError) {
+    mostrarMensajeReservaAdmin(mensajeError,"error");
+    return;
+  }
+
+  mostrarMensajeReservaAdmin(mensajeExito,"exito");
+
+  // Refrescar después de liberar el bloqueo.
+  await cargarReservacionesAdmin();
 }
 
 /****************************************************
