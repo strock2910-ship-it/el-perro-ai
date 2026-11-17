@@ -9,14 +9,10 @@
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <style>
-:root {
-  --naranja:#ff8c00;
-  --claro:#ffb347;
-  --fondo:#090909;
-  --panel:#171717;
-  --borde:rgba(255,140,0,.35);
-  --texto:#fff;
-  --secundario:#aaa;
+:root{
+  --naranja:#ff8c00;--claro:#ffb347;--fondo:#090909;
+  --panel:#171717;--borde:rgba(255,140,0,.35);
+  --texto:#fff;--secundario:#aaa
 }
 *{box-sizing:border-box}
 body{
@@ -27,77 +23,74 @@ body{
 }
 button,input,select,textarea{font-family:inherit}
 button{
-  border:1px solid transparent;border-radius:11px;padding:13px 17px;
+  border:1px solid transparent;border-radius:11px;padding:12px 16px;
   background:linear-gradient(135deg,#ff9b16,#e56d00);
-  color:white;font-weight:bold;cursor:pointer;font-size:14px;transition:.2s
+  color:white;font-weight:bold;cursor:pointer;font-size:13px;transition:.2s
 }
 button:hover{filter:brightness(1.12);transform:translateY(-1px)}
 button:disabled{opacity:.5;cursor:not-allowed;transform:none}
 input,select,textarea{
-  width:100%;min-width:0;padding:14px;border-radius:10px;
-  border:1px solid #414141;background:#242424;color:white;font-size:15px;outline:none
+  width:100%;min-width:0;padding:12px;border-radius:9px;
+  border:1px solid #414141;background:#242424;color:white;font-size:14px;outline:none
 }
-input:focus,select:focus,textarea:focus{border-color:var(--naranja);box-shadow:0 0 8px rgba(255,140,0,.15)}
-textarea{resize:vertical;min-height:85px}
-.app{width:100%;max-width:1450px;min-height:100vh;margin:auto;padding:24px 32px;display:flex;flex-direction:column;gap:20px}
+input:focus,select:focus,textarea:focus{border-color:var(--naranja)}
+textarea{resize:vertical;min-height:75px}
+.app{width:100%;max-width:1450px;min-height:100vh;margin:auto;padding:24px 32px;display:flex;flex-direction:column;gap:18px}
 header{display:flex;align-items:center;justify-content:space-between;padding:8px 5px 16px;border-bottom:1px solid rgba(255,140,0,.2)}
-.marca h1{margin:0;color:var(--naranja);font-size:30px;font-weight:900;letter-spacing:3px;text-shadow:0 0 15px rgba(255,140,0,.35)}
+.marca h1{margin:0;color:var(--naranja);font-size:30px;font-weight:900;letter-spacing:3px}
 .marca p{margin:7px 0 0;color:#aaa;font-size:13px}
 .etiqueta{color:var(--claro);background:rgba(255,140,0,.08);border:1px solid var(--borde);border-radius:30px;padding:9px 15px;font-size:12px}
-.workspace{display:grid;grid-template-columns:minmax(320px,.88fr) minmax(0,1.12fr);gap:22px;min-height:540px}
+.workspace{display:grid;grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr);gap:22px;min-height:520px}
 .avatar-panel{display:flex;flex-direction:column;gap:13px;min-width:0}
 .avatar-container{
-  position:relative;flex:1;min-height:470px;overflow:hidden;border-radius:25px;
+  position:relative;flex:1;min-height:450px;overflow:hidden;border-radius:25px;
   background:radial-gradient(ellipse at center,rgba(255,125,0,.2),transparent 58%),linear-gradient(145deg,#242424,#101010);
-  border:1px solid rgba(255,140,0,.42);box-shadow:0 0 28px rgba(255,115,0,.1),inset 0 0 40px rgba(255,140,0,.06)
+  border:1px solid rgba(255,140,0,.42);box-shadow:0 0 28px rgba(255,115,0,.1)
 }
 .avatar-container:after{content:"EL PERRO AI";position:absolute;bottom:18px;left:0;right:0;text-align:center;color:rgba(255,179,71,.55);font-size:12px;font-weight:bold;letter-spacing:5px;pointer-events:none}
 model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent}
 .status{display:flex;justify-content:center;align-items:center;min-height:42px;padding:10px 15px;background:#171717;border:1px solid #333;border-radius:12px;color:#65e68a;font-size:13px;text-align:center}
-.conversacion-panel{display:flex;flex-direction:column;min-width:0;min-height:540px;padding:20px;background:linear-gradient(145deg,#191919,#101010);border:1px solid #383838;border-radius:25px}
+.conversacion-panel{display:flex;flex-direction:column;min-width:0;min-height:520px;padding:20px;background:linear-gradient(145deg,#191919,#101010);border:1px solid #383838;border-radius:25px}
 .bienvenida{display:flex;align-items:center;gap:13px;padding:4px 2px 17px;border-bottom:1px solid #333}
 .icono-bienvenida{width:48px;height:48px;flex-shrink:0;display:grid;place-items:center;background:linear-gradient(145deg,#ff9b16,#a94e00);border-radius:15px;font-size:25px}
 .bienvenida h2{margin:0;font-size:19px}
 .bienvenida p{margin:5px 0 0;color:#999;font-size:12px}
-.chat{flex:1;min-height:350px;max-height:470px;overflow-y:auto;padding:18px 5px;scroll-behavior:smooth}
-.chat::-webkit-scrollbar{width:6px}
-.chat::-webkit-scrollbar-thumb{background:#694016;border-radius:10px}
+.chat{flex:1;min-height:320px;max-height:470px;overflow-y:auto;padding:18px 5px;scroll-behavior:smooth}
 .mensaje{max-width:88%;padding:14px 17px;margin:11px 0;border-radius:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
 .usuario{margin-left:auto;background:linear-gradient(135deg,#e87800,#a84b00);border-bottom-right-radius:4px}
 .perro{margin-right:auto;background:linear-gradient(145deg,#333,#252525);border:1px solid #414141;border-bottom-left-radius:4px}
 .composer-panel{padding:17px;background:linear-gradient(145deg,#1d1d1d,#111);border:1px solid var(--borde);border-radius:20px}
 .composer-titulo{margin:0 0 11px 3px;color:#aaa;font-size:12px;letter-spacing:.7px;text-transform:uppercase}
 .entrada{display:flex;align-items:center;gap:10px;padding:6px;background:#101010;border:1px solid #454545;border-radius:15px}
-.entrada input{flex:1;padding:13px;background:transparent;border:none;box-shadow:none}
-.btn-enviar{min-width:105px;min-height:48px}
-.btn-microfono{width:52px;height:48px;flex-shrink:0;padding:0;font-size:21px}
+.entrada input{flex:1;padding:13px;background:transparent;border:none}
+.btn-enviar{min-width:95px;min-height:46px}
+.btn-microfono{width:50px;height:46px;flex-shrink:0;padding:0;font-size:20px}
 .controles{display:flex;gap:10px;margin-top:13px}
-.controles button{flex:1;min-height:43px;font-size:12px}
+.controles button{flex:1;min-height:42px;font-size:12px}
 .secundario{background:linear-gradient(145deg,#303030,#202020);border:1px solid #454545}
 .activo{background:#a52626!important;border-color:#ff6969!important}
-.reservar-boton{width:100%;padding:17px;font-size:15px;background:linear-gradient(100deg,#a94e00,#ff9000,#a94e00);border:1px solid #ffad42;border-radius:14px}
+.reservar-boton{width:100%;padding:16px;font-size:15px;background:linear-gradient(100deg,#a94e00,#ff9000,#a94e00);border:1px solid #ffad42}
 .reserva-panel{display:none;background:linear-gradient(145deg,#1d1d1d,#111);border:1px solid var(--borde);border-radius:19px;padding:22px;gap:14px}
 .reserva-panel.visible{display:flex;flex-direction:column}
-.reserva-panel h2{color:var(--naranja);text-align:center;margin:0 0 5px;font-size:24px}
+.reserva-panel h2{color:var(--naranja);text-align:center;margin:0 0 5px}
 .reserva-panel p{color:#ccc;font-size:13px;line-height:1.5;margin:0;text-align:center}
-.campo{display:flex;flex-direction:column;gap:7px}
+.campo{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
 .campo label,.admin-formulario label{color:var(--claro);font-size:13px;font-weight:bold}
 .aviso-reserva{padding:14px;background:#242424;border:1px solid #393939;border-radius:11px;color:#ccc;font-size:12px;line-height:1.6}
 .resultado-reserva{display:none;padding:14px;border-radius:11px;font-size:14px;line-height:1.5;white-space:pre-wrap}
 .resultado-reserva.exito{display:block;background:#173522;border:1px solid #32854b;color:#a8f0bd}
 .resultado-reserva.error{display:block;background:#401d1d;border:1px solid #a33;color:#ffbaba}
 .acciones-reserva{display:flex;gap:10px}
-.acciones-reserva button{flex:1;min-height:47px}
+.acciones-reserva button{flex:1;min-height:45px}
 .boton-cerrar{background:#303030;border:1px solid #484848}
 footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.5px;border-top:1px solid #242424}
 .admin-acceso{display:inline-block;margin-top:9px;padding:7px 12px;color:#aaa;background:transparent;border:1px solid #444;border-radius:8px;font-size:11px}
-.admin-acceso:hover{color:var(--claro);border-color:var(--naranja);background:rgba(255,140,0,.08)}
 .puente-oculto{position:fixed;width:1px;height:1px;left:-10000px;top:-10000px;border:0;visibility:hidden}
 
-/* VENTANA ADMINISTRATIVA */
-.admin-overlay{display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.9);backdrop-filter:blur(7px)}
+/* ADMINISTRACIÓN */
+.admin-overlay{display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.92);backdrop-filter:blur(7px)}
 .admin-overlay.visible{display:flex}
-.admin-ventana{width:100%;max-width:980px;max-height:94vh;overflow-y:auto;padding:25px;background:linear-gradient(145deg,#202020,#101010);border:1px solid rgba(255,140,0,.5);border-radius:20px;box-shadow:0 0 35px rgba(255,140,0,.15)}
+.admin-ventana{width:100%;max-width:1050px;max-height:95vh;overflow-y:auto;padding:24px;background:linear-gradient(145deg,#202020,#101010);border:1px solid rgba(255,140,0,.5);border-radius:20px}
 .admin-ventana.login{max-width:430px}
 .admin-ventana h2{margin:0 0 8px;color:var(--naranja);text-align:center}
 .admin-descripcion{color:#aaa;font-size:13px;text-align:center;line-height:1.5;margin-bottom:20px}
@@ -110,8 +103,6 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
 .admin-mensaje.error{background:#401d1d;border:1px solid #a33;color:#ffbaba}
 .admin-mensaje.exito{background:#173522;border:1px solid #32854b;color:#a8f0bd}
 .admin-estado{color:#aaa;font-size:12px;text-align:center;margin-top:12px}
-
-/* PANEL PRINCIPAL */
 .admin-dashboard{display:none}
 .admin-dashboard.visible{display:block}
 .admin-topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:15px;background:#151515;border:1px solid #393939;border-radius:14px;margin:18px 0}
@@ -122,14 +113,14 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
 .admin-top-acciones button{font-size:12px;padding:10px 13px}
 .admin-titulo-seccion{color:var(--claro);font-size:14px;letter-spacing:1px;text-transform:uppercase;margin:23px 0 12px}
 .admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.admin-card{min-height:145px;padding:18px;text-align:left;background:linear-gradient(145deg,#242424,#151515);border:1px solid #414141;border-radius:15px;color:#fff}
-.admin-card:hover{border-color:var(--naranja);background:linear-gradient(145deg,#302315,#171717)}
-.admin-card .card-icono{font-size:28px;display:block;margin-bottom:12px}
+.admin-card{min-height:135px;padding:17px;text-align:left;background:linear-gradient(145deg,#242424,#151515);border:1px solid #414141;border-radius:15px;color:#fff}
+.admin-card:hover{border-color:var(--naranja)}
+.admin-card .card-icono{font-size:27px;display:block;margin-bottom:10px}
 .admin-card strong{display:block;color:var(--claro);font-size:15px;margin-bottom:7px}
 .admin-card small{display:block;color:#aaa;font-size:12px;line-height:1.4;font-weight:normal}
-.admin-modulo{display:none;margin-top:18px;padding:20px;background:#151515;border:1px solid #444;border-radius:15px}
+.admin-modulo{display:none;margin-top:18px;padding:18px;background:#151515;border:1px solid #444;border-radius:15px}
 .admin-modulo.visible{display:block}
-.admin-modulo h3{color:var(--naranja);margin:0 0 12px}
+.admin-modulo h3{color:var(--naranja);margin:0}
 .admin-modulo p{color:#bbb;font-size:13px;line-height:1.6}
 .modulo-cabecera{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .modulo-cabecera button{padding:9px 13px;font-size:12px}
@@ -137,139 +128,62 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
 .admin-dashboard-pie{margin-top:20px;text-align:center;color:#777;font-size:11px}
 .admin-cerrar-panel{background:#572323;border-color:#8d3b3b}
 
-/* MÓDULO DE REPORTES */
-.reportes-contenido{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-  margin-top:18px;
-}
-.reportes-intro{
-  padding:16px;
-  background:linear-gradient(145deg,#292015,#191919);
-  border:1px solid rgba(255,140,0,.35);
-  border-radius:13px;
-  color:#ddd;
-  font-size:13px;
-  line-height:1.6;
-}
-.reportes-seccion{
-  padding:17px;
-  background:linear-gradient(145deg,#202020,#141414);
-  border:1px solid #414141;
-  border-radius:14px;
-}
-.reportes-seccion h4{
-  margin:0 0 14px;
-  color:var(--claro);
-  font-size:15px;
-}
-.reportes-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:11px;
-}
-.reporte-indicador{
-  min-width:0;
-  padding:14px;
-  background:#111;
-  border:1px solid #393939;
-  border-radius:11px;
-}
-.reporte-indicador span{
-  display:block;
-  color:#aaa;
-  font-size:12px;
-  line-height:1.4;
-  margin-bottom:10px;
-}
-.reporte-indicador strong{
-  display:block;
-  color:var(--claro);
-  font-size:14px;
-  line-height:1.4;
-}
-.reporte-pendiente{
-  display:inline-block;
-  padding:6px 9px;
-  color:#ffc477;
-  background:rgba(255,140,0,.10);
-  border:1px solid rgba(255,140,0,.3);
-  border-radius:7px;
-  font-size:11px;
-}
-.reporte-lista{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-.reporte-fila{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px;
-  background:#111;
-  border:1px solid #353535;
-  border-radius:9px;
-}
-.reporte-fila span{
-  color:#ddd;
-  font-size:12px;
-}
-.reporte-fila strong{
-  color:var(--claro);
-  font-size:12px;
-  text-align:right;
-}
-.reportes-nota{
-  padding:13px;
-  color:#aaa;
-  background:#191919;
-  border-left:3px solid var(--naranja);
-  border-radius:7px;
-  font-size:12px;
-  line-height:1.6;
-}
-
+/* RESERVACIONES ADMIN */
+.reservas-admin{display:flex;flex-direction:column;gap:14px;margin-top:15px}
+.reservas-toolbar{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:9px;align-items:end}
+.reservas-toolbar label,.reserva-admin-form label{display:block;color:var(--claro);font-size:12px;font-weight:bold;margin-bottom:6px}
+.reservas-resumen{color:#aaa;font-size:12px}
+.reservas-tabla-wrap{width:100%;overflow-x:auto;border:1px solid #393939;border-radius:10px}
+.reservas-tabla{width:100%;border-collapse:collapse;min-width:850px;font-size:12px}
+.reservas-tabla th{background:#292016;color:var(--claro);text-align:left;padding:12px}
+.reservas-tabla td{padding:11px;border-top:1px solid #333;color:#ddd;vertical-align:middle}
+.reservas-tabla tr:hover td{background:#202020}
+.reserva-acciones{display:flex;gap:5px;flex-wrap:wrap}
+.reserva-acciones button{padding:7px 9px;font-size:11px}
+.btn-verde{background:#1e6538;border-color:#32854b}
+.btn-rojo{background:#702828;border-color:#a33}
+.btn-gris{background:#303030;border-color:#555}
+.estado-reserva{display:inline-block;padding:5px 8px;border-radius:7px;font-size:11px;background:#333;color:#ddd}
+.estado-registrada{background:#493414;color:#ffd18c}
+.estado-confirmada{background:#174b2c;color:#a8f0bd}
+.estado-cancelada{background:#512323;color:#ffbaba}
+.reserva-admin-form{display:none;padding:16px;background:#202020;border:1px solid #555;border-radius:12px}
+.reserva-admin-form.visible{display:block}
+.reserva-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.reserva-admin-form input,.reserva-admin-form select,.reserva-admin-form textarea{margin-top:6px}
+.reserva-admin-botones{display:flex;gap:9px;margin-top:14px}
+.reserva-admin-botones button{flex:1}
+.reserva-admin-mensaje{display:none;padding:11px;border-radius:8px;font-size:12px;line-height:1.5}
+.reserva-admin-mensaje.visible{display:block}
+.reserva-admin-mensaje.error{background:#401d1d;color:#ffbaba;border:1px solid #a33}
+.reserva-admin-mensaje.exito{background:#173522;color:#a8f0bd;border:1px solid #32854b}
+.reserva-vacio{text-align:center;padding:25px;color:#aaa;font-size:13px}
+.admin-cargando{text-align:center;padding:18px;color:#ffc477;font-size:13px}
+.reportes-contenido{display:flex;flex-direction:column;gap:14px;margin-top:15px}
+.reportes-seccion{padding:16px;background:#202020;border:1px solid #414141;border-radius:12px}
+.reportes-seccion h4{margin:0 0 12px;color:var(--claro)}
+.reportes-nota{padding:12px;color:#aaa;background:#191919;border-left:3px solid var(--naranja);font-size:12px;line-height:1.6}
 @media(max-width:850px){
-  .app{padding:17px;gap:15px}
-  .workspace{grid-template-columns:1fr;min-height:0}
-  .avatar-container{min-height:340px;height:340px}
-  .conversacion-panel{min-height:480px}
-  .chat{min-height:280px}
+ .app{padding:17px}.workspace{grid-template-columns:1fr}
+ .avatar-container{min-height:330px;height:330px}.conversacion-panel{min-height:460px}
+ .reservas-toolbar{grid-template-columns:1fr 1fr}
 }
 @media(max-width:600px){
-  .app{padding:12px;gap:13px}
-  header{padding:8px 3px 13px}
-  .marca h1{font-size:24px;letter-spacing:2px}
-  .marca p{font-size:11px}
-  .etiqueta{display:none}
-  .avatar-container{height:290px;min-height:290px;border-radius:19px}
-  .conversacion-panel{min-height:440px;padding:14px;border-radius:19px}
-  .bienvenida h2{font-size:17px}
-  .chat{min-height:260px;max-height:390px;padding:12px 2px}
-  .mensaje{max-width:94%;font-size:13px;padding:12px 14px}
-  .composer-panel{padding:12px}
-  .entrada{gap:6px}
-  .entrada input{font-size:13px;padding:10px 5px}
-  .btn-enviar{min-width:76px;padding:11px;font-size:12px}
-  .btn-microfono{width:43px;height:44px}
-  .controles{gap:7px}
-  .controles button{font-size:11px;padding:10px 5px}
-  .reserva-panel{padding:15px}
-  .acciones-reserva{flex-direction:column}
-  .admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .admin-ventana{padding:17px}
-  .reportes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .reportes-seccion{padding:13px}
-  .reporte-fila{align-items:flex-start;flex-direction:column;gap:6px}
-  .reporte-fila strong{text-align:left}
+ .app{padding:12px}.marca h1{font-size:23px}.etiqueta{display:none}
+ .avatar-container{height:280px;min-height:280px}
+ .conversacion-panel{min-height:430px;padding:14px}
+ .chat{min-height:250px}.mensaje{max-width:94%;font-size:13px}
+ .entrada{gap:5px}.entrada input{font-size:13px;padding:10px 5px}
+ .btn-enviar{min-width:70px;padding:10px;font-size:12px}
+ .btn-microfono{width:42px}.controles{gap:7px}
+ .controles button{font-size:11px;padding:9px 5px}
+ .reserva-panel{padding:15px}.acciones-reserva{flex-direction:column}
+ .admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .admin-ventana{padding:15px}.reservas-toolbar{grid-template-columns:1fr}
+ .reserva-admin-grid{grid-template-columns:1fr}
+ .reserva-admin-botones{flex-direction:column}
 }
-@media(max-width:380px){
-  .admin-grid{grid-template-columns:1fr}
-  .reportes-grid{grid-template-columns:1fr}
-}
+@media(max-width:380px){.admin-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -371,13 +285,12 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
     </div>
     <div class="aviso-reserva">
       <strong>Horarios de reservación:</strong><br>
-      Jueves y domingo: de 5:00 p. m. a 11:00 p. m.<br>
-      Viernes y sábado: de 5:00 p. m. a 11:00 p. m.<br><br>
-      Aceptamos reservaciones de jueves a domingo, con al menos un día de anticipación y para grupos de 1 a 10 personas.
+      Jueves a domingo: de 5:00 p. m. a 11:00 p. m.<br><br>
+      Aceptamos reservaciones con al menos un día de anticipación y para grupos de 1 a 10 personas.
     </div>
     <div id="resultadoReservacion" class="resultado-reserva"></div>
     <div class="acciones-reserva">
-      <button id="btnConfirmarReserva" type="submit">Confirmar reservación</button>
+      <button id="btnConfirmarReserva" type="submit">Enviar solicitud</button>
       <button type="button" class="boton-cerrar" onclick="ocultarReservaciones()">Cerrar</button>
     </div>
   </form>
@@ -389,129 +302,215 @@ footer{text-align:center;color:#777;font-size:12px;padding:12px;letter-spacing:.
 </footer>
 </div>
 
-<!-- PUENTES INDEPENDIENTES -->
 <iframe id="reservacionesBridge" name="reservacionesBridge" class="puente-oculto" title="Procesamiento de reservaciones"></iframe>
 <iframe id="adminBridge" class="puente-oculto" title="Conexión administrativa"></iframe>
 
-<!-- VENTANA ADMINISTRATIVA -->
 <section class="admin-overlay" id="adminOverlay">
-  <div class="admin-ventana login" id="adminVentana">
+<div class="admin-ventana login" id="adminVentana">
 
-    <div id="adminAccesoVista">
-      <h2>🐕 Administración</h2>
-      <p class="admin-descripcion" id="adminDescripcion">Acceso exclusivo para el equipo de El Perro Caliente.</p>
+  <div id="adminAccesoVista">
+    <h2>🐕 Administración</h2>
+    <p class="admin-descripcion" id="adminDescripcion">Acceso exclusivo para el equipo de El Perro Caliente.</p>
 
-      <form id="adminLogin" class="admin-formulario">
-        <div>
-          <label for="adminUsuario">Usuario</label>
-          <input id="adminUsuario" type="text" autocomplete="username" placeholder="Tu usuario" maxlength="80" required>
-        </div>
-        <div>
-          <label for="adminPassword">Contraseña</label>
-          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña" maxlength="200" required>
-        </div>
-        <div class="admin-acciones">
-          <button type="submit" id="adminBtnLogin">Iniciar sesión</button>
-          <button type="button" class="boton-cerrar" onclick="cerrarAdministracion()">Cerrar</button>
-        </div>
-      </form>
+    <form id="adminLogin" class="admin-formulario">
+      <div>
+        <label for="adminUsuario">Usuario</label>
+        <input id="adminUsuario" type="text" autocomplete="username" placeholder="Tu usuario" maxlength="80" required>
+      </div>
+      <div>
+        <label for="adminPassword">Contraseña</label>
+        <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña" maxlength="200" required>
+      </div>
+      <div class="admin-acciones">
+        <button type="submit" id="adminBtnLogin">Iniciar sesión</button>
+        <button type="button" class="boton-cerrar" onclick="cerrarAdministracion()">Cerrar</button>
+      </div>
+    </form>
 
-      <form id="adminCambioPassword" class="admin-formulario" style="display:none">
-        <div>
-          <label for="adminPasswordActual">Contraseña actual</label>
-          <input id="adminPasswordActual" type="password" autocomplete="current-password" required>
-        </div>
-        <div>
-          <label for="adminPasswordNueva">Nueva contraseña</label>
-          <input id="adminPasswordNueva" type="password" autocomplete="new-password" minlength="10" maxlength="200" required>
-        </div>
-        <div>
-          <label for="adminPasswordRepetida">Confirmar nueva contraseña</label>
-          <input id="adminPasswordRepetida" type="password" autocomplete="new-password" minlength="10" maxlength="200" required>
-        </div>
-        <div class="admin-acciones">
-          <button type="submit" id="adminBtnCambio">Cambiar contraseña</button>
-          <button type="button" class="boton-cerrar" onclick="cerrarAdministracion()">Cancelar</button>
-        </div>
-      </form>
+    <form id="adminCambioPassword" class="admin-formulario" style="display:none">
+      <div>
+        <label for="adminPasswordActual">Contraseña actual</label>
+        <input id="adminPasswordActual" type="password" autocomplete="current-password" required>
+      </div>
+      <div>
+        <label for="adminPasswordNueva">Nueva contraseña</label>
+        <input id="adminPasswordNueva" type="password" autocomplete="new-password" minlength="12" maxlength="200" required>
+      </div>
+      <div>
+        <label for="adminPasswordRepetida">Confirmar nueva contraseña</label>
+        <input id="adminPasswordRepetida" type="password" autocomplete="new-password" minlength="12" maxlength="200" required>
+      </div>
+      <div class="admin-acciones">
+        <button type="submit" id="adminBtnCambio">Cambiar contraseña</button>
+        <button type="button" class="boton-cerrar" onclick="cerrarAdministracion()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="admin-dashboard" id="adminDashboard">
+    <h2>🐕 Panel de administración</h2>
+    <p class="admin-descripcion">Centro de control de El Perro Caliente</p>
+
+    <div class="admin-topbar">
+      <div class="admin-identidad">
+        <strong id="adminNombrePanel">Usuario</strong>
+        <span id="adminRolPanel">Rol</span>
+      </div>
+      <div class="admin-top-acciones">
+        <button type="button" class="secundario" onclick="volverInicioAdmin()">Inicio</button>
+        <button type="button" class="admin-cerrar-panel" onclick="cerrarAdministracion()">Cerrar sesión</button>
+      </div>
     </div>
 
-    <!-- PANEL PRINCIPAL -->
-    <div class="admin-dashboard" id="adminDashboard">
-      <h2>🐕 Panel de administración</h2>
-      <p class="admin-descripcion">Centro de control de El Perro Caliente</p>
-
-      <div class="admin-topbar">
-        <div class="admin-identidad">
-          <strong id="adminNombrePanel">Usuario</strong>
-          <span id="adminRolPanel">Rol</span>
-        </div>
-        <div class="admin-top-acciones">
-          <button type="button" class="secundario" onclick="volverInicioAdmin()">Inicio</button>
-          <button type="button" class="admin-cerrar-panel" onclick="cerrarAdministracion()">Cerrar sesión</button>
-        </div>
+    <div id="adminMenuPrincipal">
+      <div class="admin-titulo-seccion">Operación del negocio</div>
+      <div class="admin-grid">
+        <button class="admin-card" onclick="abrirModuloAdmin('reservaciones')">
+          <span class="card-icono">📅</span>
+          <strong>Reservaciones</strong>
+          <small>Consulta, registra, confirma, edita y cancela reservaciones.</small>
+        </button>
+        <button class="admin-card" onclick="abrirModuloAdmin('promociones')">
+          <span class="card-icono">🍗</span>
+          <strong>Promociones</strong>
+          <small>Organiza promociones y ofertas del negocio.</small>
+        </button>
+        <button class="admin-card" onclick="abrirModuloAdmin('eventos')">
+          <span class="card-icono">🎸</span>
+          <strong>Eventos</strong>
+          <small>Organiza eventos, música y actividades.</small>
+        </button>
+        <button class="admin-card" onclick="abrirModuloAdmin('reportes')">
+          <span class="card-icono">📊</span>
+          <strong>Reportes</strong>
+          <small>Consulta indicadores y resultados.</small>
+        </button>
       </div>
 
-      <div id="adminMenuPrincipal">
-        <div class="admin-titulo-seccion">Operación del negocio</div>
+      <div id="adminZonaPrivada" style="display:none">
+        <div class="admin-titulo-seccion">Administración del sistema</div>
         <div class="admin-grid">
-          <button class="admin-card" onclick="abrirModuloAdmin('reservaciones')">
-            <span class="card-icono">📅</span>
-            <strong>Reservaciones</strong>
-            <small>Consulta y administración de reservaciones.</small>
+          <button class="admin-card" onclick="abrirModuloAdmin('usuarios')">
+            <span class="card-icono">👥</span>
+            <strong>Usuarios</strong>
+            <small>Administración de cuentas y permisos.</small>
           </button>
-          <button class="admin-card" onclick="abrirModuloAdmin('promociones')">
-            <span class="card-icono">🍗</span>
-            <strong>Promociones</strong>
-            <small>Organiza promociones y ofertas del negocio.</small>
-          </button>
-          <button class="admin-card" onclick="abrirModuloAdmin('eventos')">
-            <span class="card-icono">🎸</span>
-            <strong>Eventos</strong>
-            <small>Organiza eventos, música y actividades.</small>
-          </button>
-          <button class="admin-card" onclick="abrirModuloAdmin('reportes')">
-            <span class="card-icono">📊</span>
-            <strong>Reportes</strong>
-            <small>Consulta indicadores y resultados.</small>
+          <button class="admin-card" onclick="abrirModuloAdmin('configuracion')">
+            <span class="card-icono">⚙️</span>
+            <strong>Configuración</strong>
+            <small>Preferencias y configuración de EL PERRO AI.</small>
           </button>
         </div>
+      </div>
+    </div>
 
-        <div id="adminZonaPrivada" style="display:none">
-          <div class="admin-titulo-seccion">Administración del sistema</div>
-          <div class="admin-grid">
-            <button class="admin-card" onclick="abrirModuloAdmin('usuarios')">
-              <span class="card-icono">👥</span>
-              <strong>Usuarios</strong>
-              <small>Administración de cuentas y permisos.</small>
-            </button>
-            <button class="admin-card" onclick="abrirModuloAdmin('configuracion')">
-              <span class="card-icono">⚙️</span>
-              <strong>Configuración</strong>
-              <small>Preferencias y configuración de EL PERRO AI.</small>
-            </button>
+    <div class="admin-modulo" id="adminModulo">
+      <div class="modulo-cabecera">
+        <h3 id="adminModuloTitulo">Módulo</h3>
+        <button type="button" class="secundario" onclick="volverInicioAdmin()">← Volver al panel</button>
+      </div>
+      <p id="adminModuloDescripcion"></p>
+      <div class="modulo-aviso" id="adminModuloAviso"></div>
+
+      <div id="adminReservasContenido" style="display:none">
+        <div class="reservas-admin">
+          <div class="reservas-toolbar">
+            <div>
+              <label for="resAdminBuscar">Buscar nombre o teléfono</label>
+              <input id="resAdminBuscar" type="search" placeholder="Nombre o teléfono">
+            </div>
+            <div>
+              <label for="resAdminFecha">Fecha</label>
+              <input id="resAdminFecha" type="date">
+            </div>
+            <div>
+              <label for="resAdminEstado">Estado</label>
+              <select id="resAdminEstado">
+                <option value="">Todos</option>
+                <option value="Registrada">Registrada</option>
+                <option value="Confirmada">Confirmada</option>
+                <option value="Cancelada">Cancelada</option>
+              </select>
+            </div>
+            <div>
+              <button type="button" onclick="cargarReservacionesAdmin()">🔄 Actualizar</button>
+            </div>
+          </div>
+
+          <div class="modulo-cabecera">
+            <span class="reservas-resumen" id="resAdminResumen">Reservaciones: sin consultar</span>
+            <button type="button" onclick="abrirFormularioReservaAdmin()">＋ Nueva reservación</button>
+          </div>
+
+          <div id="reservaAdminMensaje" class="reserva-admin-mensaje"></div>
+
+          <div id="reservaAdminFormulario" class="reserva-admin-form">
+            <h4 id="reservaAdminFormTitulo" style="color:var(--claro);margin:0 0 14px">Nueva reservación</h4>
+            <form id="formReservaAdmin">
+              <div class="reserva-admin-grid">
+                <div>
+                  <label for="raNombre">Nombre completo</label>
+                  <input id="raNombre" maxlength="100" required>
+                </div>
+                <div>
+                  <label for="raTelefono">Teléfono</label>
+                  <input id="raTelefono" maxlength="20" required>
+                </div>
+                <div>
+                  <label for="raFecha">Fecha</label>
+                  <input id="raFecha" type="date" required>
+                </div>
+                <div>
+                  <label for="raHora">Hora</label>
+                  <select id="raHora" required>
+                    <option value="">Selecciona hora</option>
+                    <option value="17:00">5:00 p. m.</option>
+                    <option value="18:00">6:00 p. m.</option>
+                    <option value="19:00">7:00 p. m.</option>
+                    <option value="20:00">8:00 p. m.</option>
+                    <option value="21:00">9:00 p. m.</option>
+                    <option value="22:00">10:00 p. m.</option>
+                    <option value="23:00">11:00 p. m.</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="raPersonas">Personas</label>
+                  <select id="raPersonas" required>
+                    <option value="">Selecciona</option>
+                    <option value="1">1</option><option value="2">2</option>
+                    <option value="3">3</option><option value="4">4</option>
+                    <option value="5">5</option><option value="6">6</option>
+                    <option value="7">7</option><option value="8">8</option>
+                    <option value="9">9</option><option value="10">10</option>
+                  </select>
+                </div>
+                <div style="grid-column:1/-1">
+                  <label for="raObservaciones">Observaciones</label>
+                  <textarea id="raObservaciones" maxlength="500"></textarea>
+                </div>
+              </div>
+              <div class="reserva-admin-botones">
+                <button id="raGuardar" type="submit">Guardar reservación</button>
+                <button type="button" class="boton-cerrar" onclick="cerrarFormularioReservaAdmin()">Cancelar</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="reservaAdminTabla">
+            <div class="admin-cargando">Pulsa «Actualizar» para consultar las reservaciones.</div>
           </div>
         </div>
       </div>
 
-      <div class="admin-modulo" id="adminModulo">
-        <div class="modulo-cabecera">
-          <h3 id="adminModuloTitulo">Módulo</h3>
-          <button type="button" class="secundario" onclick="volverInicioAdmin()">← Volver al panel</button>
-        </div>
-        <p id="adminModuloDescripcion"></p>
-        <div class="modulo-aviso" id="adminModuloAviso">
-          Esta sección está preparada para conectar sus funciones.
-        </div>
-        <div id="adminReporteContenido" style="display:none"></div>
-      </div>
-
-      <div class="admin-dashboard-pie">EL PERRO AI · Administración interna</div>
+      <div id="adminReporteContenido" style="display:none"></div>
     </div>
 
-    <div id="adminMensaje" class="admin-mensaje"></div>
-    <div id="adminEstado" class="admin-estado">Preparando conexión administrativa...</div>
+    <div class="admin-dashboard-pie">EL PERRO AI · Administración interna</div>
   </div>
+
+  <div id="adminMensaje" class="admin-mensaje"></div>
+  <div id="adminEstado" class="admin-estado">Preparando conexión administrativa...</div>
+</div>
 </section>
 
 <script>
@@ -542,6 +541,10 @@ let adminToken = null;
 let adminUsuarioActual = null;
 let adminSolicitudes = {};
 
+let reservaAdminNumeroFila = null;
+let reservaAdminOcupado = false;
+let reservasAdminDatos = [];
+
 /****************************************************
  * 2. CONEXIÓN JSONP CON GOOGLE APPS SCRIPT
  ****************************************************/
@@ -549,7 +552,6 @@ function llamarGoogle(parametros) {
   return new Promise((resolve,reject) => {
     const callback = "perroCallback_" + Date.now() + "_" + Math.floor(Math.random()*100000);
     const url = new URL(URL_APPS_SCRIPT);
-
     Object.keys(parametros).forEach(clave => url.searchParams.set(clave,parametros[clave]));
     url.searchParams.set("callback",callback);
 
@@ -585,7 +587,7 @@ function llamarGoogle(parametros) {
 }
 
 /****************************************************
- * 3. CONEXIÓN Y CHAT
+ * 3. CHAT
  ****************************************************/
 async function conectarGoogle() {
   const estado = document.getElementById("estado");
@@ -632,9 +634,7 @@ async function enviarMensaje() {
     });
 
     if(!respuesta)throw new Error("Google no devolvió una respuesta.");
-    if(respuesta.correcto === false) {
-      throw new Error(respuesta.error || respuesta.mensaje || "No pude procesar tu mensaje.");
-    }
+    if(respuesta.correcto === false)throw new Error(respuesta.error || respuesta.mensaje || "No pude procesar tu mensaje.");
 
     const contenido = typeof respuesta === "string"
       ? respuesta
@@ -650,7 +650,6 @@ async function enviarMensaje() {
     agregarMensaje(contenido,"perro");
     document.getElementById("estado").textContent = "🐕 Aquí estoy para ayudarte";
     if(vozAutomatica)hablar(contenido);
-
   } catch(error) {
     console.error(error);
     agregarMensaje("Disculpa, tuve un problema al responder. Inténtalo nuevamente.","perro");
@@ -660,7 +659,6 @@ async function enviarMensaje() {
     document.getElementById("btnEnviar").disabled = false;
   }
 }
-
 document.getElementById("mensaje").addEventListener("keydown",event => {
   if(event.key === "Enter")enviarMensaje();
 });
@@ -680,114 +678,103 @@ function numeroATexto(numero) {
   function menorMil(n) {
     if(n < 30)return unidades[n];
     if(n < 100) {
-      const d = Math.floor(n/10),u = n%10;
-      return u === 0 ? decenas[d] : decenas[d] + " y " + unidades[u];
+      const d=Math.floor(n/10),u=n%10;
+      return u===0?decenas[d]:decenas[d]+" y "+unidades[u];
     }
-    if(n === 100)return "cien";
-    const c = Math.floor(n/100),resto = n%100;
-    return centenas[c] + (resto ? " " + menorMil(resto) : "");
+    if(n===100)return "cien";
+    const c=Math.floor(n/100),resto=n%100;
+    return centenas[c]+(resto?" "+menorMil(resto):"");
   }
-
   function convertir(n) {
-    if(n < 1000)return menorMil(n);
-    if(n < 1000000) {
-      const miles = Math.floor(n/1000),resto = n%1000;
-      return (miles === 1 ? "mil" : menorMil(miles) + " mil") + (resto ? " " + menorMil(resto) : "");
+    if(n<1000)return menorMil(n);
+    if(n<1000000) {
+      const miles=Math.floor(n/1000),resto=n%1000;
+      return (miles===1?"mil":menorMil(miles)+" mil")+(resto?" "+menorMil(resto):"");
     }
-    const millones = Math.floor(n/1000000),resto = n%1000000;
-    return (millones === 1 ? "un millón" : convertir(millones) + " millones") + (resto ? " " + convertir(resto) : "");
+    const millones=Math.floor(n/1000000),resto=n%1000000;
+    return (millones===1?"un millón":convertir(millones)+" millones")+(resto?" "+convertir(resto):"");
   }
-
   if(Number.isInteger(numero))return convertir(numero);
-  const partes = numero.toString().split(".");
-  return convertir(Number(partes[0])) + " punto " + partes[1].split("").map(d => unidades[Number(d)]).join(" ");
+  const partes=numero.toString().split(".");
+  return convertir(Number(partes[0]))+" punto "+partes[1].split("").map(d=>unidades[Number(d)]).join(" ");
 }
 
 function limpiarTextoParaVoz(texto) {
-  let limpio = String(texto);
-  limpio = limpio.replace(/https?:\/\/\S+/gi," ");
-  limpio = limpio.replace(/\[([^\]]+)\]\([^)]+\)/g,"$1");
-  limpio = limpio.replace(/[*_~`#]/g," ");
-  limpio = limpio.replace(/\$(\d+(?:\.\d+)?)/g,(m,n) => numeroATexto(n) + " pesos");
-  limpio = limpio.replace(/(\d[\d,]*(?:\.\d+)?)/g,n => numeroATexto(Number(n.replace(/,/g,""))));
-  limpio = limpio.replace(/\p{Extended_Pictographic}/gu," ");
-  limpio = limpio.replace(/[|•*_#~`=<>[\]{}]/g," ");
-  limpio = limpio.replace(/[ \t]+/g," ");
-  limpio = limpio.replace(/\n{2,}/g,". ");
+  let limpio=String(texto);
+  limpio=limpio.replace(/https?:\/\/\S+/gi," ");
+  limpio=limpio.replace(/\[([^\]]+)\]\([^)]+\)/g,"$1");
+  limpio=limpio.replace(/[*_~`#]/g," ");
+  limpio=limpio.replace(/\$(\d+(?:\.\d+)?)/g,(m,n)=>numeroATexto(n)+" pesos");
+  limpio=limpio.replace(/(\d[\d,]*(?:\.\d+)?)/g,n=>numeroATexto(Number(n.replace(/,/g,""))));
+  limpio=limpio.replace(/\p{Extended_Pictographic}/gu," ");
+  limpio=limpio.replace(/[|•*_#~`=<>[\]{}]/g," ");
+  limpio=limpio.replace(/[ \t]+/g," ");
+  limpio=limpio.replace(/\n{2,}/g,". ");
   return limpio.trim();
 }
 
 function seleccionarVoz() {
-  const voces = speechSynthesis.getVoices();
+  const voces=speechSynthesis.getVoices();
   if(!voces.length)return null;
-  const mexicanas = voces.filter(v => v.lang.toLowerCase() === "es-mx");
-  const espanolas = voces.filter(v => v.lang.toLowerCase().startsWith("es"));
-  const candidatas = mexicanas.length ? mexicanas : espanolas;
+  const mexicanas=voces.filter(v=>v.lang.toLowerCase()==="es-mx");
+  const espanolas=voces.filter(v=>v.lang.toLowerCase().startsWith("es"));
+  const candidatas=mexicanas.length?mexicanas:espanolas;
   if(!candidatas.length)return null;
-  return candidatas.find(v => /natural|neural|online|enhanced|premium/i.test(v.name))
-    || candidatas.find(v => /microsoft/i.test(v.name))
-    || candidatas.find(v => /google/i.test(v.name))
-    || candidatas[0];
+  return candidatas.find(v=>/natural|neural|online|enhanced|premium/i.test(v.name))
+    ||candidatas.find(v=>/microsoft/i.test(v.name))
+    ||candidatas.find(v=>/google/i.test(v.name))
+    ||candidatas[0];
 }
 
 function hablar(texto) {
   if(!("speechSynthesis" in window))return;
-  const limpio = limpiarTextoParaVoz(texto);
+  const limpio=limpiarTextoParaVoz(texto);
   if(!limpio)return;
   speechSynthesis.cancel();
-  const mensaje = new SpeechSynthesisUtterance(limpio);
-  const voz = seleccionarVoz();
-  mensaje.lang = voz ? voz.lang : "es-MX";
-  if(voz)mensaje.voice = voz;
-  mensaje.rate = .98;
-  mensaje.pitch = .98;
-  mensaje.volume = 1;
-  mensaje.onstart = () => document.getElementById("estado").textContent = "🐕 EL PERRO AI está hablando...";
-  mensaje.onend = () => document.getElementById("estado").textContent = "🐕 Aquí estoy para ayudarte";
-  mensaje.onerror = event => {
-    console.error("Error de voz:",event);
-    document.getElementById("estado").textContent = "No se pudo reproducir la voz";
-  };
+  const mensaje=new SpeechSynthesisUtterance(limpio);
+  const voz=seleccionarVoz();
+  mensaje.lang=voz?voz.lang:"es-MX";
+  if(voz)mensaje.voice=voz;
+  mensaje.rate=.98;mensaje.pitch=.98;mensaje.volume=1;
+  mensaje.onstart=()=>document.getElementById("estado").textContent="🐕 EL PERRO AI está hablando...";
+  mensaje.onend=()=>document.getElementById("estado").textContent="🐕 Aquí estoy para ayudarte";
+  mensaje.onerror=event=>console.error("Error de voz:",event);
   speechSynthesis.speak(mensaje);
 }
 
 function activarVoz() {
-  vozAutomatica = true;
+  vozAutomatica=true;
   if(ultimaRespuesta)hablar(ultimaRespuesta);
-  document.getElementById("estado").textContent = "Voz activada";
+  document.getElementById("estado").textContent="Voz activada";
 }
-
 function detenerVoz() {
   if("speechSynthesis" in window)speechSynthesis.cancel();
-  document.getElementById("estado").textContent = "Voz detenida";
+  document.getElementById("estado").textContent="Voz detenida";
 }
-
 function prepararMicrofono() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SpeechRecognition) {
-    document.getElementById("estado").textContent = "Tu navegador no admite reconocimiento de voz";
+    document.getElementById("estado").textContent="Tu navegador no admite reconocimiento de voz";
     return;
   }
-  reconocimiento = new SpeechRecognition();
-  reconocimiento.lang = "es-MX";
-  reconocimiento.continuous = false;
-  reconocimiento.interimResults = false;
-  reconocimiento.onstart = () => {
+  reconocimiento=new SpeechRecognition();
+  reconocimiento.lang="es-MX";
+  reconocimiento.continuous=false;
+  reconocimiento.interimResults=false;
+  reconocimiento.onstart=()=>{
     document.getElementById("btnMicrofono").classList.add("activo");
-    document.getElementById("estado").textContent = "🎤 Te estoy escuchando...";
+    document.getElementById("estado").textContent="🎤 Te estoy escuchando...";
   };
-  reconocimiento.onresult = event => {
-    document.getElementById("mensaje").value = event.results[0][0].transcript;
+  reconocimiento.onresult=event=>{
+    document.getElementById("mensaje").value=event.results[0][0].transcript;
     enviarMensaje();
   };
-  reconocimiento.onerror = event => {
-    console.error("Error de micrófono:",event.error);
-    document.getElementById("estado").textContent = "Error de voz: " + event.error;
+  reconocimiento.onerror=event=>{
+    document.getElementById("estado").textContent="Error de voz: "+event.error;
     document.getElementById("btnMicrofono").classList.remove("activo");
   };
-  reconocimiento.onend = () => document.getElementById("btnMicrofono").classList.remove("activo");
+  reconocimiento.onend=()=>document.getElementById("btnMicrofono").classList.remove("activo");
 }
-
 function escuchar() {
   if(!reconocimiento)prepararMicrofono();
   if(!reconocimiento)return;
@@ -795,10 +782,10 @@ function escuchar() {
 }
 
 /****************************************************
- * 5. RESERVACIONES
+ * 5. FORMULARIO PÚBLICO DE RESERVACIONES
  ****************************************************/
 function mostrarReservaciones() {
-  const panel = document.getElementById("panelReservaciones");
+  const panel=document.getElementById("panelReservaciones");
   panel.classList.add("visible");
   panel.scrollIntoView({behavior:"smooth",block:"start"});
 }
@@ -806,127 +793,125 @@ function ocultarReservaciones() {
   document.getElementById("panelReservaciones").classList.remove("visible");
 }
 function obtenerFechaLocal(diasAdicionales) {
-  const fecha = new Date();
+  const fecha=new Date();
   fecha.setHours(0,0,0,0);
   fecha.setDate(fecha.getDate()+diasAdicionales);
-  return fecha.getFullYear() + "-" + String(fecha.getMonth()+1).padStart(2,"0") + "-" + String(fecha.getDate()).padStart(2,"0");
+  return fecha.getFullYear()+"-"+String(fecha.getMonth()+1).padStart(2,"0")+"-"+String(fecha.getDate()).padStart(2,"0");
 }
 function configurarFechaMinima() {
-  document.getElementById("resFecha").min = obtenerFechaLocal(1);
+  document.getElementById("resFecha").min=obtenerFechaLocal(1);
 }
 function validarFechaCliente(fechaTexto) {
   if(!fechaTexto)return "Selecciona una fecha.";
-  const partes = fechaTexto.split("-").map(Number);
-  const fecha = new Date(partes[0],partes[1]-1,partes[2]);
-  if(fechaTexto <= obtenerFechaLocal(0))return "Las reservaciones deben realizarse con al menos un día de anticipación.";
+  const partes=fechaTexto.split("-").map(Number);
+  const fecha=new Date(partes[0],partes[1]-1,partes[2]);
+  if(fechaTexto<=obtenerFechaLocal(0))return "Las reservaciones deben realizarse con al menos un día de anticipación.";
   if(![0,4,5,6].includes(fecha.getDay()))return "Solo aceptamos reservaciones de jueves a domingo.";
   return "";
 }
 function origenPostPermitido(origen) {
-  if(!origen || origen === "null")return false;
+  if(!origen||origen==="null")return false;
   try {
-    const host = new URL(origen).hostname;
-    return host === "script.google.com" || host.endsWith(".googleusercontent.com");
+    const host=new URL(origen).hostname;
+    return host==="script.google.com"||host.endsWith(".googleusercontent.com");
   } catch(error){return false}
 }
 
 window.addEventListener("message",function(event) {
   if(!origenPostPermitido(event.origin))return;
-  const mensaje = event.data;
-  if(!mensaje || typeof mensaje !== "object")return;
-  if(mensaje.tipo !== "EL_PERRO_AI_POST_RESULTADO" || !mensaje.requestId)return;
-  if(!solicitudReservaActual || mensaje.requestId !== solicitudReservaActual)return;
+  const mensaje=event.data;
+  if(!mensaje||typeof mensaje!=="object")return;
+  if(mensaje.tipo!=="EL_PERRO_AI_POST_RESULTADO"||!mensaje.requestId)return;
+  if(!solicitudReservaActual||mensaje.requestId!==solicitudReservaActual)return;
 
   clearTimeout(temporizadorReserva);
-  temporizadorReserva = null;
-  reservaEnviandose = false;
-  reservaResultadoIncierto = false;
-  document.getElementById("btnConfirmarReserva").disabled = false;
-  solicitudReservaActual = null;
+  temporizadorReserva=null;
+  reservaEnviandose=false;
+  reservaResultadoIncierto=false;
+  document.getElementById("btnConfirmarReserva").disabled=false;
+  solicitudReservaActual=null;
 
-  const resolver = resolverReservaActual;
-  const rechazar = rechazarReservaActual;
-  resolverReservaActual = null;
-  rechazarReservaActual = null;
-  const resultado = mensaje.resultado || {};
+  const resolver=resolverReservaActual;
+  const rechazar=rechazarReservaActual;
+  resolverReservaActual=null;
+  rechazarReservaActual=null;
+  const resultado=mensaje.resultado||{};
 
-  if(resultado.correcto && resultado.confirmada) {
-    mostrarResultadoReserva("🐕 ¡Tu reservación quedó registrada correctamente! ¡Te esperamos en El Perro Caliente!","exito");
+  if(resultado.correcto&&resultado.confirmada) {
+    mostrarResultadoReserva("🐕 ¡Tu solicitud quedó registrada correctamente! ¡Te esperamos en El Perro Caliente!","exito");
     document.getElementById("formReservacion").reset();
     configurarFechaMinima();
     if(resolver)resolver(resultado);
   } else {
-    const error = new Error(resultado.error || "No fue posible registrar la reservación.");
+    const error=new Error(resultado.error||"No fue posible registrar la reservación.");
     if(rechazar)rechazar(error);
     else mostrarResultadoReserva(error.message,"error");
   }
 });
 
 function mostrarResultadoReserva(texto,tipo) {
-  const resultado = document.getElementById("resultadoReservacion");
-  resultado.textContent = texto;
-  resultado.className = "resultado-reserva " + tipo;
+  const resultado=document.getElementById("resultadoReservacion");
+  resultado.textContent=texto;
+  resultado.className="resultado-reserva "+tipo;
   resultado.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
 function enviarReservacionPOST(datos) {
-  return new Promise((resolve,reject) => {
-    if(reservaEnviandose || reservaResultadoIncierto) {
+  return new Promise((resolve,reject)=>{
+    if(reservaEnviandose||reservaResultadoIncierto) {
       reject(new Error("Ya existe una solicitud pendiente o sin verificar. No envíes otra reservación."));
       return;
     }
-    const iframe = document.getElementById("reservacionesBridge");
+    const iframe=document.getElementById("reservacionesBridge");
     if(!iframe) {
       reject(new Error("No se encontró el canal de reservaciones."));
       return;
     }
 
-    const requestId = "reserva_" + Date.now() + "_" + Math.random().toString(36).substring(2,12);
-    reservaEnviandose = true;
-    solicitudReservaActual = requestId;
-    resolverReservaActual = resolve;
-    rechazarReservaActual = reject;
+    const requestId="reserva_"+Date.now()+"_"+Math.random().toString(36).substring(2,12);
+    reservaEnviandose=true;
+    solicitudReservaActual=requestId;
+    resolverReservaActual=resolve;
+    rechazarReservaActual=reject;
 
-    const formularioPost = document.createElement("form");
-    formularioPost.method = "POST";
-    formularioPost.action = URL_APPS_SCRIPT;
-    formularioPost.target = "reservacionesBridge";
-    formularioPost.enctype = "application/x-www-form-urlencoded";
-    formularioPost.acceptCharset = "UTF-8";
-    formularioPost.style.display = "none";
+    const formularioPost=document.createElement("form");
+    formularioPost.method="POST";
+    formularioPost.action=URL_APPS_SCRIPT;
+    formularioPost.target="reservacionesBridge";
+    formularioPost.enctype="application/x-www-form-urlencoded";
+    formularioPost.acceptCharset="UTF-8";
+    formularioPost.style.display="none";
 
-    const campoPayload = document.createElement("input");
-    campoPayload.type = "hidden";
-    campoPayload.name = "payload";
-    campoPayload.value = JSON.stringify({requestId:requestId,datos:datos});
+    const campoPayload=document.createElement("input");
+    campoPayload.type="hidden";
+    campoPayload.name="payload";
+    campoPayload.value=JSON.stringify({requestId:requestId,datos:datos});
     formularioPost.appendChild(campoPayload);
     document.body.appendChild(formularioPost);
 
-    temporizadorReserva = setTimeout(function() {
-      temporizadorReserva = null;
-      reservaEnviandose = false;
-      reservaResultadoIncierto = true;
-      solicitudReservaActual = null;
-      resolverReservaActual = null;
-      rechazarReservaActual = null;
-      document.getElementById("btnConfirmarReserva").disabled = true;
-      reject(new Error("No recibimos respuesta de Google. La solicitud pudo haberse registrado. Verifica primero la hoja de Google Sheets antes de intentar otra vez."));
+    temporizadorReserva=setTimeout(()=>{
+      temporizadorReserva=null;
+      reservaEnviandose=false;
+      reservaResultadoIncierto=true;
+      solicitudReservaActual=null;
+      resolverReservaActual=null;
+      rechazarReservaActual=null;
+      document.getElementById("btnConfirmarReserva").disabled=true;
+      reject(new Error("No recibimos respuesta de Google. La solicitud pudo haberse registrado. Verifica primero Google Sheets antes de intentar otra vez."));
     },45000);
 
     try {
       formularioPost.submit();
-      setTimeout(() => {
-        if(formularioPost.parentNode)formularioPost.parentNode.removeChild(formularioPost);
-      },2000);
+      setTimeout(()=>{if(formularioPost.parentNode)formularioPost.parentNode.removeChild(formularioPost)},2000);
     } catch(error) {
       clearTimeout(temporizadorReserva);
-      temporizadorReserva = null;
-      reservaEnviandose = false;
-      solicitudReservaActual = null;
-      resolverReservaActual = null;
-      rechazarReservaActual = null;
+      temporizadorReserva=null;
+      reservaEnviandose=false;
+      solicitudReservaActual=null;
+      resolverReservaActual=null;
+      rechazarReservaActual=null;
       if(formularioPost.parentNode)formularioPost.parentNode.removeChild(formularioPost);
-      reject(new Error("No se pudo enviar la solicitud: " + error.message));
+      reject(new Error("No se pudo enviar la solicitud: "+error.message));
     }
   });
 }
@@ -935,107 +920,106 @@ document.getElementById("formReservacion").addEventListener("submit",async funct
   event.preventDefault();
   if(reservaEnviandose)return;
   if(reservaResultadoIncierto) {
-    mostrarResultadoReserva("Hay una solicitud cuyo resultado aún no se ha verificado. Revisa primero Google Sheets para evitar duplicar la reservación.","error");
+    mostrarResultadoReserva("Hay una solicitud cuyo resultado aún no se ha verificado. Revisa primero Google Sheets para evitar duplicados.","error");
     return;
   }
 
-  const nombre = document.getElementById("resNombre").value.trim();
-  const telefono = document.getElementById("resTelefono").value.trim();
-  const fecha = document.getElementById("resFecha").value;
-  const hora = document.getElementById("resHora").value;
-  const personas = Number(document.getElementById("resPersonas").value);
-  const observaciones = document.getElementById("resObservaciones").value.trim();
+  const nombre=document.getElementById("resNombre").value.trim();
+  const telefono=document.getElementById("resTelefono").value.trim();
+  const fecha=document.getElementById("resFecha").value;
+  const hora=document.getElementById("resHora").value;
+  const personas=Number(document.getElementById("resPersonas").value);
+  const observaciones=document.getElementById("resObservaciones").value.trim();
 
-  if(!nombre || !telefono || !fecha || !hora) {
-    mostrarResultadoReserva("Completa todos los campos obligatorios.","error");
-    return;
+  if(!nombre||!telefono||!fecha||!hora) {
+    mostrarResultadoReserva("Completa todos los campos obligatorios.","error");return;
   }
   if(!/^[0-9+\-\s()]{7,20}$/.test(telefono)) {
-    mostrarResultadoReserva("Escribe un número telefónico válido.","error");
-    return;
+    mostrarResultadoReserva("Escribe un número telefónico válido.","error");return;
   }
-  if(nombre.length > 100) {
-    mostrarResultadoReserva("El nombre es demasiado largo.","error");
-    return;
+  if(nombre.length>100) {
+    mostrarResultadoReserva("El nombre es demasiado largo.","error");return;
   }
-  const errorFecha = validarFechaCliente(fecha);
+  const errorFecha=validarFechaCliente(fecha);
   if(errorFecha) {
-    mostrarResultadoReserva(errorFecha,"error");
-    return;
+    mostrarResultadoReserva(errorFecha,"error");return;
   }
-  if(!Number.isInteger(personas) || personas < 1 || personas > 10) {
-    mostrarResultadoReserva("La reservación debe ser de 1 a 10 personas.","error");
-    return;
+  if(!Number.isInteger(personas)||personas<1||personas>10) {
+    mostrarResultadoReserva("La reservación debe ser de 1 a 10 personas.","error");return;
   }
-  if(!/^\d{2}:\d{2}$/.test(hora) || hora < "17:00" || hora > "23:00") {
-    mostrarResultadoReserva("Selecciona un horario válido entre 5:00 p. m. y 11:00 p. m.","error");
-    return;
+  if(!/^\d{2}:\d{2}$/.test(hora)||hora<"17:00"||hora>"23:00") {
+    mostrarResultadoReserva("Selecciona un horario válido entre 5:00 p. m. y 11:00 p. m.","error");return;
   }
-  if(observaciones.length > 500) {
-    mostrarResultadoReserva("Las observaciones no pueden superar los 500 caracteres.","error");
-    return;
+  if(observaciones.length>500) {
+    mostrarResultadoReserva("Las observaciones no pueden superar los 500 caracteres.","error");return;
   }
 
-  const datos = {nombre,telefono,fecha,hora,personas,observaciones};
-  document.getElementById("btnConfirmarReserva").disabled = true;
+  const datos={nombre,telefono,fecha,hora,personas,observaciones};
+  document.getElementById("btnConfirmarReserva").disabled=true;
   mostrarResultadoReserva("🐕 Estamos enviando tu solicitud. Espera un momento...","exito");
 
   try {
     await enviarReservacionPOST(datos);
   } catch(error) {
     console.error("Error de reservación:",error);
-    mostrarResultadoReserva(error.message || "No fue posible enviar tu reservación.","error");
+    mostrarResultadoReserva(error.message||"No fue posible enviar tu reservación.","error");
     if(!reservaResultadoIncierto) {
-      reservaEnviandose = false;
-      document.getElementById("btnConfirmarReserva").disabled = false;
+      reservaEnviandose=false;
+      document.getElementById("btnConfirmarReserva").disabled=false;
     }
   }
 });
 
 /****************************************************
- * 6. ADMINISTRACIÓN Y COMUNICACIÓN CON ADMINBRIDGE
+ * 6. CONEXIÓN CON ADMINBRIDGE
  ****************************************************/
 function prepararAdminBridge() {
-  const iframe = document.getElementById("adminBridge");
-  const estado = document.getElementById("adminEstado");
+  const iframe=document.getElementById("adminBridge");
+  const estado=document.getElementById("adminEstado");
   if(!iframe) {
-    if(estado)estado.textContent = "Error: no se encontró el puente administrativo.";
+    if(estado)estado.textContent="Error: no se encontró el puente administrativo.";
     return;
   }
-  const actual = iframe.getAttribute("src");
-  if(!actual || actual === "about:blank") {
-    adminBridgeListo = false;
-    adminBridgeVentana = null;
-    if(estado)estado.textContent = "Cargando puente administrativo...";
-    iframe.src = URL_APPS_SCRIPT + "?adminBridge=1";
+  const actual=iframe.getAttribute("src");
+  if(!actual||actual==="about:blank") {
+    adminBridgeListo=false;
+    adminBridgeVentana=null;
+    if(estado)estado.textContent="Cargando puente administrativo...";
+    iframe.src=URL_APPS_SCRIPT+"?adminBridge=1";
   }
 }
 
 function abrirAdministracion() {
   document.getElementById("adminOverlay").classList.add("visible");
   document.getElementById("adminVentana").classList.add("login");
-  document.getElementById("adminAccesoVista").style.display = "block";
+  document.getElementById("adminAccesoVista").style.display="block";
   document.getElementById("adminDashboard").classList.remove("visible");
   limpiarMensajeAdmin();
   mostrarFormularioAdmin("login");
   if(!adminBridgeListo) {
-    document.getElementById("adminEstado").textContent = "Conectando con el sistema administrativo...";
+    document.getElementById("adminEstado").textContent="Conectando con el sistema administrativo...";
     prepararAdminBridge();
   } else {
-    document.getElementById("adminEstado").textContent = "Sistema administrativo conectado.";
+    document.getElementById("adminEstado").textContent="Sistema administrativo conectado.";
   }
 }
 
 function cerrarAdministracion() {
-  if(adminToken && adminBridgeListo) {
+  if(adminToken&&adminBridgeListo) {
     enviarMensajeAdmin("EL_PERRO_ADMIN_CERRAR",{token:adminToken}).catch(console.error);
   }
-  adminToken = null;
-  adminUsuarioActual = null;
+  Object.values(adminSolicitudes).forEach(p=>{
+    clearTimeout(p.temporizador);
+    p.reject(new Error("La sesión administrativa se cerró."));
+  });
+  adminSolicitudes={};
+  adminToken=null;
+  adminUsuarioActual=null;
+  reservasAdminDatos=[];
   document.getElementById("adminOverlay").classList.remove("visible");
   document.getElementById("adminLogin").reset();
   document.getElementById("adminCambioPassword").reset();
-  document.getElementById("adminAccesoVista").style.display = "block";
+  document.getElementById("adminAccesoVista").style.display="block";
   document.getElementById("adminDashboard").classList.remove("visible");
   document.getElementById("adminVentana").classList.add("login");
   mostrarFormularioAdmin("login");
@@ -1043,49 +1027,48 @@ function cerrarAdministracion() {
 }
 
 function mostrarFormularioAdmin(tipo) {
-  document.getElementById("adminLogin").style.display = tipo === "login" ? "flex" : "none";
-  document.getElementById("adminCambioPassword").style.display = tipo === "cambio" ? "flex" : "none";
-  document.getElementById("adminDescripcion").textContent =
-    tipo === "cambio"
-      ? "Por seguridad debes establecer una nueva contraseña para continuar."
-      : "Acceso exclusivo para el equipo de El Perro Caliente.";
+  document.getElementById("adminLogin").style.display=tipo==="login"?"flex":"none";
+  document.getElementById("adminCambioPassword").style.display=tipo==="cambio"?"flex":"none";
+  document.getElementById("adminDescripcion").textContent=tipo==="cambio"
+    ?"Por seguridad debes establecer una nueva contraseña para continuar."
+    :"Acceso exclusivo para el equipo de El Perro Caliente.";
 }
 
 function mostrarMensajeAdmin(texto,tipo) {
-  const elemento = document.getElementById("adminMensaje");
-  elemento.textContent = texto;
-  elemento.className = "admin-mensaje visible " + tipo;
+  const elemento=document.getElementById("adminMensaje");
+  elemento.textContent=texto;
+  elemento.className="admin-mensaje visible "+tipo;
 }
 function limpiarMensajeAdmin() {
-  const elemento = document.getElementById("adminMensaje");
-  elemento.textContent = "";
-  elemento.className = "admin-mensaje";
+  const elemento=document.getElementById("adminMensaje");
+  elemento.textContent="";
+  elemento.className="admin-mensaje";
 }
 
 function origenAdminPermitido(origen) {
   try {
-    const host = new URL(origen).hostname;
-    return host === "script.google.com" || host.endsWith(".googleusercontent.com");
+    const url=new URL(origen);
+    return url.hostname==="script.google.com"||url.hostname.endsWith(".googleusercontent.com");
   } catch(error){return false}
 }
 
 function enviarMensajeAdmin(tipo,datos) {
-  return new Promise((resolve,reject) => {
-    if(!adminBridgeListo || !adminBridgeVentana) {
+  return new Promise((resolve,reject)=>{
+    if(!adminBridgeListo||!adminBridgeVentana) {
       reject(new Error("El puente administrativo todavía no está conectado."));
       return;
     }
 
-    const requestId = "admin_" + Date.now() + "_" + Math.random().toString(36).substring(2,10);
-    const temporizador = setTimeout(() => {
+    const requestId="admin_"+Date.now()+"_"+Math.random().toString(36).substring(2,10);
+    const temporizador=setTimeout(()=>{
       delete adminSolicitudes[requestId];
       reject(new Error("El sistema administrativo no respondió a tiempo."));
     },30000);
 
-    adminSolicitudes[requestId] = {resolve,reject,temporizador};
+    adminSolicitudes[requestId]={resolve,reject,temporizador};
 
     try {
-      adminBridgeVentana.postMessage(Object.assign({tipo,requestId},datos || {}),"*");
+      adminBridgeVentana.postMessage(Object.assign({tipo,requestId},datos||{}),"*");
     } catch(error) {
       clearTimeout(temporizador);
       delete adminSolicitudes[requestId];
@@ -1096,26 +1079,28 @@ function enviarMensajeAdmin(tipo,datos) {
 
 window.addEventListener("message",function(event) {
   if(!origenAdminPermitido(event.origin))return;
-  const mensaje = event.data;
-  if(!mensaje || typeof mensaje !== "object")return;
+  const mensaje=event.data;
+  if(!mensaje||typeof mensaje!=="object")return;
 
-  if(mensaje.tipo === "EL_PERRO_ADMIN_BRIDGE_READY") {
-    adminBridgeVentana = event.source;
-    adminBridgeListo = true;
-    document.getElementById("adminEstado").textContent = "Sistema administrativo conectado.";
-    console.log("ADMIN: puente conectado desde",event.origin);
+  if(mensaje.tipo==="EL_PERRO_ADMIN_BRIDGE_READY") {
+    const iframe=document.getElementById("adminBridge");
+    if(event.source!==iframe.contentWindow)return;
+    adminBridgeVentana=event.source;
+    adminBridgeListo=true;
+    document.getElementById("adminEstado").textContent="Sistema administrativo conectado.";
+    console.log("ADMIN: puente conectado.");
     return;
   }
 
-  if(mensaje.tipo !== "EL_PERRO_ADMIN_RESULTADO" || !mensaje.requestId)return;
-  if(event.source !== adminBridgeVentana)return;
+  if(mensaje.tipo!=="EL_PERRO_ADMIN_RESULTADO"||!mensaje.requestId)return;
+  if(event.source!==adminBridgeVentana)return;
 
-  const pendiente = adminSolicitudes[mensaje.requestId];
+  const pendiente=adminSolicitudes[mensaje.requestId];
   if(!pendiente)return;
 
   clearTimeout(pendiente.temporizador);
   delete adminSolicitudes[mensaje.requestId];
-  pendiente.resolve(mensaje.resultado || {});
+  pendiente.resolve(mensaje.resultado||{});
 });
 
 /****************************************************
@@ -1125,27 +1110,25 @@ document.getElementById("adminLogin").addEventListener("submit",async function(e
   event.preventDefault();
   limpiarMensajeAdmin();
 
-  const usuario = document.getElementById("adminUsuario").value.trim();
-  const password = document.getElementById("adminPassword").value;
-  if(!usuario || !password) {
-    mostrarMensajeAdmin("Escribe tu usuario y contraseña.","error");
-    return;
+  const usuario=document.getElementById("adminUsuario").value.trim();
+  const password=document.getElementById("adminPassword").value;
+  if(!usuario||!password) {
+    mostrarMensajeAdmin("Escribe tu usuario y contraseña.","error");return;
   }
 
-  const boton = document.getElementById("adminBtnLogin");
-  boton.disabled = true;
-  boton.textContent = "Verificando...";
+  const boton=document.getElementById("adminBtnLogin");
+  boton.disabled=true;boton.textContent="Verificando...";
 
   try {
-    const resultado = await enviarMensajeAdmin("EL_PERRO_ADMIN_LOGIN",{username:usuario,password:password});
-    if(!resultado.correcto)throw new Error(resultado.error || "Usuario o contraseña incorrectos.");
+    const resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_LOGIN",{username:usuario,password:password});
+    if(!resultado.correcto)throw new Error(resultado.error||resultado.mensaje||"Usuario o contraseña incorrectos.");
     if(!resultado.token)throw new Error("El servidor no entregó un token de sesión.");
 
-    adminToken = resultado.token;
-    adminUsuarioActual = resultado.usuario || {};
-    document.getElementById("adminPassword").value = "";
+    adminToken=resultado.token;
+    adminUsuarioActual=resultado.usuario||{};
+    document.getElementById("adminPassword").value="";
 
-    if(adminUsuarioActual.forceChange === true) {
+    if(adminUsuarioActual.forceChange===true) {
       mostrarFormularioAdmin("cambio");
       mostrarMensajeAdmin("Inicio de sesión correcto. Debes cambiar tu contraseña temporal.","exito");
     } else {
@@ -1155,8 +1138,7 @@ document.getElementById("adminLogin").addEventListener("submit",async function(e
   } catch(error) {
     mostrarMensajeAdmin(error.message,"error");
   } finally {
-    boton.disabled = false;
-    boton.textContent = "Iniciar sesión";
+    boton.disabled=false;boton.textContent="Iniciar sesión";
   }
 });
 
@@ -1166,97 +1148,77 @@ document.getElementById("adminCambioPassword").addEventListener("submit",async f
 
   if(!adminToken) {
     mostrarMensajeAdmin("No existe una sesión administrativa activa.","error");
-    mostrarFormularioAdmin("login");
-    return;
+    mostrarFormularioAdmin("login");return;
   }
 
-  const actual = document.getElementById("adminPasswordActual").value;
-  const nueva = document.getElementById("adminPasswordNueva").value;
-  const repetida = document.getElementById("adminPasswordRepetida").value;
+  const actual=document.getElementById("adminPasswordActual").value;
+  const nueva=document.getElementById("adminPasswordNueva").value;
+  const repetida=document.getElementById("adminPasswordRepetida").value;
 
-  if(nueva.length < 10) {
-    mostrarMensajeAdmin("La nueva contraseña debe tener al menos 10 caracteres.","error");
-    return;
+  if(nueva.length<12) {
+    mostrarMensajeAdmin("La nueva contraseña debe tener al menos 12 caracteres.","error");return;
   }
-  if(nueva !== repetida) {
-    mostrarMensajeAdmin("Las contraseñas nuevas no coinciden.","error");
-    return;
+  if(!/[a-z]/.test(nueva)||!/[A-Z]/.test(nueva)||!/[0-9]/.test(nueva)||!/[^A-Za-z0-9]/.test(nueva)) {
+    mostrarMensajeAdmin("La contraseña debe incluir mayúsculas, minúsculas, números y símbolos.","error");return;
   }
-  if(actual === nueva) {
-    mostrarMensajeAdmin("La nueva contraseña debe ser diferente a la actual.","error");
-    return;
+  if(nueva!==repetida) {
+    mostrarMensajeAdmin("Las contraseñas nuevas no coinciden.","error");return;
+  }
+  if(actual===nueva) {
+    mostrarMensajeAdmin("La nueva contraseña debe ser diferente a la actual.","error");return;
   }
 
-  const boton = document.getElementById("adminBtnCambio");
-  boton.disabled = true;
-  boton.textContent = "Actualizando...";
+  const boton=document.getElementById("adminBtnCambio");
+  boton.disabled=true;boton.textContent="Actualizando...";
 
   try {
-    const resultado = await enviarMensajeAdmin("EL_PERRO_ADMIN_CAMBIAR_PASSWORD",{
-      token:adminToken,
-      passwordActual:actual,
-      passwordNueva:nueva
+    const resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_CAMBIAR_PASSWORD",{
+      token:adminToken,passwordActual:actual,passwordNueva:nueva
     });
-
-    if(!resultado.correcto)throw new Error(resultado.error || "No fue posible cambiar la contraseña.");
+    if(!resultado.correcto)throw new Error(resultado.error||resultado.mensaje||"No fue posible cambiar la contraseña.");
 
     document.getElementById("adminCambioPassword").reset();
-    adminToken = null;
-    adminUsuarioActual = null;
+    adminToken=null;adminUsuarioActual=null;
     mostrarFormularioAdmin("login");
-    mostrarMensajeAdmin(resultado.mensaje || "Tu contraseña se actualizó correctamente. Inicia sesión nuevamente.","exito");
+    mostrarMensajeAdmin(resultado.mensaje||"Tu contraseña se actualizó correctamente. Inicia sesión nuevamente.","exito");
   } catch(error) {
     mostrarMensajeAdmin(error.message,"error");
   } finally {
-    boton.disabled = false;
-    boton.textContent = "Cambiar contraseña";
+    boton.disabled=false;boton.textContent="Cambiar contraseña";
   }
 });
 
 /****************************************************
- * 8. MOSTRAR PANEL Y CONTROLAR ACCESOS
+ * 8. PANEL Y PERMISOS VISUALES
  ****************************************************/
 function usuarioEsAdministrador(usuario) {
-  const rol = String(usuario.rol || "").toUpperCase();
-  const username = String(usuario.username || "").toLowerCase();
+  const rol=String((usuario||{}).rol||"").toUpperCase();
+  const username=String((usuario||{}).username||"").toLowerCase();
+  if(rol==="ADMINISTRADOR"||rol==="ADMIN"||username==="brian.admin")return true;
 
-  if(rol === "ADMINISTRADOR" || rol === "ADMIN")return true;
-  if(username === "brian.admin")return true;
-
-  const permisos = usuario.permisos;
+  const permisos=usuario&&usuario.permisos;
   if(Array.isArray(permisos)) {
-    return permisos.some(p => /usuarios|configuracion|administrar_sistema/i.test(String(p)));
+    return permisos.some(p=>/usuarios\.administrar|sistema\.configurar/i.test(String(p)));
   }
-  if(permisos && typeof permisos === "object") {
-    return Boolean(
-      permisos.usuarios ||
-      permisos.administrarUsuarios ||
-      permisos.configuracion ||
-      permisos.configurarSistema ||
-      permisos.administrarSistema
-    );
+  if(permisos&&typeof permisos==="object") {
+    return Boolean(permisos.usuarios||permisos.administrarUsuarios||permisos.configuracion||permisos.configurarSistema);
   }
   return false;
 }
 
 function mostrarPanelAdministrativo() {
-  if(!adminUsuarioActual || !adminToken)return;
-
-  document.getElementById("adminAccesoVista").style.display = "none";
+  if(!adminUsuarioActual||!adminToken)return;
+  document.getElementById("adminAccesoVista").style.display="none";
   document.getElementById("adminDashboard").classList.add("visible");
   document.getElementById("adminVentana").classList.remove("login");
-  document.getElementById("adminMensaje").className = "admin-mensaje";
+  document.getElementById("adminMensaje").className="admin-mensaje";
 
-  const nombre = adminUsuarioActual.nombre || adminUsuarioActual.username || "Usuario";
-  const rol = adminUsuarioActual.rol || "Personal autorizado";
-
-  document.getElementById("adminNombrePanel").textContent = nombre;
-  document.getElementById("adminRolPanel").textContent = "Rol: " + rol;
-
-  const esAdmin = usuarioEsAdministrador(adminUsuarioActual);
-  document.getElementById("adminZonaPrivada").style.display = esAdmin ? "block" : "none";
-
-  document.getElementById("adminEstado").textContent = "Sesión iniciada: " + nombre;
+  const nombre=adminUsuarioActual.nombre||adminUsuarioActual.username||"Usuario";
+  const rol=adminUsuarioActual.rol||"Personal autorizado";
+  document.getElementById("adminNombrePanel").textContent=nombre;
+  document.getElementById("adminRolPanel").textContent="Rol: "+rol;
+  document.getElementById("adminZonaPrivada").style.display=usuarioEsAdministrador(adminUsuarioActual)?"block":"none";
+  document.getElementById("adminEstado").textContent="Sesión iniciada: "+nombre;
   volverInicioAdmin();
 }
 
@@ -1264,240 +1226,359 @@ function mostrarPanelAdministrativo() {
  * 9. MÓDULOS ADMINISTRATIVOS
  ****************************************************/
 function abrirModuloAdmin(modulo) {
-  const modulos = {
+  const modulos={
     reservaciones:{
       titulo:"📅 Reservaciones",
-      descripcion:"Desde esta sección se administrarán las solicitudes de reservación de los clientes.",
-      aviso:"La conexión con Google Sheets y las acciones para consultar, confirmar, editar y cancelar reservaciones se implementarán en la siguiente etapa."
+      descripcion:"Consulta y administra las solicitudes de reservación de los clientes.",
+      aviso:"Las operaciones se realizan mediante tu sesión administrativa y se registran en Google Sheets."
     },
     promociones:{
       titulo:"🍗 Promociones",
       descripcion:"Administra las promociones activas de El Perro Caliente.",
-      aviso:"Aquí conectaremos el registro, edición, publicación y desactivación de promociones."
+      aviso:"Este módulo se conectará en una siguiente etapa."
     },
     eventos:{
       titulo:"🎸 Eventos",
       descripcion:"Organiza eventos, música en vivo, concursos y actividades especiales.",
-      aviso:"Aquí conectaremos el calendario de eventos, sus detalles, publicaciones y cambios."
+      aviso:"Este módulo se conectará en una siguiente etapa."
     },
     reportes:{
       titulo:"📊 Reportes",
       descripcion:"Consulta información de actividad, reservaciones, promociones y resultados.",
-      aviso:""
+      aviso:"Panel informativo pendiente de conexión a sus fuentes de datos."
     },
     usuarios:{
       titulo:"👥 Usuarios",
       descripcion:"Administración de las cuentas del personal autorizado.",
-      aviso:"Esta sección estará disponible únicamente para el administrador principal. Las altas, bajas y permisos deberán validarse también desde el servidor."
+      aviso:"Esta sección estará disponible únicamente para el administrador principal."
     },
     configuracion:{
       titulo:"⚙️ Configuración",
       descripcion:"Preferencias generales y configuración de EL PERRO AI.",
-      aviso:"Aquí se conectarán las opciones de configuración del asistente y del sistema."
+      aviso:"Esta sección se conectará en una siguiente etapa."
     }
   };
 
-  const datos = modulos[modulo];
+  const datos=modulos[modulo];
   if(!datos)return;
 
-  if((modulo === "usuarios" || modulo === "configuracion") &&
-      !usuarioEsAdministrador(adminUsuarioActual)) {
-    mostrarMensajeAdmin("No tienes permiso para acceder a esta sección.","error");
-    return;
+  if((modulo==="usuarios"||modulo==="configuracion")&&!usuarioEsAdministrador(adminUsuarioActual)) {
+    mostrarMensajeAdmin("No tienes permiso para acceder a esta sección.","error");return;
   }
 
-  document.getElementById("adminMenuPrincipal").style.display = "none";
+  document.getElementById("adminMenuPrincipal").style.display="none";
+  document.getElementById("adminModulo").classList.add("visible");
+  document.getElementById("adminModuloTitulo").textContent=datos.titulo;
+  document.getElementById("adminModuloDescripcion").textContent=datos.descripcion;
+  document.getElementById("adminModuloAviso").textContent=datos.aviso;
 
-  const moduloPanel = document.getElementById("adminModulo");
-  const aviso = document.getElementById("adminModuloAviso");
-  const reportes = document.getElementById("adminReporteContenido");
+  const reservas=document.getElementById("adminReservasContenido");
+  const reportes=document.getElementById("adminReporteContenido");
+  reservas.style.display=modulo==="reservaciones"?"block":"none";
+  reportes.style.display="none";
+  reportes.innerHTML="";
 
-  moduloPanel.classList.add("visible");
-
-  document.getElementById("adminModuloTitulo").textContent = datos.titulo;
-  document.getElementById("adminModuloDescripcion").textContent = datos.descripcion;
-
-  if(modulo === "reportes") {
-    aviso.style.display = "none";
-    reportes.style.display = "block";
-
-    reportes.innerHTML = `
+  if(modulo==="reservaciones") {
+    cerrarFormularioReservaAdmin();
+    limpiarMensajeReservaAdmin();
+    cargarReservacionesAdmin();
+  } else if(modulo==="reportes") {
+    document.getElementById("adminModuloAviso").style.display="none";
+    reportes.style.display="block";
+    reportes.innerHTML=`
       <div class="reportes-contenido">
-
-        <div class="reportes-intro">
-          <strong>🐕 Centro de información de El Perro Caliente</strong><br>
-          Desde aquí podrás consultar el comportamiento del negocio,
-          conocer la actividad de tus clientes y evaluar los resultados
-          de promociones y eventos.
-          <br><br>
-          <span class="reporte-pendiente">Panel preparado · Datos pendientes de conexión</span>
-        </div>
-
         <section class="reportes-seccion">
-          <h4>📈 1. Resumen general del negocio</h4>
-          <div class="reportes-grid">
-            <div class="reporte-indicador">
-              <span>Clientes atendidos</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Actividad general</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Tendencia del negocio</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-          </div>
+          <h4>📊 Centro de información de El Perro Caliente</h4>
+          <p style="color:#aaa;font-size:13px;line-height:1.6">
+            El panel de reportes está preparado para conectar reservaciones,
+            promociones, eventos y resultados del negocio. Los indicadores todavía
+            no consultan datos reales.
+          </p>
         </section>
-
-        <section class="reportes-seccion">
-          <h4>📅 2. Reporte de reservaciones</h4>
-          <div class="reportes-grid">
-            <div class="reporte-indicador">
-              <span>Reservaciones recibidas</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Reservaciones canceladas</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Clientes que asistieron</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-          </div>
-          <div class="reportes-nota" style="margin-top:12px">
-            Aquí podremos consultar las reservaciones por fecha,
-            identificar cancelaciones y medir la asistencia de los clientes.
-          </div>
-        </section>
-
-        <section class="reportes-seccion">
-          <h4>🍗 3. Rendimiento de promociones</h4>
-          <div class="reportes-grid">
-            <div class="reporte-indicador">
-              <span>Promociones activas</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Promoción más utilizada</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Usos de promociones</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-          </div>
-          <div class="reportes-nota" style="margin-top:12px">
-            Podremos identificar qué promociones atraen más clientes,
-            cuáles tienen mayor aceptación y cuáles conviene mejorar.
-          </div>
-        </section>
-
-        <section class="reportes-seccion">
-          <h4>🎸 4. Eventos y actividades</h4>
-          <div class="reporte-lista">
-            <div class="reporte-fila">
-              <span>Próximos eventos</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-fila">
-              <span>Eventos realizados</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-fila">
-              <span>Resultados y asistencia</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-          </div>
-        </section>
-
-        <section class="reportes-seccion">
-          <h4>📆 5. Actividad por periodo</h4>
-          <div class="reportes-grid">
-            <div class="reporte-indicador">
-              <span>Actividad diaria</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Actividad semanal</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-indicador">
-              <span>Actividad mensual</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-          </div>
-          <div class="reportes-nota" style="margin-top:12px">
-            Esta sección permitirá comparar distintos periodos,
-            identificar los días de mayor movimiento y observar
-            cómo evoluciona la actividad del negocio.
-          </div>
-        </section>
-
-        <section class="reportes-seccion">
-          <h4>💰 Próxima etapa: reportes financieros</h4>
-          <div class="reporte-lista">
-            <div class="reporte-fila">
-              <span>Ventas y gastos</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-fila">
-              <span>Efectivo, transferencias y tarjeta</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-fila">
-              <span>Ventas por responsable</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-fila">
-              <span>Utilidad estimada</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-            <div class="reporte-fila">
-              <span>Dinero pendiente de comprobar o entregar</span>
-              <strong>Pendiente de conexión</strong>
-            </div>
-          </div>
-        </section>
-
         <div class="reportes-nota">
-          <strong>Nota:</strong> Este panel es una estructura visual.
-          Todavía no consulta información real ni modifica registros.
-          En la siguiente etapa conectaremos las fuentes de datos
-          correspondientes para mostrar indicadores actualizados.
+          Próxima etapa: reportes de ventas, gastos, efectivo, transferencias,
+          tarjeta, responsables y dinero pendiente de comprobar o entregar.
         </div>
-
-      </div>
-    `;
+      </div>`;
   } else {
-    aviso.style.display = "block";
-    aviso.textContent = datos.aviso;
-    reportes.style.display = "none";
-    reportes.innerHTML = "";
+    document.getElementById("adminModuloAviso").style.display="block";
   }
 }
 
 function volverInicioAdmin() {
-  document.getElementById("adminMenuPrincipal").style.display = "block";
+  document.getElementById("adminMenuPrincipal").style.display="block";
   document.getElementById("adminModulo").classList.remove("visible");
+  document.getElementById("adminModuloAviso").style.display="block";
+  document.getElementById("adminReservasContenido").style.display="none";
+  document.getElementById("adminReporteContenido").style.display="none";
+  document.getElementById("adminReporteContenido").innerHTML="";
+  cerrarFormularioReservaAdmin();
+}
 
-  const reportes = document.getElementById("adminReporteContenido");
-  const aviso = document.getElementById("adminModuloAviso");
+/****************************************************
+ * 10. MÓDULO DE RESERVACIONES: MENSAJES Y FORMULARIO
+ ****************************************************/
+function mostrarMensajeReservaAdmin(texto,tipo) {
+  const elemento=document.getElementById("reservaAdminMensaje");
+  elemento.textContent=texto;
+  elemento.className="reserva-admin-mensaje visible "+tipo;
+}
+function limpiarMensajeReservaAdmin() {
+  const elemento=document.getElementById("reservaAdminMensaje");
+  elemento.textContent="";
+  elemento.className="reserva-admin-mensaje";
+}
+function abrirFormularioReservaAdmin(reserva) {
+  if(!adminToken)return;
+  limpiarMensajeReservaAdmin();
+  const form=document.getElementById("reservaAdminFormulario");
+  document.getElementById("formReservaAdmin").reset();
 
-  if(reportes) {
-    reportes.style.display = "none";
-    reportes.innerHTML = "";
+  reservaAdminNumeroFila=reserva?Number(reserva.numeroFila):null;
+  document.getElementById("reservaAdminFormTitulo").textContent=reserva?"Editar reservación":"Nueva reservación";
+  document.getElementById("raGuardar").textContent=reserva?"Guardar cambios":"Crear reservación";
+
+  if(reserva) {
+    document.getElementById("raNombre").value=reserva.nombre||"";
+    document.getElementById("raTelefono").value=reserva.telefono||"";
+    document.getElementById("raFecha").value=reserva.fecha||"";
+    document.getElementById("raHora").value=normalizarHoraAdmin(reserva.hora);
+    document.getElementById("raPersonas").value=String(reserva.personas||"");
+    document.getElementById("raObservaciones").value=reserva.observaciones||"";
+  } else {
+    document.getElementById("raFecha").min=obtenerFechaLocal(1);
   }
 
-  if(aviso) {
-    aviso.style.display = "block";
+  form.classList.add("visible");
+  form.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function cerrarFormularioReservaAdmin() {
+  const form=document.getElementById("reservaAdminFormulario");
+  if(form)form.classList.remove("visible");
+  reservaAdminNumeroFila=null;
+}
+function normalizarHoraAdmin(valor) {
+  if(valor===null||valor===undefined)return "";
+  let texto=String(valor).trim();
+  const match=texto.match(/(\d{1,2}):(\d{2})/);
+  if(!match)return texto;
+  return String(match[1]).padStart(2,"0")+":"+match[2];
+}
+function validarFormularioReservaAdmin(datos) {
+  if(!datos.nombre||datos.nombre.length>100)return "Escribe un nombre válido de máximo 100 caracteres.";
+  if(!/^[0-9+\-\s()]{7,20}$/.test(datos.telefono))return "Escribe un teléfono válido.";
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(datos.fecha))return "Selecciona una fecha válida.";
+  if(!/^\d{2}:\d{2}$/.test(datos.hora)||datos.hora<"17:00"||datos.hora>"23:00")return "Selecciona un horario entre 17:00 y 23:00.";
+  if(!Number.isInteger(datos.personas)||datos.personas<1||datos.personas>10)return "El número de personas debe ser de 1 a 10.";
+  if(datos.observaciones.length>500)return "Las observaciones no pueden superar 500 caracteres.";
+  if(![0,4,5,6].includes(new Date(datos.fecha+"T12:00:00").getDay()))return "Solo se aceptan reservaciones de jueves a domingo.";
+  if(!reservaAdminNumeroFila&&datos.fecha<=obtenerFechaLocal(0))return "Para crear una reservación, selecciona al menos un día posterior.";
+  return "";
+}
+
+document.getElementById("formReservaAdmin").addEventListener("submit",async function(event) {
+  event.preventDefault();
+  if(reservaAdminOcupado)return;
+  if(!adminToken) {
+    mostrarMensajeReservaAdmin("La sesión administrativa expiró. Inicia sesión nuevamente.","error");return;
+  }
+
+  const datos={
+    nombre:document.getElementById("raNombre").value.trim(),
+    telefono:document.getElementById("raTelefono").value.trim(),
+    fecha:document.getElementById("raFecha").value,
+    hora:document.getElementById("raHora").value,
+    personas:Number(document.getElementById("raPersonas").value),
+    observaciones:document.getElementById("raObservaciones").value.trim()
+  };
+
+  const error=validarFormularioReservaAdmin(datos);
+  if(error) {
+    mostrarMensajeReservaAdmin(error,"error");return;
+  }
+
+  const boton=document.getElementById("raGuardar");
+  reservaAdminOcupado=true;
+  boton.disabled=true;
+  boton.textContent="Guardando...";
+
+  try {
+    let resultado;
+    if(reservaAdminNumeroFila) {
+      resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_RESERVACIONES_EDITAR",{
+        token:adminToken,numeroFila:reservaAdminNumeroFila,datos:datos
+      });
+    } else {
+      resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_RESERVACIONES_CREAR",{
+        token:adminToken,datos:datos
+      });
+    }
+
+    if(!resultado.correcto)throw new Error(resultado.error||resultado.mensaje||"No fue posible guardar la reservación.");
+
+    cerrarFormularioReservaAdmin();
+    mostrarMensajeReservaAdmin(resultado.mensaje||(reservaAdminNumeroFila?"Reservación actualizada.":"Reservación creada."),"exito");
+    await cargarReservacionesAdmin();
+  } catch(error) {
+    mostrarMensajeReservaAdmin(error.message||"Ocurrió un error al guardar.","error");
+  } finally {
+    reservaAdminOcupado=false;
+    boton.disabled=false;
+    boton.textContent=reservaAdminNumeroFila?"Guardar cambios":"Crear reservación";
+  }
+});
+
+/****************************************************
+ * 11. CONSULTAR Y FILTRAR RESERVACIONES
+ ****************************************************/
+async function cargarReservacionesAdmin() {
+  if(!adminToken) {
+    mostrarMensajeReservaAdmin("No hay una sesión activa. Inicia sesión nuevamente.","error");return;
+  }
+  if(reservaAdminOcupado)return;
+
+  const contenedor=document.getElementById("reservaAdminTabla");
+  contenedor.innerHTML='<div class="admin-cargando">Consultando Google Sheets...</div>';
+  document.getElementById("resAdminResumen").textContent="Consultando...";
+
+  const filtros={
+    busqueda:document.getElementById("resAdminBuscar").value.trim(),
+    fecha:document.getElementById("resAdminFecha").value,
+    estado:document.getElementById("resAdminEstado").value
+  };
+
+  try {
+    const resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_RESERVACIONES_LISTAR",{
+      token:adminToken,filtros:filtros
+    });
+
+    if(!resultado.correcto)throw new Error(resultado.error||resultado.mensaje||"No se pudieron consultar las reservaciones.");
+
+    reservasAdminDatos=Array.isArray(resultado.reservaciones)?resultado.reservaciones:[];
+    document.getElementById("resAdminResumen").textContent=
+      "Reservaciones encontradas: "+(resultado.total!==undefined?resultado.total:reservasAdminDatos.length);
+    pintarTablaReservacionesAdmin(reservasAdminDatos);
+  } catch(error) {
+    contenedor.innerHTML='<div class="reserva-vacio">No se pudieron cargar las reservaciones.</div>';
+    document.getElementById("resAdminResumen").textContent="Error al consultar";
+    mostrarMensajeReservaAdmin(error.message||"Error de consulta.","error");
+  }
+}
+
+function escaparHTML(valor) {
+  return String(valor===null||valor===undefined?"":valor)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function pintarTablaReservacionesAdmin(lista) {
+  const contenedor=document.getElementById("reservaAdminTabla");
+  if(!lista.length) {
+    contenedor.innerHTML='<div class="reserva-vacio">No se encontraron reservaciones con esos filtros.</div>';
+    return;
+  }
+
+  let html=`
+    <div class="reservas-tabla-wrap">
+    <table class="reservas-tabla">
+      <thead><tr>
+        <th>Cliente</th><th>Teléfono</th><th>Fecha</th><th>Hora</th>
+        <th>Personas</th><th>Estado</th><th>Acciones</th>
+      </tr></thead><tbody>`;
+
+  lista.forEach(reserva=>{
+    const estado=String(reserva.estado||"Registrada");
+    const clase=estado.toLowerCase()==="confirmada"?"estado-confirmada":
+      estado.toLowerCase()==="cancelada"?"estado-cancelada":"estado-registrada";
+    const numero=Number(reserva.numeroFila);
+    const json=JSON.stringify(reserva).replace(/</g,"\\u003c").replace(/'/g,"&#039;");
+
+    html+=`<tr>
+      <td><strong>${escaparHTML(reserva.nombre)}</strong><br><small>${escaparHTML(reserva.observaciones||"")}</small></td>
+      <td>${escaparHTML(reserva.telefono)}</td>
+      <td>${escaparHTML(reserva.fecha)}</td>
+      <td>${escaparHTML(normalizarHoraAdmin(reserva.hora))}</td>
+      <td>${escaparHTML(reserva.personas)}</td>
+      <td><span class="estado-reserva ${clase}">${escaparHTML(estado)}</span></td>
+      <td><div class="reserva-acciones">`;
+
+    if(estado.toLowerCase()!=="cancelada") {
+      html+=`<button class="btn-gris" type="button" data-accion="editar" data-fila="${numero}">Editar</button>`;
+    }
+    if(estado.toLowerCase()==="registrada") {
+      html+=`<button class="btn-verde" type="button" data-accion="confirmar" data-fila="${numero}">Confirmar</button>`;
+    }
+    if(estado.toLowerCase()!=="cancelada") {
+      html+=`<button class="btn-rojo" type="button" data-accion="cancelar" data-fila="${numero}">Cancelar</button>`;
+    }
+    html+=`</div></td></tr>`;
+  });
+
+  html+="</tbody></table></div>";
+  contenedor.innerHTML=html;
+
+  contenedor.querySelectorAll("button[data-accion]").forEach(boton=>{
+    boton.addEventListener("click",()=>{
+      const numero=Number(boton.dataset.fila);
+      const accion=boton.dataset.accion;
+      const reserva=reservasAdminDatos.find(r=>Number(r.numeroFila)===numero);
+      if(accion==="editar"&&reserva)abrirFormularioReservaAdmin(reserva);
+      if(accion==="confirmar")cambiarEstadoReservaAdmin(numero,"Confirmada");
+      if(accion==="cancelar")cambiarEstadoReservaAdmin(numero,"Cancelada");
+    });
+  });
+}
+
+/****************************************************
+ * 12. CONFIRMAR Y CANCELAR RESERVACIONES
+ ****************************************************/
+async function cambiarEstadoReservaAdmin(numeroFila,nuevoEstado) {
+  if(reservaAdminOcupado)return;
+  if(!adminToken) {
+    mostrarMensajeReservaAdmin("La sesión administrativa expiró.","error");return;
+  }
+
+  const reserva=reservasAdminDatos.find(r=>Number(r.numeroFila)===Number(numeroFila));
+  const nombre=reserva?reserva.nombre:"esta reservación";
+
+  const pregunta=nuevoEstado==="Cancelada"
+    ?"¿Seguro que deseas cancelar la reservación de "+nombre+"?"
+    :"¿Deseas confirmar la reservación de "+nombre+"?";
+
+  if(!window.confirm(pregunta))return;
+
+  reservaAdminOcupado=true;
+  try {
+    const resultado=await enviarMensajeAdmin("EL_PERRO_ADMIN_RESERVACIONES_ESTADO",{
+      token:adminToken,numeroFila:Number(numeroFila),nuevoEstado:nuevoEstado
+    });
+
+    if(!resultado.correcto)throw new Error(resultado.error||resultado.mensaje||"No se pudo actualizar el estado.");
+
+    mostrarMensajeReservaAdmin(resultado.mensaje||"Estado actualizado a "+nuevoEstado+".","exito");
+    await cargarReservacionesAdmin();
+  } catch(error) {
+    mostrarMensajeReservaAdmin(error.message||"No se pudo actualizar la reservación.","error");
+  } finally {
+    reservaAdminOcupado=false;
   }
 }
 
 /****************************************************
- * 10. INICIAR EL SISTEMA
+ * 13. FILTROS
+ ****************************************************/
+let temporizadorFiltroReservas=null;
+function programarFiltroReservas() {
+  clearTimeout(temporizadorFiltroReservas);
+  temporizadorFiltroReservas=setTimeout(()=>cargarReservacionesAdmin(),450);
+}
+document.getElementById("resAdminBuscar").addEventListener("input",programarFiltroReservas);
+document.getElementById("resAdminFecha").addEventListener("change",cargarReservacionesAdmin);
+document.getElementById("resAdminEstado").addEventListener("change",cargarReservacionesAdmin);
+
+/****************************************************
+ * 14. INICIAR
  ****************************************************/
 window.addEventListener("load",function() {
   prepararMicrofono();
@@ -1507,7 +1588,7 @@ window.addEventListener("load",function() {
 
   if("speechSynthesis" in window) {
     speechSynthesis.getVoices();
-    speechSynthesis.onvoiceschanged = () => seleccionarVoz();
+    speechSynthesis.onvoiceschanged=()=>seleccionarVoz();
   }
 });
 </script>
