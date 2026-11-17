@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -631,7 +632,10 @@ footer {
   .acciones-reserva {flex-direction:column}
 }
 </style>
-  <body>
+</head>
+
+<body>
+
 <div class="app">
 
 <header>
@@ -1744,29 +1748,33 @@ document.getElementById("formReservacion").addEventListener(
     }
   }
 );
-  /****************************************************
+
+/****************************************************
  * 18. ADMINISTRACIÓN: VARIABLES Y CONEXIÓN
  ****************************************************/
 
 let adminBridgeListo = false;
+let adminBridgeVentana = null;
 let adminToken = null;
 let adminUsuarioActual = null;
 let adminSolicitudes = {};
-let adminCierrePendiente = false;
 
 /*
- * CORRECCIÓN DE CONEXIÓN ADMINISTRATIVA
- * Comprueba el atributo src real del iframe.
- * No utiliza iframe.src para comprobar si está vacío,
- * porque el navegador puede devolver una URL aunque
- * todavía no se haya establecido el atributo.
+ * El iframe de Apps Script puede utilizar un marco
+ * intermedio de Google. Por eso no suponemos que el
+ * mensaje READY proviene siempre directamente del
+ * contentWindow del iframe.
  */
 
 function prepararAdminBridge() {
   const iframe = document.getElementById("adminBridge");
+  const estado = document.getElementById("adminEstado");
 
   if (!iframe) {
     console.error("No se encontró el iframe administrativo.");
+    if (estado) {
+      estado.textContent = "Error: no se encontró el puente administrativo.";
+    }
     return;
   }
 
@@ -1774,9 +1782,11 @@ function prepararAdminBridge() {
 
   if (!direccionActual || direccionActual === "about:blank") {
     adminBridgeListo = false;
+    adminBridgeVentana = null;
 
-    document.getElementById("adminEstado").textContent =
-      "Cargando puente administrativo...";
+    if (estado) {
+      estado.textContent = "Cargando puente administrativo...";
+    }
 
     iframe.src = URL_APPS_SCRIPT + "?adminBridge=1";
 
@@ -1796,6 +1806,7 @@ function abrirAdministracion() {
   if (!adminBridgeListo) {
     document.getElementById("adminEstado").textContent =
       "Conectando con el sistema administrativo...";
+
     prepararAdminBridge();
   } else {
     document.getElementById("adminEstado").textContent =
@@ -1805,17 +1816,15 @@ function abrirAdministracion() {
 
 function cerrarAdministracion() {
   if (adminToken && adminBridgeListo) {
-    enviarMensajeAdmin("EL_PERRO_ADMIN_CERRAR",{
+    enviarMensajeAdmin("EL_PERRO_ADMIN_CERRAR", {
       token:adminToken
     }).catch(console.error);
   }
 
   adminToken = null;
   adminUsuarioActual = null;
-  adminCierrePendiente = false;
 
   document.getElementById("adminOverlay").classList.remove("visible");
-
   document.getElementById("adminLogin").reset();
   document.getElementById("adminCambioPassword").reset();
 
@@ -1838,14 +1847,12 @@ function mostrarFormularioAdmin(tipo) {
 
 function mostrarMensajeAdmin(texto,tipo) {
   const elemento = document.getElementById("adminMensaje");
-
   elemento.textContent = texto;
   elemento.className = "admin-mensaje visible " + tipo;
 }
 
 function limpiarMensajeAdmin() {
   const elemento = document.getElementById("adminMensaje");
-
   elemento.textContent = "";
   elemento.className = "admin-mensaje";
 }
@@ -1854,46 +1861,6 @@ function limpiarMensajeAdmin() {
  * 19. MENSAJES ENTRE INDEX Y ADMINBRIDGE
  ****************************************************/
 
-function enviarMensajeAdmin(tipo,datos) {
-  return new Promise((resolve,reject) => {
-
-    const iframe = document.getElementById("adminBridge");
-
-    if (!iframe || !iframe.contentWindow) {
-      reject(new Error("No se encontró el puente administrativo."));
-      return;
-    }
-
-    if (!adminBridgeListo) {
-      reject(new Error("El sistema administrativo todavía está conectando."));
-      return;
-    }
-
-    const requestId = "admin_" +
-      Date.now() + "_" +
-      Math.random().toString(36).substring(2,10);
-
-    const temporizador = setTimeout(function() {
-      delete adminSolicitudes[requestId];
-      reject(new Error("El sistema administrativo no respondió a tiempo."));
-    },30000);
-
-    adminSolicitudes[requestId] = {
-      resolve:resolve,
-      reject:reject,
-      temporizador:temporizador
-    };
-
-    iframe.contentWindow.postMessage(
-      Object.assign({
-        tipo:tipo,
-        requestId:requestId
-      },datos || {}),
-      "*"
-    );
-  });
-}
-
 function origenAdminPermitido(origen) {
   try {
     const host = new URL(origen).hostname;
@@ -1901,16 +1868,62 @@ function origenAdminPermitido(origen) {
     return host === "script.google.com" ||
       host.endsWith(".googleusercontent.com");
 
-  } catch(error) {
+  } catch (error) {
     return false;
   }
 }
 
-window.addEventListener("message",function(event) {
+function enviarMensajeAdmin(tipo, datos) {
+  return new Promise((resolve, reject) => {
 
-  const iframe = document.getElementById("adminBridge");
+    if (!adminBridgeListo || !adminBridgeVentana) {
+      reject(new Error(
+        "El puente administrativo todavía no está conectado."
+      ));
+      return;
+    }
 
-  if (!iframe || event.source !== iframe.contentWindow) return;
+    const requestId = "admin_" +
+      Date.now() + "_" +
+      Math.random().toString(36).substring(2, 10);
+
+    const temporizador = setTimeout(function() {
+      delete adminSolicitudes[requestId];
+      reject(new Error(
+        "El sistema administrativo no respondió a tiempo."
+      ));
+    }, 30000);
+
+    adminSolicitudes[requestId] = {
+      resolve: resolve,
+      reject: reject,
+      temporizador: temporizador
+    };
+
+    try {
+      adminBridgeVentana.postMessage(
+        Object.assign({
+          tipo: tipo,
+          requestId: requestId
+        }, datos || {}),
+        "*"
+      );
+    } catch (error) {
+      clearTimeout(temporizador);
+      delete adminSolicitudes[requestId];
+      reject(error);
+    }
+  });
+}
+
+/*
+ * Recibe el aviso READY del puente.
+ * La ventana que envía READY queda identificada
+ * y se utiliza para enviarle las solicitudes.
+ */
+
+window.addEventListener("message", function(event) {
+
   if (!origenAdminPermitido(event.origin)) return;
 
   const mensaje = event.data;
@@ -1918,21 +1931,25 @@ window.addEventListener("message",function(event) {
   if (!mensaje || typeof mensaje !== "object") return;
 
   if (mensaje.tipo === "EL_PERRO_ADMIN_BRIDGE_READY") {
+
+    adminBridgeVentana = event.source;
     adminBridgeListo = true;
 
     document.getElementById("adminEstado").textContent =
       "Sistema administrativo conectado.";
 
-    console.log(
-      "EL PERRO AI: puente administrativo conectado.",
-      event.origin
-    );
+    console.log("ADMIN: puente conectado.");
+    console.log("ADMIN: origen:", event.origin);
 
     return;
   }
 
   if (mensaje.tipo !== "EL_PERRO_ADMIN_RESULTADO") return;
   if (!mensaje.requestId) return;
+
+  // Los resultados deben provenir de la misma ventana
+  // que notificó que el puente estaba preparado.
+  if (event.source !== adminBridgeVentana) return;
 
   const pendiente = adminSolicitudes[mensaje.requestId];
 
@@ -2018,7 +2035,7 @@ document.getElementById("adminLogin").addEventListener(
 
         document.getElementById("adminEstado").textContent =
           "Sesión iniciada: " + nombre +
-          ". La siguiente etapa incorporará el panel de administración.";
+          ". El panel de administración se integrará en la siguiente etapa.";
       }
 
     } catch(error) {
@@ -2152,7 +2169,6 @@ window.addEventListener("load",function() {
   conectarGoogle();
   configurarFechaMinima();
 
-  // Prepara también el puente administrativo al cargar la página.
   prepararAdminBridge();
 
   if ("speechSynthesis" in window) {
@@ -2167,4 +2183,3 @@ window.addEventListener("load",function() {
 
 </body>
 </html>
-</head>
