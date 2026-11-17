@@ -657,12 +657,12 @@ function origenPostPermitido(origen) {
  ****************************************************/
 
 window.addEventListener("message", function(event) {
-  const iframe = document.getElementById("reservacionesBridge");
-
-  if (!iframe || event.source !== iframe.contentWindow) return;
 
   if (!origenPostPermitido(event.origin)) {
-    console.warn("Origen de respuesta no reconocido:", event.origin);
+    console.warn(
+      "Origen de respuesta no reconocido:",
+      event.origin
+    );
     return;
   }
 
@@ -672,7 +672,10 @@ window.addEventListener("message", function(event) {
   if (mensaje.tipo !== "EL_PERRO_AI_POST_RESULTADO") return;
   if (!mensaje.requestId) return;
 
-  if (!solicitudReservaActual || mensaje.requestId !== solicitudReservaActual) {
+  if (
+    !solicitudReservaActual ||
+    mensaje.requestId !== solicitudReservaActual
+  ) {
     return;
   }
 
@@ -682,7 +685,9 @@ window.addEventListener("message", function(event) {
   reservaEnviandose = false;
   reservaResultadoIncierto = false;
 
-  document.getElementById("btnConfirmarReserva").disabled = false;
+  document.getElementById(
+    "btnConfirmarReserva"
+  ).disabled = false;
 
   solicitudReservaActual = null;
 
@@ -695,23 +700,36 @@ window.addEventListener("message", function(event) {
   const resultado = mensaje.resultado || {};
 
   if (resultado.correcto && resultado.confirmada) {
+
     mostrarResultadoReserva(
-      resultado.mensaje || "¡Tu reservación quedó registrada!",
+      resultado.mensaje ||
+      "¡Tu reservación quedó registrada!",
       "exito"
     );
 
-    document.getElementById("formReservacion").reset();
+    document.getElementById(
+      "formReservacion"
+    ).reset();
+
     configurarFechaMinima();
 
     if (resolver) resolver(resultado);
 
   } else {
+
     const error = new Error(
-      resultado.error || "No fue posible registrar la reservación."
+      resultado.error ||
+      "No fue posible registrar la reservación."
     );
 
-    if (rechazar) rechazar(error);
-    else mostrarResultadoReserva(error.message, "error");
+    if (rechazar) {
+      rechazar(error);
+    } else {
+      mostrarResultadoReserva(
+        error.message,
+        "error"
+      );
+    }
   }
 });
 
@@ -780,6 +798,7 @@ function enviarReservacionPOST(datos) {
     document.body.appendChild(formularioPost);
 
     temporizadorReserva = setTimeout(function() {
+
       temporizadorReserva = null;
       reservaEnviandose = false;
       reservaResultadoIncierto = true;
@@ -788,7 +807,9 @@ function enviarReservacionPOST(datos) {
       resolverReservaActual = null;
       rechazarReservaActual = null;
 
-      document.getElementById("btnConfirmarReserva").disabled = true;
+      document.getElementById(
+        "btnConfirmarReserva"
+      ).disabled = true;
 
       reject(new Error(
         "No recibimos respuesta de Google. La solicitud pudo haberse registrado. Verifica primero la hoja de Google Sheets antes de intentar otra vez. Actualiza la página solamente después de comprobar el registro."
@@ -797,6 +818,7 @@ function enviarReservacionPOST(datos) {
     }, 45000);
 
     try {
+
       formularioPost.submit();
 
       setTimeout(function() {
@@ -806,6 +828,7 @@ function enviarReservacionPOST(datos) {
       }, 2000);
 
     } catch(error) {
+
       clearTimeout(temporizadorReserva);
       temporizadorReserva = null;
 
@@ -830,6 +853,7 @@ function enviarReservacionPOST(datos) {
  ****************************************************/
 
 document.getElementById("formReservacion").addEventListener("submit", async function(event) {
+
   event.preventDefault();
 
   if (reservaEnviandose) return;
@@ -895,10 +919,6 @@ document.getElementById("formReservacion").addEventListener("submit", async func
     observaciones: observaciones
   };
 
-  // IMPORTANTE:
-  // No activar reservaEnviandose aquí.
-  // enviarReservacionPOST() la activa al comenzar el envío.
-
   document.getElementById("btnConfirmarReserva").disabled = true;
 
   mostrarResultadoReserva(
@@ -907,9 +927,11 @@ document.getElementById("formReservacion").addEventListener("submit", async func
   );
 
   try {
+
     await enviarReservacionPOST(datos);
 
   } catch(error) {
+
     console.error("Error de reservación:", error);
 
     mostrarResultadoReserva(
@@ -919,7 +941,9 @@ document.getElementById("formReservacion").addEventListener("submit", async func
 
     if (!reservaResultadoIncierto) {
       reservaEnviandose = false;
-      document.getElementById("btnConfirmarReserva").disabled = false;
+      document.getElementById(
+        "btnConfirmarReserva"
+      ).disabled = false;
     }
   }
 });
@@ -929,6 +953,7 @@ document.getElementById("formReservacion").addEventListener("submit", async func
  ****************************************************/
 
 window.addEventListener("load", function() {
+
   prepararMicrofono();
   conectarGoogle();
   configurarFechaMinima();
