@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -632,9 +631,7 @@ footer {
   .acciones-reserva {flex-direction:column}
 }
 </style>
-</head>
-
-<body>
+  <body>
 <div class="app">
 
 <header>
@@ -1747,8 +1744,7 @@ document.getElementById("formReservacion").addEventListener(
     }
   }
 );
-
-/****************************************************
+  /****************************************************
  * 18. ADMINISTRACIÓN: VARIABLES Y CONEXIÓN
  ****************************************************/
 
@@ -1758,13 +1754,36 @@ let adminUsuarioActual = null;
 let adminSolicitudes = {};
 let adminCierrePendiente = false;
 
+/*
+ * CORRECCIÓN DE CONEXIÓN ADMINISTRATIVA
+ * Comprueba el atributo src real del iframe.
+ * No utiliza iframe.src para comprobar si está vacío,
+ * porque el navegador puede devolver una URL aunque
+ * todavía no se haya establecido el atributo.
+ */
+
 function prepararAdminBridge() {
   const iframe = document.getElementById("adminBridge");
 
-  if (!iframe) return;
+  if (!iframe) {
+    console.error("No se encontró el iframe administrativo.");
+    return;
+  }
 
-  if (!iframe.src) {
+  const direccionActual = iframe.getAttribute("src");
+
+  if (!direccionActual || direccionActual === "about:blank") {
+    adminBridgeListo = false;
+
+    document.getElementById("adminEstado").textContent =
+      "Cargando puente administrativo...";
+
     iframe.src = URL_APPS_SCRIPT + "?adminBridge=1";
+
+    console.log(
+      "EL PERRO AI: cargando puente administrativo",
+      iframe.src
+    );
   }
 }
 
@@ -1903,6 +1922,11 @@ window.addEventListener("message",function(event) {
 
     document.getElementById("adminEstado").textContent =
       "Sistema administrativo conectado.";
+
+    console.log(
+      "EL PERRO AI: puente administrativo conectado.",
+      event.origin
+    );
 
     return;
   }
@@ -2128,6 +2152,9 @@ window.addEventListener("load",function() {
   conectarGoogle();
   configurarFechaMinima();
 
+  // Prepara también el puente administrativo al cargar la página.
+  prepararAdminBridge();
+
   if ("speechSynthesis" in window) {
     speechSynthesis.getVoices();
 
@@ -2140,3 +2167,4 @@ window.addEventListener("load",function() {
 
 </body>
 </html>
+</head>
