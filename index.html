@@ -184,7 +184,6 @@ Aceptamos reservaciones de jueves a domingo, con al menos un día de anticipaci�
 <footer>EL PERRO AI · El Perro Caliente Tultepec</footer>
 </div>
 
-<!-- Iframe oculto: recibe la respuesta POST de Apps Script -->
 <iframe
 id="reservacionesBridge"
 name="reservacionesBridge"
@@ -660,10 +659,8 @@ function origenPostPermitido(origen) {
 window.addEventListener("message", function(event) {
   const iframe = document.getElementById("reservacionesBridge");
 
-  // Solo aceptar mensajes procedentes del iframe de reservaciones.
   if (!iframe || event.source !== iframe.contentWindow) return;
 
-  // Verificar que el mensaje proceda de Google Apps Script.
   if (!origenPostPermitido(event.origin)) {
     console.warn("Origen de respuesta no reconocido:", event.origin);
     return;
@@ -675,7 +672,6 @@ window.addEventListener("message", function(event) {
   if (mensaje.tipo !== "EL_PERRO_AI_POST_RESULTADO") return;
   if (!mensaje.requestId) return;
 
-  // Ignorar respuestas de solicitudes anteriores.
   if (!solicitudReservaActual || mensaje.requestId !== solicitudReservaActual) {
     return;
   }
@@ -765,7 +761,6 @@ function enviarReservacionPOST(datos) {
     resolverReservaActual = resolve;
     rechazarReservaActual = reject;
 
-    // Crear un formulario POST dirigido al iframe oculto.
     const formularioPost = document.createElement("form");
 
     formularioPost.method = "POST";
@@ -784,8 +779,6 @@ function enviarReservacionPOST(datos) {
     formularioPost.appendChild(campoPayload);
     document.body.appendChild(formularioPost);
 
-    // Si Google no devuelve respuesta, no permitimos un segundo envío
-    // hasta que se verifique si la primera solicitud quedó registrada.
     temporizadorReserva = setTimeout(function() {
       temporizadorReserva = null;
       reservaEnviandose = false;
@@ -806,7 +799,6 @@ function enviarReservacionPOST(datos) {
     try {
       formularioPost.submit();
 
-      // Retirar el formulario temporal después de iniciar el envío.
       setTimeout(function() {
         if (formularioPost.parentNode) {
           formularioPost.parentNode.removeChild(formularioPost);
@@ -903,7 +895,9 @@ document.getElementById("formReservacion").addEventListener("submit", async func
     observaciones: observaciones
   };
 
-  reservaEnviandose = true;
+  // IMPORTANTE:
+  // No activar reservaEnviandose aquí.
+  // enviarReservacionPOST() la activa al comenzar el envío.
 
   document.getElementById("btnConfirmarReserva").disabled = true;
 
